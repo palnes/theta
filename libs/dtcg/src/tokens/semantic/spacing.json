@@ -1,0 +1,39 @@
+{
+  "sys": {
+    "spacing": {
+      "none": {
+        "$value": "{ref.dimension.0}"
+      },
+      "2xs": {
+        "$value": "{ref.dimension.2}"
+      },
+      "xs": {
+        "$value": "{ref.dimension.4}"
+      },
+      "sm": {
+        "$value": "{ref.dimension.8}"
+      },
+      "md": {
+        "$value": "{ref.dimension.12}"
+      },
+      "lg": {
+        "$value": "{ref.dimension.16}"
+      },
+      "xl": {
+        "$value": "{ref.dimension.32}"
+      },
+      "2xl": {
+        "$value": "{ref.dimension.64}"
+      },
+      "3xl": {
+        "$value": "{ref.dimension.128}"
+      },
+      "14": {
+        "$value": "{ref.dimension.56}"
+      },
+      "18": {
+        "$value": "{ref.dimension.72}"
+      }
+    }
+  }
+}

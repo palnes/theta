@@ -1,0 +1,47 @@
+{
+  "cmp": {
+    "radioButton": {
+      "size": {
+        "$value": "{ref.dimension.20}"
+      },
+      "innerSize": {
+        "$value": "{ref.dimension.10}"
+      },
+      "borderWidth": {
+        "$value": "{ref.dimension.2}"
+      },
+      "color": {
+        "background": {
+          "default": {
+            "$value": "{ref.color.white}"
+          },
+          "hover": {
+            "$value": "{sys.color.interaction.brand.subtle.hover}"
+          },
+          "selected": {
+            "$value": "{sys.color.action.primary.default}"
+          }
+        },
+        "border": {
+          "default": {
+            "$value": "{sys.color.border.subtle}"
+          },
+          "hover": {
+            "$value": "{sys.color.border.default}"
+          },
+          "disabled": {
+            "$value": "{sys.color.border.disabled}"
+          },
+          "error": {
+            "$value": "{sys.color.border.error}"
+          }
+        },
+        "dot": {
+          "default": {
+            "$value": "{ref.color.white}"
+          }
+        }
+      }
+    }
+  }
+}

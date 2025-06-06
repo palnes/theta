@@ -1,0 +1,91 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { TokenReferenceTable } from '../helpers/TokenReferenceTable';
+
+<Meta title="Token Reference/Component/Button" />
+
+# Button Component Tokens
+
+Complete specification of all button component tokens organized by category.
+
+## Token Structure
+
+Button tokens follow the pattern: `cmp.button.[category].[variant].[property].[state]`
+
+## All Button Tokens
+
+<TokenReferenceTable tier="cmp" category="button" />
+
+## Usage Examples
+
+### CSS Variables
+```css
+.button {
+  height: var(--cmp-button-height-medium);
+  padding: 0 var(--cmp-button-paddingx-medium);
+  font-size: var(--cmp-button-fontsize-medium);
+  font-weight: var(--cmp-button-fontweight);
+  border-radius: var(--cmp-button-radius-medium);
+}
+
+.button--primary {
+  background-color: var(--cmp-button-color-primary-background-default);
+  color: var(--cmp-button-color-primary-text-default);
+}
+
+.button--primary:hover {
+  background-color: var(--cmp-button-color-primary-background-hover);
+}
+```
+
+### JavaScript/TypeScript
+```javascript
+import tokens from '@theta/tokens';
+
+const buttonStyles = {
+  height: tokens.cmp.button.height.medium,
+  paddingLeft: tokens.cmp.button.paddingX.medium,
+  paddingRight: tokens.cmp.button.paddingX.medium,
+  fontSize: tokens.cmp.button.fontSize.medium,
+  fontWeight: tokens.cmp.button.fontWeight,
+  borderRadius: tokens.cmp.button.radius.medium,
+};
+```
+
+### React Native
+```javascript
+import tokens from '@theta/tokens';
+
+const styles = StyleSheet.create({
+  button: {
+    height: tokens.cmpButtonHeightMedium,
+    paddingHorizontal: tokens.cmpButtonPaddingXMedium,
+    fontSize: tokens.cmpButtonFontSizeMedium,
+    fontWeight: tokens.cmpButtonFontWeight,
+    borderRadius: tokens.cmpButtonRadiusMedium,
+  },
+});
+```
+
+## Design Guidelines
+
+### Size Variants
+- **Small**: Compact buttons for constrained spaces
+- **Medium**: Default size for most use cases
+- **Large**: Prominent actions or touch-friendly interfaces
+
+### Color Variants
+- **Primary**: Main actions and CTAs
+- **Secondary**: Supporting actions
+- **Ghost**: Minimal visual weight with border
+- **Danger**: Destructive or high-impact actions
+
+### States
+- **Default**: Normal resting state
+- **Hover**: Mouse hover interaction
+- **Active**: Pressed/active state
+- **Disabled**: Non-interactive state
+
+### Accessibility
+- All buttons include focus outline tokens for keyboard navigation
+- Color combinations meet WCAG contrast requirements
+- Minimum touch target sizes for mobile interfaces

@@ -1,0 +1,145 @@
+/* Global documentation styles for better readability */
+
+/* Main content area */
+.sbdocs-content {
+  max-width: 900px;
+}
+
+/* H2 - Major sections */
+.sbdocs-content h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0 0 1rem;
+  padding-top: 0;
+}
+
+/* First H2 can have a small top margin */
+.sbdocs-content h2:first-of-type {
+  margin-top: 1rem;
+}
+
+/* H3 - Subsections */
+.sbdocs-content h3 {
+  font-size: 1.375rem;
+  font-weight: 600;
+  margin: 2.5rem 0 1rem;
+  color: var(--sys-color-text-primary);
+}
+
+/* H4 - Sub-subsections */
+.sbdocs-content h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 2rem 0 0.75rem;
+  color: var(--sys-color-text-primary);
+}
+
+/* Horizontal rules for section breaks */
+.sbdocs-content hr {
+  border: none;
+  border-top: 2px solid var(--sys-color-border-subtle);
+  margin: 3rem 0;
+}
+
+/* Tables */
+.sbdocs-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--sys-color-border-subtle);
+}
+
+.sbdocs-content th {
+  text-align: left;
+  padding: 0.75rem;
+  background: var(--sys-color-surface-secondary);
+  border-bottom: 2px solid var(--sys-color-border-default);
+  font-weight: 600;
+}
+
+.sbdocs-content td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--sys-color-border-subtle);
+}
+
+.sbdocs-content tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Code blocks */
+.sbdocs-content pre {
+  background: var(--sys-color-surface-raised-default);
+  border: 1px solid var(--sys-color-border-subtle);
+  border-radius: var(--sys-radius-medium);
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+/* Override Storybook's docblock-source excessive margins */
+.sbdocs-content .docblock-source {
+  margin: 0.5rem 0 !important;
+}
+
+/* Inline code - higher specificity to override Storybook defaults */
+.sbdocs-content p code,
+.sbdocs-content li code,
+.sbdocs-content td code,
+.sbdocs-content th code,
+.sbdocs-content div code {
+  background: var(--ref-color-gray-50) !important;
+  color: var(--ref-color-gray-900) !important;
+  padding: 0.125rem 0.25rem;
+  border-radius: var(--sys-radius-small);
+  font-size: 0.875em;
+  font-family: monospace;
+  border: none;
+}
+
+/* Paragraphs */
+.sbdocs-content p {
+  line-height: 1.6;
+  margin: 1rem 0;
+}
+
+/* Lists */
+.sbdocs-content ul,
+.sbdocs-content ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.sbdocs-content li {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+/* Nested lists need proper spacing - override Storybook defaults */
+.sbdocs-content li > ul,
+.sbdocs-content li > ol {
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Override Storybook's first/last child rules */
+.sbdocs-content li > ul:first-of-type,
+.sbdocs-content li > ol:first-of-type {
+  margin-top: 0.5rem !important;
+}
+
+.sbdocs-content li > ul:last-child,
+.sbdocs-content li > ol:last-child {
+  margin-bottom: 0.5rem !important;
+}
+
+/* Links */
+.sbdocs-content a {
+  color: var(--sys-color-action-primary-default);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.sbdocs-content a:hover {
+  color: var(--sys-color-action-primary-hover);
+}

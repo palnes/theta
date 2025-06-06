@@ -1,0 +1,154 @@
+{
+  "ref": {
+    "fontFamily": {
+      "sans": {
+        "$type": "fontFamily",
+        "$value": [
+          "system-ui",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "sans-serif"
+        ]
+      },
+      "manrope": {
+        "$type": "fontFamily",
+        "$value": ["Manrope", "sans-serif"]
+      },
+      "mono": {
+        "$type": "fontFamily",
+        "$value": ["ui-monospace", "SFMono-Regular", "Consolas", "Liberation Mono", "monospace"]
+      }
+    },
+    "fontSize": {
+      "10": {
+        "$value": {
+          "value": 10,
+          "unit": "px"
+        }
+      },
+      "12": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        }
+      },
+      "14": {
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        }
+      },
+      "16": {
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        }
+      },
+      "20": {
+        "$value": {
+          "value": 20,
+          "unit": "px"
+        }
+      },
+      "25": {
+        "$value": {
+          "value": 25,
+          "unit": "px"
+        }
+      },
+      "28": {
+        "$value": {
+          "value": 28,
+          "unit": "px"
+        }
+      },
+      "32": {
+        "$value": {
+          "value": 32,
+          "unit": "px"
+        }
+      },
+      "44": {
+        "$value": {
+          "value": 44,
+          "unit": "px"
+        }
+      },
+      "$type": "dimension"
+    },
+    "fontWeight": {
+      "$type": "fontWeight",
+      "regular": {
+        "$value": "regular"
+      },
+      "medium": {
+        "$value": "medium"
+      },
+      "semi-bold": {
+        "$value": "semi-bold"
+      },
+      "bold": {
+        "$value": "bold"
+      }
+    },
+    "lineHeightPx": {
+      "12": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        }
+      },
+      "16": {
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        }
+      },
+      "20": {
+        "$value": {
+          "value": 20,
+          "unit": "px"
+        }
+      },
+      "24": {
+        "$value": {
+          "value": 24,
+          "unit": "px"
+        }
+      },
+      "28": {
+        "$value": {
+          "value": 28,
+          "unit": "px"
+        }
+      },
+      "30": {
+        "$value": {
+          "value": 30,
+          "unit": "px"
+        }
+      },
+      "32": {
+        "$value": {
+          "value": 32,
+          "unit": "px"
+        }
+      },
+      "40": {
+        "$value": {
+          "value": 40,
+          "unit": "px"
+        }
+      },
+      "48": {
+        "$value": {
+          "value": 48,
+          "unit": "px"
+        }
+      },
+      "$type": "dimension"
+    }
+  }
+}

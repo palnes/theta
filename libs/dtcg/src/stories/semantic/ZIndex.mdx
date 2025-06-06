@@ -1,0 +1,128 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { getSemanticZIndex, getSemanticZIndexFromDocs } from '../helpers/semanticTokenHelpers';
+import { TokenReferenceTable } from '../helpers/TokenReferenceTable';
+import { useDocumentationData } from '../helpers/useDocumentationData';
+
+<Meta title="Token Reference/Semantic/Z-Index" />
+
+# Z-Index System
+
+Consistent z-index values for proper layering of UI elements.
+
+export const ZIndexVisualization = () => {
+  const { data, loading, error } = useDocumentationData();
+  
+  if (loading) return <div>Loading z-index values...</div>;
+  if (error) return <div>Error loading z-index: {error}</div>;
+  if (!data) return null;
+  
+  const zIndexTokens = getSemanticZIndexFromDocs(data.sys?.zIndex || []);
+  
+  return (
+    <div style={{ position: 'relative', height: 400, marginBottom: '0.5rem', overflow: 'visible' }}>
+      {zIndexTokens.map(({ key, value }, index) => {
+    const colors = ['hsl(0, 60%, 50%)', 'hsl(72, 60%, 50%)', 'hsl(144, 60%, 50%)', 'hsl(216, 60%, 50%)', 'hsl(288, 60%, 50%)', 'hsl(360, 60%, 50%)'];
+    const positions = [0, 40, 80, 120, 160, 200];
+    const sizes = [160, 150, 140, 130, 120, 110];
+    
+    return (
+      <div
+        key={key}
+        className="z-index-card"
+        style={{
+          position: 'absolute',
+          left: positions[index],
+          top: positions[index],
+          width: sizes[index],
+          height: sizes[index],
+          backgroundColor: colors[index],
+          borderRadius: 8,
+          padding: 16,
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          zIndex: `var(--sys-z-index-${key})`,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          color: 'white',
+          fontWeight: 500,
+          transition: 'all 0.2s ease',
+          cursor: 'pointer',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.zIndex = 'calc(var(--sys-z-index-tooltip) + 1)';
+          e.currentTarget.style.transform = 'scale(1.05)';
+          e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.25)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.zIndex = `var(--sys-z-index-${key})`;
+          e.currentTarget.style.transform = 'scale(1)';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+        }}
+      >
+        <div style={{ fontSize: 14, marginBottom: 4 }}>{key.toUpperCase()}</div>
+        <div style={{ fontSize: 20, fontFamily: 'monospace' }}>{value}</div>
+      </div>
+    );
+  })}
+    </div>
+  );
+};
+
+## Visual Representation
+
+<ZIndexVisualization />
+
+## Common Patterns
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24, marginBottom: 48 }}>
+  <div style={{ padding: 24, background: '#f5f5f5', borderRadius: 8 }}>
+    <h4 style={{ marginBottom: 12 }}>Modal with Backdrop</h4>
+    <pre style={{ fontSize: 12, margin: 0, fontFamily: 'monospace' }}>
+{`.backdrop {
+  z-index: var(--sys-z-index-modal);
+}
+
+.modal {
+  z-index: calc(var(--sys-z-index-modal) + 1);
+}`}
+    </pre>
+  </div>
+  
+  <div style={{ padding: 24, background: '#f5f5f5', borderRadius: 8 }}>
+    <h4 style={{ marginBottom: 12 }}>Dropdown Menu</h4>
+    <pre style={{ fontSize: 12, margin: 0, fontFamily: 'monospace' }}>
+{`.dropdown-menu {
+  z-index: var(--sys-z-index-dropdown);
+}`}
+    </pre>
+  </div>
+  
+  <div style={{ padding: 24, background: '#f5f5f5', borderRadius: 8 }}>
+    <h4 style={{ marginBottom: 12 }}>Fixed Header</h4>
+    <pre style={{ fontSize: 12, margin: 0, fontFamily: 'monospace' }}>
+{`.header {
+  position: fixed;
+  z-index: var(--sys-z-index-sticky);
+}`}
+    </pre>
+  </div>
+</div>
+
+> For detailed information about token architecture, usage patterns, and stacking context management, see the [Token Guide](/?path=/docs/getting-started-token-guide--docs).
+
+## Z-Index Guidelines
+
+- Always use semantic z-index tokens instead of arbitrary numbers
+- Avoid z-index values between the defined scale to prevent conflicts
+- Use calc() for slight adjustments when needed (e.g., modal + backdrop)
+- Test overlapping elements across different screen sizes
+
+### Common Pitfalls
+- Creating new stacking contexts unintentionally (transform, opacity < 1, etc.)
+- Using extremely high z-index values (9999) as a "fix"
+- Not considering mobile/responsive layouts where stacking may differ
+
+## Reference Table
+
+<TokenReferenceTable tier="sys" category="zIndex" />

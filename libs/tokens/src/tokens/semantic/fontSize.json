@@ -1,0 +1,30 @@
+{
+  "sys": {
+    "fontSize": {
+      "xs": {
+        "$value": "{ref.fontSize.12}"
+      },
+      "sm": {
+        "$value": "{ref.fontSize.14}"
+      },
+      "base": {
+        "$value": "{ref.fontSize.16}"
+      },
+      "lg": {
+        "$value": "{ref.fontSize.20}"
+      },
+      "xl": {
+        "$value": "{ref.fontSize.25}"
+      },
+      "2xl": {
+        "$value": "{ref.fontSize.28}"
+      },
+      "3xl": {
+        "$value": "{ref.fontSize.32}"
+      },
+      "4xl": {
+        "$value": "{ref.fontSize.44}"
+      }
+    }
+  }
+}

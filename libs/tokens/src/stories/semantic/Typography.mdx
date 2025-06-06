@@ -1,0 +1,152 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { getSemanticTypographyFromDocs } from '../helpers/semanticTokenHelpers';
+import { useDocumentationData } from '../helpers/useDocumentationData';
+import { TokenReferenceTable } from '../helpers/TokenReferenceTable';
+
+<Meta title="Token Reference/Semantic/Typography" />
+
+# Typography System
+
+Pre-composed typography styles that ensure consistent text hierarchy across the application.
+
+export const TypographySection = ({ category, variants }) => {
+  const categoryLabels = {
+    heading: 'Heading Styles',
+    body: 'Body Styles',
+    action: 'Action Styles',
+    label: 'Label Styles',
+    code: 'Code Styles'
+  };
+  
+  const sampleText = {
+    heading: 'The quick brown fox jumps over the lazy dog',
+    body: 'The quick brown fox jumps over the lazy dog. This is sample text that demonstrates the typography style.',
+    action: 'Action Text',
+    label: 'Label Text',
+    code: 'const example = "Hello World";'
+  };
+  
+  return (
+    <div style={{ marginBottom: 48 }}>
+      <h2>{categoryLabels[category] || category}</h2>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        {variants.map((token) => {
+          const { variant, cssVariable, jsPath } = token;
+          
+          if (category === 'action') {
+            return (
+              <div key={variant}>
+                <button
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    font: `var(${cssVariable})`,
+                    padding: variant === 'lg' ? '12px 24px' : variant === 'sm' ? '8px 16px' : '10px 20px',
+                    background: 'var(--sys-color-action-primary)',
+                    color: 'var(--sys-color-action-primarytext)',
+                    border: 'none',
+                    borderRadius: 8,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {`${variant.toUpperCase()} ${sampleText[category]}`}
+                </button>
+                <code style={{ display: 'block', fontSize: 12, color: '#666', marginTop: 8 }}>
+                  {cssVariable}
+                </code>
+                <code style={{ display: 'block', fontSize: 10, color: '#999', marginTop: 2 }}>
+                  {jsPath.replace('tokens.', '')}
+                </code>
+              </div>
+            );
+          }
+          
+          if (category === 'label') {
+            return (
+              <div key={variant}>
+                <label style={{ font: `var(${cssVariable})` }}>
+                  {`${variant.toUpperCase()} ${sampleText[category]}`}
+                </label>
+                <code style={{ display: 'block', fontSize: 12, color: '#666', marginTop: 4 }}>
+                  {cssVariable}
+                </code>
+                <code style={{ display: 'block', fontSize: 10, color: '#999', marginTop: 2 }}>
+                  {jsPath}
+                </code>
+              </div>
+            );
+          }
+          
+          if (category === 'code') {
+            return (
+              <div key={variant}>
+                <pre style={{ 
+                  font: `var(${cssVariable})`,
+                  background: '#f5f5f5',
+                  padding: 16,
+                  borderRadius: 8,
+                  margin: 0
+                }}>
+                  {sampleText[category]}
+                </pre>
+                <code style={{ display: 'block', fontSize: 12, color: '#666', marginTop: 8 }}>
+                  {cssVariable}
+                </code>
+                <code style={{ display: 'block', fontSize: 10, color: '#999', marginTop: 2 }}>
+                  {jsPath.replace('tokens.', '')}
+                </code>
+              </div>
+            );
+          }
+          
+          return (
+            <div key={variant}>
+              <div style={{ font: `var(${cssVariable})`, marginBottom: 8 }}>
+                {sampleText[category]}
+              </div>
+              <code style={{ fontSize: 12, color: '#666' }}>{cssVariable}</code>
+              <code style={{ display: 'block', fontSize: 10, color: '#999', marginTop: 2 }}>
+                {jsPath}
+              </code>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+export const TypographyVisualization = () => {
+  const { data, loading, error } = useDocumentationData();
+  
+  if (loading) return <div>Loading typography...</div>;
+  if (error) return <div>Error loading typography: {error}</div>;
+  if (!data) return null;
+  
+  const typographyData = getSemanticTypographyFromDocs(data.sys?.typography || []);
+  
+  return (
+    <>
+      {typographyData.map(({ category, variants }) => (
+        <TypographySection key={category} category={category} variants={variants} />
+      ))}
+    </>
+  );
+};
+
+<TypographyVisualization />
+
+> For detailed information about token architecture, usage patterns, and typography composition, see the [Token Guide](/?path=/docs/getting-started-token-guide--docs).
+
+## Typography Guidelines
+
+- Use heading styles for page titles and section headers
+- Body styles for regular content
+- Action styles for interactive elements
+- Label styles for form fields and UI labels
+- Maintain consistent hierarchy throughout the application
+
+## Reference Table
+
+<TokenReferenceTable tier="sys" category="typography" />

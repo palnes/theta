@@ -1,0 +1,63 @@
+{
+  "name": "theta",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "libs/*"
+  ],
+  "packageManager": "yarn@4.5.3",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "build:tokens": "turbo run build --filter=@theta/tokens",
+    "test": "turbo run test",
+    "test:watch": "turbo run test:watch",
+    "test:ui": "turbo run test:ui",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "format": "turbo run format",
+    "clean": "turbo run clean",
+    "dev": "turbo run dev --parallel",
+    "storybook": "turbo run storybook --parallel",
+    "build-storybook": "turbo run build-storybook",
+    "check": "turbo run lint typecheck test --parallel",
+    "ci": "turbo run lint typecheck test build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@storybook/addon-a11y": "^9.0.6",
+    "@storybook/addon-docs": "^9.0.6",
+    "@storybook/addon-onboarding": "^9.0.6",
+    "@storybook/addon-vitest": "^9.0.6",
+    "@storybook/react": "^9.0.6",
+    "@storybook/react-vite": "^9.0.6",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@types/react": "19.0.10",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.5.1",
+    "@vitest/browser": "^3.0.0",
+    "@vitest/coverage-v8": "^3.0.0",
+    "playwright": "^1.49.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "react-native-web": "^0.20.0",
+    "storybook": "^9.0.6",
+    "turbo": "^2.5.4",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^3.0.0",
+    "vitest-browser-react": "^0.2.0"
+  },
+  "resolutions": {
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "@types/react": "19.0.10",
+    "react-docgen-typescript": "2.2.2",
+    "react-native-web": "^0.20.0"
+  },
+  "dependencies": {
+    "@fontsource/manrope": "^5.2.6"
+  }
+}

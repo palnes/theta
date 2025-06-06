@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noUncheckedSideEffectImports": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "allowJs": false,
+    "paths": {
+      "@shbno/nordlys-tokens": ["./packages/nordlys-tokens/src/index.ts"],
+      "@shbno/nordlys-tokens/*": ["./packages/nordlys-tokens/src/*"],
+      "@shbno/nordlys-web": ["./packages/nordlys-web/src/index.ts"],
+      "@shbno/nordlys-web/*": ["./packages/nordlys-web/src/*"],
+      "@shbno/nordlys-native": ["./packages/nordlys-native/src/index.ts"],
+      "@shbno/nordlys-native/*": ["./packages/nordlys-native/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "**/dist", "**/build", "**/.turbo"]
+}

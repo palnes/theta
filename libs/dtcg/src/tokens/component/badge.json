@@ -1,0 +1,86 @@
+{
+  "cmp": {
+    "badge": {
+      "height": {
+        "$value": "{ref.dimension.20}"
+      },
+      "minWidth": {
+        "$value": "{ref.dimension.20}"
+      },
+      "paddingX": {
+        "$value": "{ref.dimension.6}"
+      },
+      "borderRadius": {
+        "$value": "{ref.dimension.max}"
+      },
+      "fontSize": {
+        "$value": "{ref.fontSize.12}"
+      },
+      "fontWeight": {
+        "$value": "{ref.fontWeight.semi-bold}"
+      },
+      "color": {
+        "default": {
+          "background": {
+            "default": {
+              "$value": "{sys.color.surface.primary.default}"
+            }
+          },
+          "text": {
+            "default": {
+              "$value": "{sys.color.text.primary}"
+            }
+          }
+        },
+        "info": {
+          "background": {
+            "default": {
+              "$value": "{sys.color.status.info.surface}"
+            }
+          },
+          "text": {
+            "default": {
+              "$value": "{sys.color.text.primary}"
+            }
+          }
+        },
+        "success": {
+          "background": {
+            "default": {
+              "$value": "{sys.color.status.success.surface}"
+            }
+          },
+          "text": {
+            "default": {
+              "$value": "{sys.color.text.success}"
+            }
+          }
+        },
+        "warning": {
+          "background": {
+            "default": {
+              "$value": "{sys.color.status.warning.surface}"
+            }
+          },
+          "text": {
+            "default": {
+              "$value": "{sys.color.text.warning}"
+            }
+          }
+        },
+        "error": {
+          "background": {
+            "default": {
+              "$value": "{sys.color.status.error.surface}"
+            }
+          },
+          "text": {
+            "default": {
+              "$value": "{sys.color.text.error}"
+            }
+          }
+        }
+      }
+    }
+  }
+}

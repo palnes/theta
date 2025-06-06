@@ -1,0 +1,174 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { 
+  extractFontSizes, 
+  extractFontWeights, 
+  extractLineHeights, 
+  extractFontFamilies, 
+  extractFontSizesFromDocs,
+  extractFontWeightsFromDocs,
+  extractLineHeightsFromDocs,
+  extractFontFamiliesFromDocs,
+  formatFontFamilyValue 
+} from '../helpers/tokenHelpers';
+import { TokenReferenceTable } from '../helpers/TokenReferenceTable';
+import { useDocumentationData } from '../helpers/useDocumentationData';
+
+<Meta title="Token Reference/Primitives/Typography" />
+
+# Primitive Typography Values
+
+Raw typography values that form the foundation of our type system.
+
+> **Note**: We recommend using semantic typography tokens (`sys.typography.*`) in your components instead of these primitives. Primitives are best referenced when creating new semantic tokens.
+
+## Font Sizes
+
+export const FontSizes = () => {
+  const { data, loading, error } = useDocumentationData();
+  
+  if (loading) return <div>Loading font sizes...</div>;
+  if (error) return <div>Error loading font sizes: {error}</div>;
+  if (!data) return null;
+  
+  const fontSizes = extractFontSizesFromDocs(data.ref?.fontSize || []);
+  
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginBottom: 48 }}>
+      {fontSizes.map(({ size, value, key, cssVariable, jsPath }) => (
+        <div key={key}>
+          <div style={{ fontSize: `var(--ref-fontsize-${size})`, marginBottom: 4 }}>
+            The quick brown fox jumps
+          </div>
+          <code style={{ fontSize: 11, color: '#666' }}>
+            {value} • {cssVariable}
+          </code>
+          <code style={{ display: 'block', fontSize: 9, color: '#999', marginTop: 2 }}>
+            {jsPath.replace('tokens.', '')}
+          </code>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+<FontSizes />
+
+## Font Weights
+
+export const FontWeights = () => {
+  const { data, loading, error } = useDocumentationData();
+  
+  if (loading) return <div>Loading font weights...</div>;
+  if (error) return <div>Error loading font weights: {error}</div>;
+  if (!data) return null;
+  
+  const fontWeights = extractFontWeightsFromDocs(data.ref?.fontWeight || []);
+  
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 48 }}>
+      {fontWeights.map(({ name, value, token, cssVariable, jsPath }) => {
+        
+        return (
+          <div key={value}>
+            <div style={{ fontSize: 24, fontWeight: `var(--ref-fontweight-${value})` }}>
+              {name} ({value})
+            </div>
+            <code style={{ fontSize: 11, color: '#666' }}>{cssVariable}</code>
+            <code style={{ fontSize: 9, color: '#999', marginLeft: 8 }}>{jsPath.replace('tokens.', '')}</code>
+            <span style={{ fontSize: 9, color: '#888', marginLeft: 8 }}>= {token.$value}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+<FontWeights />
+
+## Line Heights
+
+export const LineHeights = () => {
+  const { data, loading, error } = useDocumentationData();
+  
+  if (loading) return <div>Loading line heights...</div>;
+  if (error) return <div>Error loading line heights: {error}</div>;
+  if (!data) return null;
+  
+  const lineHeights = extractLineHeightsFromDocs(data.ref?.lineHeightPx || []);
+  
+  return (
+    <div style={{ display: 'grid', gap: 24, marginBottom: 48 }}>
+      {lineHeights.map(({ name, key, description, token, cssVariable, jsPath }) => {
+        
+        return (
+          <div key={key} style={{ padding: 16, background: '#f5f5f5', borderRadius: 8 }}>
+            <div style={{ fontSize: 16, lineHeight: `var(--ref-lineheightpx-${key})` }}>
+              <strong>{name} ({token.$value})</strong><br />
+              This text has {name} line height.<br />
+              {description}.
+            </div>
+            <code style={{ fontSize: 11, color: '#666', marginTop: 8, display: 'block' }}>
+              {cssVariable}
+            </code>
+            <code style={{ fontSize: 9, color: '#999' }}>
+              {jsPath.replace('tokens.', '')} = {token.$value}
+            </code>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+<LineHeights />
+
+## Font Families
+
+export const FontFamilies = () => {
+  const { data, loading, error } = useDocumentationData();
+  
+  if (loading) return <div>Loading font families...</div>;
+  if (error) return <div>Error loading font families: {error}</div>;
+  if (!data) return null;
+  
+  const fontFamilies = extractFontFamiliesFromDocs(data.ref?.fontFamily || []);
+  
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 48 }}>
+      {fontFamilies.map(({ key, value, cssVariable, jsPath }) => {
+        const fontValue = formatFontFamilyValue(value);
+          
+        return (
+          <div key={key}>
+            <div style={{ fontSize: 20, fontFamily: `var(--ref-fontfamily-${key})` }}>
+              {key === 'mono' ? 'Monospace: Code example' : 'Sans-serif: The quick brown fox jumps over the lazy dog'}
+            </div>
+            <code style={{ fontSize: 11, color: '#666' }}>{cssVariable}</code>
+            <code style={{ fontSize: 9, color: '#999', marginLeft: 8 }}>{jsPath.replace('tokens.', '')}</code>
+            <div style={{ fontSize: 9, color: '#888', marginTop: 4, fontFamily: 'monospace' }}>
+              {fontValue}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+<FontFamilies />
+
+> For detailed information about token architecture, usage patterns, and typography composition, see the [Token Guide](/?path=/docs/getting-started-token-guide--docs).
+
+## Reference Tables
+
+### Font Sizes
+<TokenReferenceTable tier="ref" category="fontSize" />
+
+### Font Weights
+<TokenReferenceTable tier="ref" category="fontWeight" />
+
+### Line Heights
+<TokenReferenceTable tier="ref" category="lineHeightPx" />
+
+### Font Families
+<TokenReferenceTable tier="ref" category="fontFamily" />

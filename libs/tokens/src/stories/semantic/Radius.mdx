@@ -1,0 +1,98 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { getSemanticRadius, getSemanticRadiusFromDocs } from '../helpers/semanticTokenHelpers';
+import { TokenReferenceTable } from '../helpers/TokenReferenceTable';
+import { useDocumentationData } from '../helpers/useDocumentationData';
+
+<Meta title="Token Reference/Semantic/Radius" />
+
+# Border Radius System
+
+Consistent border radius values for rounded corners throughout the design system.
+
+export const RadiusScale = () => {
+  const { data, loading, error } = useDocumentationData();
+  
+  if (loading) return <div>Loading radius values...</div>;
+  if (error) return <div>Error loading radius: {error}</div>;
+  if (!data) return null;
+  
+  const radiusTokens = getSemanticRadiusFromDocs(data.sys?.radius || []);
+  
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: 24, marginBottom: 48 }}>
+      {radiusTokens.map(({ key, tokenValue, cssVariable }) => (
+        <div key={key} style={{ textAlign: 'center' }}>
+          <div
+            style={{
+              width: 80,
+              height: 80,
+              backgroundColor: 'var(--sys-color-action-primary-default)',
+              border: '1px solid var(--sys-color-border-default)',
+              borderRadius: `var(--sys-radius-${key})`,
+              margin: '0 auto 12px',
+            }}
+          />
+          <div style={{ fontSize: 12, fontWeight: 600 }}>{key.toUpperCase()}</div>
+          <code style={{ fontSize: 10, color: 'var(--sys-color-text-muted)', display: 'block' }}>{cssVariable}</code>
+          <div style={{ fontSize: 10, color: 'var(--sys-color-text-muted)' }}>{tokenValue}</div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+## Radius Scale
+
+<RadiusScale />
+
+## Common Use Cases
+
+<div style={{ display: 'grid', gap: 24, marginBottom: 48 }}>
+  <div style={{ padding: 24, background: 'var(--sys-color-surface-secondary)', border: '1px solid var(--sys-color-border-default)', borderRadius: 'var(--sys-radius-none)' }}>
+    <h4 style={{ marginBottom: 8 }}>Sharp edges (none)</h4>
+    <p style={{ margin: 0, fontSize: 14, color: 'var(--sys-color-text-secondary)' }}>
+      Used for data tables, code blocks, and elements requiring sharp corners.
+    </p>
+  </div>
+  
+  <div style={{ padding: 24, background: 'var(--sys-color-surface-secondary)', border: '1px solid var(--sys-color-border-default)', borderRadius: 'var(--sys-radius-sm)' }}>
+    <h4 style={{ marginBottom: 8 }}>Small components (sm)</h4>
+    <p style={{ margin: 0, fontSize: 14, color: 'var(--sys-color-text-secondary)' }}>
+      Input fields, checkboxes, and other small interactive elements.
+    </p>
+  </div>
+  
+  <div style={{ padding: 24, background: 'var(--sys-color-surface-secondary)', border: '1px solid var(--sys-color-border-default)', borderRadius: 'var(--sys-radius-md)' }}>
+    <h4 style={{ marginBottom: 8 }}>Cards and containers (md)</h4>
+    <p style={{ margin: 0, fontSize: 14, color: 'var(--sys-color-text-secondary)' }}>
+      Standard rounding for buttons, cards, and content containers.
+    </p>
+  </div>
+  
+  <div style={{ padding: 24, background: 'var(--sys-color-surface-secondary)', border: '1px solid var(--sys-color-border-default)', borderRadius: 'var(--sys-radius-lg)' }}>
+    <h4 style={{ marginBottom: 8 }}>Modal dialogs (lg/xl)</h4>
+    <p style={{ margin: 0, fontSize: 14, color: 'var(--sys-color-text-secondary)' }}>
+      Larger rounding for prominent UI elements like modals and overlays.
+    </p>
+  </div>
+  
+  <div style={{ padding: '8px 24px', background: 'var(--sys-color-surface-secondary)', border: '1px solid var(--sys-color-border-default)', borderRadius: 'var(--sys-radius-full)', display: 'inline-block' }}>
+    <h4 style={{ margin: 0, fontSize: 14 }}>Pills and badges (full)</h4>
+  </div>
+</div>
+
+> For detailed information about token architecture, usage patterns, and design consistency, see the [Token Guide](/?path=/docs/getting-started-token-guide--docs).
+
+## Radius Guidelines
+
+- **none (0px)**: Sharp corners, data tables, code blocks
+- **sm (4px)**: Small interactive elements, inputs, checkboxes
+- **md (8px)**: Buttons, dropdown menus, tooltips
+- **lg/xl (12px)**: Cards, modals, large containers
+- **full (9999px)**: Pills, badges, circular elements
+
+Use consistent radius values to create visual cohesion across your interface.
+
+## Reference Table
+
+<TokenReferenceTable tier="sys" category="radius" />

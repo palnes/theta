@@ -1,0 +1,140 @@
+{
+  "sys": {
+    "typography": {
+      "heading": {
+        "3xl": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "{ref.fontFamily.manrope}",
+            "fontSize": "{ref.fontSize.44}",
+            "fontWeight": "{ref.fontWeight.regular}",
+            "lineHeight": "{ref.lineHeightPx.48}"
+          }
+        },
+        "2xl": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "{ref.fontFamily.manrope}",
+            "fontSize": "{ref.fontSize.32}",
+            "fontWeight": "{ref.fontWeight.regular}",
+            "lineHeight": "{ref.lineHeightPx.40}"
+          }
+        },
+        "xl": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "{ref.fontFamily.manrope}",
+            "fontSize": "{ref.fontSize.28}",
+            "fontWeight": "{ref.fontWeight.regular}",
+            "lineHeight": "{ref.lineHeightPx.32}"
+          }
+        },
+        "lg": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "{ref.fontFamily.manrope}",
+            "fontSize": "{ref.fontSize.25}",
+            "fontWeight": "{ref.fontWeight.regular}",
+            "lineHeight": "{ref.lineHeightPx.30}"
+          }
+        },
+        "md": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "{ref.fontFamily.manrope}",
+            "fontSize": "{ref.fontSize.20}",
+            "fontWeight": "{ref.fontWeight.medium}",
+            "lineHeight": "{ref.lineHeightPx.28}"
+          }
+        },
+        "sm": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "{ref.fontFamily.manrope}",
+            "fontSize": "{ref.fontSize.16}",
+            "fontWeight": "{ref.fontWeight.semi-bold}",
+            "lineHeight": "{ref.lineHeightPx.24}"
+          }
+        },
+        "xs": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "{ref.fontFamily.manrope}",
+            "fontSize": "{ref.fontSize.14}",
+            "fontWeight": "{ref.fontWeight.bold}",
+            "lineHeight": "{ref.lineHeightPx.20}"
+          }
+        }
+      },
+      "label": {
+        "sm": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "{ref.fontFamily.manrope}",
+            "fontSize": "{ref.fontSize.12}",
+            "fontWeight": "{ref.fontWeight.medium}",
+            "lineHeight": "{ref.lineHeightPx.16}"
+          }
+        }
+      },
+      "action": {
+        "lg": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "{ref.fontFamily.manrope}",
+            "fontSize": "{ref.fontSize.16}",
+            "fontWeight": "{ref.fontWeight.semi-bold}",
+            "lineHeight": "{ref.lineHeightPx.24}"
+          }
+        },
+        "md": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "{ref.fontFamily.manrope}",
+            "fontSize": "{ref.fontSize.14}",
+            "fontWeight": "{ref.fontWeight.semi-bold}",
+            "lineHeight": "{ref.lineHeightPx.20}"
+          }
+        },
+        "sm": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "{ref.fontFamily.manrope}",
+            "fontSize": "{ref.fontSize.10}",
+            "fontWeight": "{ref.fontWeight.bold}",
+            "lineHeight": "{ref.lineHeightPx.12}"
+          }
+        }
+      },
+      "body": {
+        "lg": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "{ref.fontFamily.manrope}",
+            "fontSize": "{ref.fontSize.16}",
+            "fontWeight": "{ref.fontWeight.medium}",
+            "lineHeight": "{ref.lineHeightPx.24}"
+          }
+        },
+        "md": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "{ref.fontFamily.manrope}",
+            "fontSize": "{ref.fontSize.14}",
+            "fontWeight": "{ref.fontWeight.medium}",
+            "lineHeight": "{ref.lineHeightPx.20}"
+          }
+        },
+        "sm": {
+          "$type": "typography",
+          "$value": {
+            "fontFamily": "{ref.fontFamily.manrope}",
+            "fontSize": "{ref.fontSize.12}",
+            "fontWeight": "{ref.fontWeight.medium}",
+            "lineHeight": "{ref.lineHeightPx.16}"
+          }
+        }
+      }
+    }
+  }
+}

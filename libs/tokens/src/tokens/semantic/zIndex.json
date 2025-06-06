@@ -1,0 +1,24 @@
+{
+  "sys": {
+    "zIndex": {
+      "base": {
+        "$value": "{ref.zIndex.0}"
+      },
+      "dropdown": {
+        "$value": "{ref.zIndex.1000}"
+      },
+      "sticky": {
+        "$value": "{ref.zIndex.1100}"
+      },
+      "modal": {
+        "$value": "{ref.zIndex.1300}"
+      },
+      "popover": {
+        "$value": "{ref.zIndex.1400}"
+      },
+      "tooltip": {
+        "$value": "{ref.zIndex.1500}"
+      }
+    }
+  }
+}

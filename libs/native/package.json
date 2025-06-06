@@ -1,0 +1,99 @@
+{
+  "name": "@theta/native",
+  "version": "0.0.1",
+  "main": "./index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./components/*": {
+      "types": "./dist/components/*/index.d.ts",
+      "import": "./dist/components/*/index.js",
+      "require": "./dist/components/*/index.js"
+    },
+    "./dist/*": {
+      "import": "./dist/*",
+      "require": "./dist/*"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "build": "rm -rf dist && tsc -p tsconfig.lib.json",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "yarn build",
+    "lint": "biome lint .",
+    "format": "biome check . --write",
+    "clean": "rm -rf dist",
+    "storybook:web": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "storybook-generate": "sb-rn-get-stories",
+    "storybook": "cross-env EXPO_PUBLIC_STORYBOOK_ENABLED='true' expo start",
+    "storybook:ios": "cross-env EXPO_PUBLIC_STORYBOOK_ENABLED='true' expo start --ios",
+    "storybook:android": "cross-env EXPO_PUBLIC_STORYBOOK_ENABLED='true' expo start --android",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@gorhom/bottom-sheet": "^5.1.2",
+    "@react-native-async-storage/async-storage": "2.1.2",
+    "@react-native-community/datetimepicker": "8.3.0",
+    "@react-native-community/slider": "4.5.6",
+    "@theta/tokens": "workspace:*",
+    "expo": "~53.0.11",
+    "expo-constants": "~17.1.6",
+    "expo-status-bar": "~2.2.3",
+    "react": "*",
+    "react-dom": "*",
+    "react-native": "0.79.3",
+    "react-native-gesture-handler": "~2.24.0",
+    "react-native-reanimated": "~3.17.4",
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-svg": "15.11.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.0",
+    "@babel/preset-env": "^7.25.4",
+    "@biomejs/biome": "*",
+    "@expo/metro-runtime": "~5.0.4",
+    "@storybook/addon-docs": "*",
+    "@storybook/addon-ondevice-actions": "^9.0.6",
+    "@storybook/addon-ondevice-backgrounds": "^9.0.6",
+    "@storybook/addon-ondevice-controls": "^9.0.6",
+    "@storybook/addon-ondevice-notes": "^9.0.6",
+    "@storybook/react": "*",
+    "@storybook/react-native": "^9.0.6",
+    "@storybook/react-native-web-vite": "^9.0.6",
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react-native": "^13.2.0",
+    "@types/jest": "^29.5.14",
+    "@types/react": "*",
+    "@types/react-test-renderer": "^19",
+    "babel-jest": "30.0.0-beta.3",
+    "babel-plugin-react-docgen-typescript": "^1.5.1",
+    "cross-env": "^7.0.3",
+    "jest": "^29.7.0",
+    "jest-expo": "^53.0.7",
+    "react-native-web": "*",
+    "react-test-renderer": "19.0.0",
+    "storybook": "*",
+    "turbo": "^2.5.4",
+    "typescript": "*",
+    "vite": "*"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-native": ">=0.70.0"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "sys": {
+    "fontWeight": {
+      "normal": {
+        "$value": "{ref.fontWeight.400}"
+      },
+      "medium": {
+        "$value": "{ref.fontWeight.500}"
+      },
+      "semibold": {
+        "$value": "{ref.fontWeight.600}"
+      },
+      "bold": {
+        "$value": "{ref.fontWeight.700}"
+      }
+    },
+    "lineHeight": {
+      "none": {
+        "$value": "{ref.lineHeight.none}"
+      },
+      "tight": {
+        "$value": "{ref.lineHeight.tight}"
+      },
+      "normal": {
+        "$value": "{ref.lineHeight.normal}"
+      },
+      "relaxed": {
+        "$value": "{ref.lineHeight.relaxed}"
+      }
+    },
+    "fontFamily": {
+      "sans": {
+        "$value": "{ref.fontFamily.sans}"
+      },
+      "mono": {
+        "$value": "{ref.fontFamily.mono}"
+      }
+    }
+  }
+}

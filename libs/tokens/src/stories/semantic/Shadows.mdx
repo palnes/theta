@@ -1,0 +1,136 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { TokenReferenceTable } from '../helpers/TokenReferenceTable';
+import { getSemanticShadowsFromDocs } from '../helpers/semanticTokenHelpers';
+import { useDocumentationData } from '../helpers/useDocumentationData';
+
+<Meta title="Token Reference/Semantic/Shadows" />
+
+# Shadow System
+
+Elevation shadows for creating depth and visual hierarchy in the interface.
+
+export const ShadowScale = () => {
+  const { data, loading, error } = useDocumentationData();
+  
+  if (loading) return <div>Loading shadows...</div>;
+  if (error) return <div>Error loading shadows: {error}</div>;
+  if (!data) return null;
+  
+  const shadows = getSemanticShadowsFromDocs(data.sys?.boxShadow || []);
+  
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 32, marginBottom: 48 }}>
+      {shadows.map(({ key, cssVariable, jsPath }) => (
+        <div key={key} style={{ textAlign: 'center' }}>
+          <div
+            style={{
+              width: 140,
+              height: 140,
+              backgroundColor: '#ffffff',
+              boxShadow: `var(--sys-shadow-${key})`,
+              borderRadius: 8,
+              margin: '0 auto 16px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '1px solid #e5e7eb',
+            }}
+          >
+            <div style={{ fontSize: 14, fontWeight: 500, color: '#111827' }}>
+              Shadow
+            </div>
+          </div>
+          <div style={{ fontSize: 12, fontWeight: 600 }}>{key.toUpperCase()}</div>
+          <code style={{ fontSize: 10, color: '#666', display: 'block' }}>{cssVariable}</code>
+          <code style={{ fontSize: 9, color: '#999', display: 'block', marginTop: 2 }}>
+            {jsPath.replace('tokens.', '')}
+          </code>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+## Shadow Scale
+
+<ShadowScale />
+
+## Component Examples
+
+<div style={{ padding: 32, background: '#f9fafb', borderRadius: 8, marginBottom: 48 }}>
+  <h3 style={{ marginBottom: 24 }}>Common Use Cases</h3>
+  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32 }}>
+    <div>
+      <h4 style={{ marginBottom: 12, fontSize: 14 }}>Card (base shadow)</h4>
+      <div
+        style={{
+          padding: 24,
+          background: '#ffffff',
+          borderRadius: 8,
+          boxShadow: 'var(--sys-shadow-base)',
+          border: '1px solid #e5e7eb',
+        }}
+      >
+        <div style={{ fontWeight: 500, marginBottom: 8 }}>Card Title</div>
+        <div style={{ fontSize: 14, color: '#6b7280' }}>
+          Cards typically use the base shadow for subtle elevation.
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <h4 style={{ marginBottom: 12, fontSize: 14 }}>Dropdown (large shadow)</h4>
+      <div
+        style={{
+          padding: 16,
+          background: '#ffffff',
+          borderRadius: 6,
+          boxShadow: 'var(--sys-shadow-large)',
+          border: '1px solid #e5e7eb',
+        }}
+      >
+        <div style={{ padding: '8px 0', fontSize: 14 }}>Option 1</div>
+        <div style={{ padding: '8px 0', fontSize: 14 }}>Option 2</div>
+        <div style={{ padding: '8px 0', fontSize: 14 }}>Option 3</div>
+      </div>
+    </div>
+    
+    <div>
+      <h4 style={{ marginBottom: 12, fontSize: 14 }}>Modal (spread shadow)</h4>
+      <div
+        style={{
+          padding: 24,
+          background: '#ffffff',
+          borderRadius: 12,
+          boxShadow: 'var(--sys-shadow-spread)',
+          border: '1px solid #e5e7eb',
+          transform: 'scale(0.8)',
+        }}
+      >
+        <div style={{ fontWeight: 600, marginBottom: 8 }}>Modal Dialog</div>
+        <div style={{ fontSize: 12, color: '#6b7280' }}>
+          Modals use spread shadow for prominent elevation.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+> For detailed information about token architecture, usage patterns, and design consistency, see the [Token Guide](/?path=/docs/getting-started-token-guide--docs).
+
+## Shadow Guidelines
+
+- **Base**: Default elevation for cards, tiles, and raised surfaces
+- **Large**: Higher elevation for dropdowns, tooltips, and floating elements
+- **Spread**: Maximum elevation for modals and overlays
+
+Use shadows to indicate elevation and create visual hierarchy. Be consistent with shadow usage across similar components and use restraint—not every element needs a shadow.
+
+### Accessibility Notes
+- Don't rely on shadows alone for interactive states
+- Add explicit focus outlines for WCAG 2.4.7 compliance
+- Test shadow visibility in both light and dark themes
+
+## Reference Table
+
+<TokenReferenceTable tier="sys" category="shadow" />
