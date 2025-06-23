@@ -15,22 +15,17 @@
     },
     "./css": {
       "types": "./dist/css.d.ts",
-      "import": "./dist/css/tokens.css"
+      "import": "./dist/tokens.css"
     },
     "./css/themes": {
       "import": "./dist/css/themes.css"
     }
   },
-  "files": [
-    "dist",
-    "src"
-  ],
+  "files": ["dist", "src"],
   "scripts": {
-    "build": "yarn build:tokens && yarn build:css-types",
-    "build:tokens": "node build.js",
-    "build:css-types": "node scripts/build-css-types.js",
-    "dev": "yarn build:tokens --watch",
-    "clean": "rm -rf dist",
+    "build": "node build.js",
+    "dev": "node watch.js",
+    "clean": "rm -rf dist temp",
     "lint": "biome lint .",
     "format": "biome check . --write",
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",
@@ -39,21 +34,27 @@
   },
   "devDependencies": {
     "@biomejs/biome": "*",
-    "@storybook/addon-a11y": "*",
-    "@storybook/addon-docs": "*",
-    "@storybook/addon-onboarding": "*",
-    "@storybook/react": "*",
-    "@storybook/react-vite": "*",
+    "@storybook/addon-a11y": "9.0.13",
+    "@storybook/addon-docs": "9.0.13",
+    "@storybook/addon-onboarding": "9.0.13",
+    "@storybook/react-vite": "9.0.13",
+    "@terrazzo/cli": "^0.8.1",
+    "@terrazzo/parser": "^0.8.1",
+    "@terrazzo/plugin-css": "^0.8.1",
+    "@terrazzo/plugin-js": "^0.8.1",
     "@types/react": "*",
     "@types/react-dom": "*",
     "@vitejs/plugin-react": "*",
+    "glob": "^11.0.3",
     "react": "*",
     "react-dom": "*",
     "remark-gfm": "^4.0.1",
     "remark-toc": "^9.0.0",
-    "storybook": "*",
-    "style-dictionary": "^5.0.0",
+    "storybook": "9.0.13",
     "typescript": "*",
     "vite": "*"
+  },
+  "dependencies": {
+    "color-parse": "^2.0.2"
   }
 }

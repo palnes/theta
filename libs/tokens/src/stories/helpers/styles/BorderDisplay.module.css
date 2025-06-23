@@ -1,0 +1,75 @@
+.section {
+  margin-bottom: var(--sys-spacing-xl);
+}
+
+.widthGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sys-spacing-md);
+}
+
+.styleGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: var(--sys-spacing-md);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.borderCard {
+  padding: var(--sys-spacing-lg);
+  background: var(--sys-color-surface-secondary);
+  border-radius: var(--sys-radius-lg);
+  border: var(--sys-border-width-thin) solid var(--sys-color-border-subtle);
+}
+
+.borderCardContent {
+  display: flex;
+  align-items: center;
+  gap: var(--sys-spacing-md);
+}
+
+.borderExample {
+  width: var(--sys-dimension-component-height-large);
+  height: var(--sys-dimension-component-height-large);
+  background: var(--sys-color-surface-raised-default);
+  border-radius: var(--sys-radius-md);
+}
+
+.borderInfo {
+  flex: 1;
+}
+
+.borderTitle {
+  margin: 0 0 var(--sys-spacing-xs) 0;
+  text-transform: capitalize;
+  font-weight: var(--sys-font-weight-semibold);
+}
+
+.borderVariable {
+  font-size: var(--sys-font-size-xs);
+  color: var(--sys-color-text-secondary);
+  font-family: var(--sys-font-family-code);
+}
+
+.borderPath {
+  display: block;
+  font-size: var(--sys-font-size-xs);
+  color: var(--sys-color-text-tertiary);
+  margin-top: var(--sys-spacing-2xs);
+  font-family: var(--sys-font-family-code);
+}
+
+.borderDescription {
+  font-size: var(--sys-font-size-sm);
+  color: var(--sys-color-text-muted);
+  margin-top: var(--sys-spacing-xs);
+  line-height: 1.5;
+}
+
+.styleCard {
+  padding: var(--sys-spacing-lg);
+  background: var(--sys-color-surface-secondary);
+  border-radius: var(--sys-radius-md);
+}

@@ -3,11 +3,11 @@
   align-items: center;
   justify-content: center;
   border: none;
-  font-weight: var(--cmp-button-fontweight);
+  font-weight: var(--cmp-button-font-weight);
   cursor: pointer;
   transition: all var(--cmp-button-transition-duration) ms var(--cmp-button-transition-easing);
-  font-family: var(--cmp-button-fontfamily);
-  line-height: var(--cmp-button-lineheight);
+  font-family: var(--cmp-button-font-family);
+  line-height: var(--cmp-button-line-height);
 }
 
 /* States */
@@ -51,7 +51,7 @@
 .ghost {
   background-color: transparent;
   color: var(--cmp-button-color-ghost-text-default);
-  border: var(--cmp-button-borderwidth-ghost) solid var(--cmp-button-color-ghost-border-default);
+  border: var(--cmp-button-border-width-ghost) solid var(--cmp-button-color-ghost-border-default);
 }
 
 .ghost.hovered {
@@ -62,20 +62,20 @@
 .small {
   height: var(--cmp-button-height-small);
   border-radius: var(--cmp-button-radius-small);
-  font-size: var(--cmp-button-fontsize-small);
-  padding: 0 var(--cmp-button-paddingx-small);
+  font-size: var(--cmp-button-font-size-small);
+  padding: 0 var(--cmp-button-padding-x-small);
 }
 
 .medium {
   height: var(--cmp-button-height-medium);
   border-radius: var(--cmp-button-radius-medium);
-  font-size: var(--cmp-button-fontsize-medium);
-  padding: 0 var(--cmp-button-paddingx-medium);
+  font-size: var(--cmp-button-font-size-medium);
+  padding: 0 var(--cmp-button-padding-x-medium);
 }
 
 .large {
   height: var(--cmp-button-height-large);
   border-radius: var(--cmp-button-radius-large);
-  font-size: var(--cmp-button-fontsize-large);
-  padding: 0 var(--cmp-button-paddingx-large);
+  font-size: var(--cmp-button-font-size-large);
+  padding: 0 var(--cmp-button-padding-x-large);
 }

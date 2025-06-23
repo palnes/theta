@@ -1,0 +1,243 @@
+/* Color Scale Documentation Styles */
+
+.colorScale {
+  margin-bottom: var(--sys-spacing-2xl);
+}
+
+.colorScaleTitle {
+  text-transform: capitalize;
+  font-size: var(--sys-font-size-lg);
+  font-weight: var(--sys-font-weight-semibold);
+  margin-bottom: var(--sys-spacing-md);
+  color: var(--sys-color-text-primary);
+}
+
+.colorGroupTitle {
+  text-transform: capitalize;
+  font-size: var(--sys-font-size-base);
+  font-weight: var(--sys-font-weight-medium);
+  margin-bottom: var(--sys-spacing-sm);
+  margin-top: var(--sys-spacing-lg);
+  color: var(--sys-color-text-secondary);
+}
+
+.colorGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--sys-spacing-lg);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.colorGridLarge {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--sys-spacing-lg);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.colorItem {
+  position: relative;
+  list-style: none;
+}
+
+.colorSwatch {
+  width: 100%;
+  height: var(--sys-dimension-component-height-medium);
+  border-radius: var(--sys-radius-md);
+  margin-bottom: var(--sys-spacing-sm);
+  border: 1px solid var(--sys-color-border-subtle);
+}
+
+.colorSwatchClickable {
+  cursor: pointer;
+  transition: transform 100ms ease-in-out, box-shadow 100ms ease-in-out;
+}
+
+.colorSwatchClickable:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.colorSwatchClickable:active {
+  transform: translateY(0);
+}
+
+.colorInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-3xs);
+}
+
+.colorName {
+  font-weight: var(--sys-font-weight-normal);
+  font-size: var(--sys-font-size-sm);
+  color: var(--sys-color-text-secondary);
+}
+
+.colorReference {
+  font-family: var(--ref-font-family-mono);
+  font-size: var(--sys-font-size-xs);
+  color: var(--sys-color-text-secondary);
+  display: block;
+}
+
+.colorJsPath {
+  font-family: var(--ref-font-family-mono);
+  font-size: var(--sys-font-size-xs);
+  color: var(--sys-color-text-tertiary);
+  display: block;
+}
+
+.colorValue {
+  font-family: var(--ref-font-family-mono);
+  font-size: var(--sys-font-size-xs);
+  color: var(--sys-color-text-muted);
+}
+
+/* Popover styles */
+.colorPopover {
+  position: absolute;
+  top: calc(100% + var(--sys-spacing-xs));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  min-width: calc(var(--sys-spacing-xl) * 8.75); /* 280px */
+  max-width: calc(var(--sys-spacing-xl) * 15.625); /* 500px */
+  width: max-content;
+  background: var(--sys-color-surface-raised-default);
+  border: var(--sys-border-width-thin) solid var(--sys-color-border-default);
+  border-radius: var(--sys-radius-md);
+  box-shadow: var(--sys-shadow-large);
+  padding: var(--sys-spacing-md);
+  font-size: var(--sys-font-size-sm); /* Base font size 14px */
+}
+
+/* Arrow pointing up */
+.colorPopover::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--sys-spacing-xs) * -1);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: var(--sys-spacing-xs) solid transparent;
+  border-right: var(--sys-spacing-xs) solid transparent;
+  border-bottom: var(--sys-spacing-xs) solid var(--sys-color-border-default);
+}
+
+.colorPopover::after {
+  content: "";
+  position: absolute;
+  top: calc(var(--sys-spacing-xs) * -0.875);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: var(--sys-spacing-xs) solid transparent;
+  border-right: var(--sys-spacing-xs) solid transparent;
+  border-bottom: 8px solid var(--sys-color-surface-raised-default);
+}
+
+.colorPopoverClose {
+  position: absolute;
+  top: var(--sys-spacing-sm);
+  right: var(--sys-spacing-sm);
+  background: none;
+  border: none;
+  font-size: var(--sys-font-size-lg);
+  color: var(--sys-color-text-secondary);
+  cursor: pointer;
+  padding: 0;
+  width: var(--sys-spacing-lg);
+  height: var(--sys-spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--sys-radius-sm);
+  line-height: 1;
+}
+
+.colorPopoverClose:hover {
+  background: var(--sys-color-surface-secondary-default);
+  color: var(--sys-color-text-primary);
+}
+
+.colorPopoverContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-sm);
+  padding-right: var(--sys-spacing-lg); /* Add space for close button */
+  font-size: var(--sys-font-size-sm); /* Base size for popover 14px */
+  margin: 0;
+}
+
+.colorPopoverContent dd {
+  margin: 0;
+  flex: 1;
+}
+
+.colorPopoverRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sys-spacing-sm);
+}
+
+.colorPopover .colorPopoverLabel {
+  font-size: var(--sys-font-size-sm); /* 14px */
+  color: var(--sys-color-text-secondary);
+  font-weight: var(--sys-font-weight-medium);
+  min-width: calc(var(--sys-spacing-xl) * 1.4); /* ~45px */
+  text-align: right;
+  font-family: var(--sys-font-family-sans);
+  line-height: 1.5;
+  font-style: normal;
+}
+
+.colorPopover .colorPopoverValue {
+  font-family: var(--sys-font-family-code);
+  font-size: var(--sys-font-size-sm); /* 14px */
+  color: var(--sys-color-text-primary);
+  user-select: all;
+  cursor: text;
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+.colorPopoverValue:hover {
+  background: var(--sys-color-surface-secondary-default);
+  padding: 2px 4px;
+  border-radius: var(--sys-radius-xs);
+  margin: -2px -4px;
+}
+
+.colorCategory {
+  font-size: var(--sys-font-size-2xs);
+  color: var(--sys-color-text-muted);
+  text-transform: capitalize;
+}
+
+/* Text preview mode */
+.colorSwatchText {
+  width: 100%;
+  height: var(--sys-dimension-component-height-medium);
+  background: var(--sys-color-surface-secondary-default);
+  border: 1px solid var(--sys-color-border-subtle);
+  border-radius: var(--sys-radius-md);
+  margin-bottom: var(--sys-spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--sys-font-weight-bold);
+  font-size: var(--sys-font-size-lg);
+  padding: var(--sys-spacing-sm);
+}
+
+.colorSwatchText.colorSwatchClickable:hover {
+  background: var(--sys-color-surface-raised-default);
+  border-color: var(--sys-color-border-default);
+}

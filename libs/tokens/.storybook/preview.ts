@@ -1,6 +1,6 @@
 import type { Preview } from '@storybook/react-vite';
 import '@fontsource/manrope/400.css';
-import '../dist/css/tokens.css';
+import '../dist/tokens.css';
 import '../dist/css/internal-all-tokens.css';
 import '../dist/css/themes.css';
 import './docs.css';

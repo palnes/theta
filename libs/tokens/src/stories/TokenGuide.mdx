@@ -1,26 +1,27 @@
-import { Meta } from '@storybook/addon-docs';
+import { Meta } from '@storybook/addon-docs/blocks';
 import { Warning } from './helpers/DocComponents';
 
 <Meta title="Getting Started/Token Guide" />
 
 # Token Guide
 
-Design tokens are the heart of Theta's design system. They're the smallest pieces of our design language - colors, spacing, typography, and more - stored as data that can be transformed into code for any platform.
+Design tokens are reusable design decisions expressed as data. They include colors, spacing, typography, and other visual properties that can be transformed into platform-specific code.
 
-This guide will teach you how to work with Theta's token system, whether you're building components, creating themes, or contributing to the design system itself.
+This guide covers the token architecture, naming conventions, and usage patterns in Theta.
 
 ## What Are Design Tokens?
 
-Instead of hardcoding values like `color: #0969da` throughout your components, design tokens let you reference semantic values like `color: var(--sys-color-action-primary)`. This abstraction provides:
+Instead of hardcoding values like `color: #0969da`, design tokens use semantic references like `color: var(--sys-color-action-primary)`.
 
-- **Consistency**: Use the same values everywhere without copy-pasting hex codes
-- **Maintainability**: Change a color in one place, update your entire system
-- **Theming**: Swap semantic values to create dark mode or brand variations
-- **Cross-platform**: Same tokens work on web, iOS, and Android
+Benefits:
+- Consistent values across components
+- Single source of truth for design decisions
+- Theme switching capability
+- Platform-agnostic definitions
 
 ## How Theta's Token System Works
 
-We use a three-tier architecture that mirrors how designers think about design systems:
+Theta uses a three-tier token architecture:
 
 1. **Primitive tokens** define your raw values (all the colors in your palette)
 2. **Semantic tokens** assign meaning to those values (what "primary action" means)
@@ -41,16 +42,13 @@ This structure lets you change how something looks (primitives), what it means (
 
 ## Three-Tier Architecture
 
-Our token system follows a hierarchical structure inspired by the design token pyramid, where each tier builds upon the previous one. This creates a system that's both flexible and maintainable.
+The token system uses a hierarchical structure where each tier references the tier below it:
 
-### The Token Pyramid
+1. **Primitive tokens**: Raw values (colors, dimensions, fonts)
+2. **Semantic tokens**: Design decisions with intent
+3. **Component tokens**: Component-specific implementations
 
-Think of tokens as a pyramid with three levels:
-- **Wide base**: Many primitive values (colors, sizes, fonts)
-- **Middle layer**: Fewer semantic tokens (meanings and intentions)  
-- **Narrow top**: Specific component implementations
-
-This narrowing ensures consistency - many components share the same semantic tokens, which reference a controlled set of primitives.
+Multiple components share semantic tokens, which reference a controlled set of primitives.
 
 ### Primitive Tokens (ref.*)
 
@@ -63,7 +61,7 @@ Raw design values without semantic meaning. These form your design palette - all
 "ref.fontSize.14": "14px"
 ```
 
-Think of these as your "art supplies" - the raw materials you'll use to build your design.
+These are raw values without semantic meaning.
 
 ### Semantic Tokens (sys.*)
 
@@ -76,7 +74,7 @@ Design intent and meaning. These express **what** something is conceptually, not
 "sys.spacing.md": "{ref.spacing.16}"
 ```
 
-These are your "design decisions" - primary actions are blue, muted text is gray, medium spacing is 16px.
+Semantic tokens map design intent to primitive values.
 
 ### Component Tokens (cmp.*)
 
@@ -89,11 +87,11 @@ Implementation details. These define **how** components use semantic values.
 "cmp.input.border.default": "{sys.color.border.default}"
 ```
 
-These are your "blueprints" - buttons use primary action color for their background, inputs use default border color.
+Component tokens specify how components use semantic tokens.
 
 ### Why This Architecture?
 
-Let's see how this pyramid benefits us with a real example:
+Example of the token hierarchy:
 
 ```json
 // 1. One primitive color
@@ -111,7 +109,7 @@ Let's see how this pyramid benefits us with a real example:
 "cmp.checkbox.background.checked": "{sys.color.action.primary}"
 ```
 
-**The power**: Change `ref.color.blue.600` to a different blue, and your entire system updates consistently. Want different colors for links vs buttons? Change the semantic layer. Need a special button variant? Modify only the component token.
+Changing `ref.color.blue.600` updates all tokens that reference it. Different semantic tokens can map to the same primitive, and components can override semantic defaults when needed.
 
 ### Reference Rules
 
@@ -131,7 +129,7 @@ Tokens can only reference tokens from higher tiers. This one-way flow prevents c
 
 ## Token Format
 
-Theta uses the [Design Tokens Community Group (DTCG) format](https://github.com/design-tokens/community-group) for defining tokens. This is an industry-standard specification that ensures our tokens are portable, tool-agnostic, and future-proof. By following DTCG, our tokens can be consumed by Style Dictionary, Figma plugins, and other design tools without custom transformations. The format uses JSON with special properties (prefixed with `$`) to define token metadata alongside their values.
+Theta uses the [Design Tokens Community Group (DTCG) format](https://github.com/design-tokens/community-group). This specification uses JSON with special properties (prefixed with `$`) to define token metadata.
 
 ### Core Properties
 

@@ -1,0 +1,37 @@
+.container {
+  position: relative;
+  height: 400px;
+  margin-bottom: var(--sys-spacing-xs);
+  overflow: visible;
+}
+
+.card {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--sys-radius-md);
+  padding: var(--sys-spacing-md);
+  box-shadow: var(--sys-shadow-base);
+  color: white;
+  font-weight: var(--sys-font-weight-medium);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: var(--sys-shadow-large);
+}
+
+.cardLabel {
+  font-size: var(--sys-font-size-sm);
+  margin-bottom: var(--sys-spacing-2xs);
+  text-transform: uppercase;
+}
+
+.cardValue {
+  font-size: var(--sys-font-size-lg);
+  font-family: var(--sys-font-family-code);
+}

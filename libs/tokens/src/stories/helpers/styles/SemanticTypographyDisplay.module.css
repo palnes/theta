@@ -1,0 +1,71 @@
+.section {
+  margin-bottom: var(--sys-spacing-xl);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-lg);
+}
+
+.example {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-xs);
+}
+
+.sample {
+  margin-bottom: var(--sys-spacing-xs);
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--sys-radius-md);
+  cursor: pointer;
+  background: var(--sys-color-action-primary-default);
+  color: var(--sys-color-text-on-action);
+}
+
+.actionButtonSm {
+  padding: var(--sys-spacing-xs) var(--sys-spacing-md);
+}
+
+.actionButtonMd {
+  padding: var(--sys-spacing-xs) var(--sys-spacing-lg);
+}
+
+.actionButtonLg {
+  padding: var(--sys-spacing-sm) var(--sys-spacing-lg);
+}
+
+.codeBlock {
+  background: var(--sys-color-surface-secondary);
+  padding: var(--sys-spacing-md);
+  border-radius: var(--sys-radius-md);
+  margin: 0;
+}
+
+.variable {
+  display: block;
+  font-size: var(--sys-font-size-xs);
+  color: var(--sys-color-text-muted);
+  font-family: var(--sys-font-family-code);
+}
+
+.path {
+  display: block;
+  font-size: var(--sys-font-size-xs);
+  color: var(--sys-color-text-muted);
+  margin-top: var(--sys-spacing-2xs);
+  font-family: var(--sys-font-family-code);
+}
+
+.tokenInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-2xs);
+  margin-top: var(--sys-spacing-xs);
+}

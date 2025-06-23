@@ -46,3 +46,6 @@ coverage/
 *storybook.log
 storybook-static
 *.module.css.json
+
+# Storybook
+storybook.requires.ts

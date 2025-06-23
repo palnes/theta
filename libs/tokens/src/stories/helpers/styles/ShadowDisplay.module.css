@@ -1,0 +1,22 @@
+.shadowGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sys-spacing-xl);
+  padding: var(--sys-spacing-xl) 0;
+}
+
+.shadowExample {
+  width: var(--sys-dimension-component-height-large);
+  height: var(--sys-dimension-component-height-large);
+  background-color: var(--sys-color-surface-raised-default);
+  border: 1px solid var(--sys-color-border-subtle);
+  border-radius: var(--sys-radius-md);
+  margin: var(--sys-spacing-lg) auto;
+  align-self: center;
+}
+
+.shadowValue {
+  font-family: var(--sys-font-family-code);
+  font-size: var(--sys-font-size-xs);
+  color: var(--sys-color-text-secondary);
+}

@@ -1,119 +1,22 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { extractDimensions, extractSpecialDimensions, extractDimensionsFromDocs, extractSpecialDimensionsFromDocs, formatTokenValue } from '../helpers/tokenHelpers';
 import { TokenReferenceTable } from '../helpers/TokenReferenceTable';
-import { useDocumentationData } from '../helpers/useDocumentationData';
+import { DimensionDisplay, SpecialDimensionsDisplay } from '../helpers/components/DimensionDisplay';
 
 <Meta title="Token Reference/Primitives/Dimensions" />
 
 # Primitive Dimension Values
 
-Raw dimension values that form the foundation of our spacing and sizing system.
+Base dimension values for spacing and sizing.
 
-> **Note**: We recommend using semantic tokens (`sys.spacing.*`, `sys.radius.*`, etc.) in your components instead of these primitives. Primitives are best referenced when creating new semantic tokens.
 
 ## Dimension Scale
 
-export const DimensionScale = () => {
-  const { data, loading, error } = useDocumentationData();
-  
-  if (loading) return <div>Loading dimensions...</div>;
-  if (error) return <div>Error loading dimensions: {error}</div>;
-  if (!data) return null;
-  
-  const dimensions = extractDimensionsFromDocs(data.ref?.dimension || []);
-  
-  // Find the maximum negative value (most negative) and maximum positive value
-  const negativeValues = dimensions.filter(d => d.value < 0);
-  const positiveValues = dimensions.filter(d => d.value >= 0);
-  const maxNegative = negativeValues.length > 0 ? Math.abs(Math.min(...negativeValues.map(d => d.value))) : 0;
-  const maxPositive = positiveValues.length > 0 ? Math.max(...positiveValues.map(d => d.value), 128) : 128;
-  
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 48 }}>
-      {dimensions.map(({ value, tokenValue, key, cssVariable, jsPath }) => (
-        <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div style={{ width: 50, fontFamily: 'monospace', fontSize: 14, fontWeight: 600, textAlign: 'right' }}>
-            {value}
-          </div>
-          <div style={{ 
-            width: maxNegative + maxPositive + 20, 
-            display: 'flex', 
-            alignItems: 'center',
-            position: 'relative'
-          }}>
-            {/* Zero axis line */}
-            <div
-              style={{
-                position: 'absolute',
-                left: maxNegative,
-                top: 0,
-                bottom: 0,
-                width: 1,
-                backgroundColor: '#e5e7eb',
-              }}
-            />
-            {/* Bar */}
-            <div
-              style={{
-                width: Math.min(Math.abs(value), value < 0 ? maxNegative : maxPositive),
-                height: 24,
-                backgroundColor: value < 0 ? '#ef4444' : '#6366f1',
-                borderRadius: 4,
-                position: 'absolute',
-                left: value < 0 ? maxNegative - Math.abs(value) : maxNegative,
-              }}
-            />
-          </div>
-          <div style={{ fontFamily: 'monospace', fontSize: 12, color: '#666' }}>
-            {tokenValue} • <code>{cssVariable}</code>
-          </div>
-          <code style={{ fontSize: 10, color: '#999' }}>
-            {jsPath.replace('tokens.', '')}
-          </code>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-<DimensionScale />
+<DimensionDisplay />
 
 ## Special Values
 
-export const SpecialDimensions = () => {
-  const { data, loading, error } = useDocumentationData();
-  
-  if (loading) return null;
-  if (error) return null;
-  if (!data) return null;
-  
-  const specials = extractSpecialDimensionsFromDocs(data.ref?.dimension || []);
-  
-  if (specials.length === 0) return null;
-  
-  return (
-    <div style={{ marginBottom: 48 }}>
-      <h3>Special Dimensions</h3>
-      <div style={{ display: 'grid', gap: 12 }}>
-        {specials.map(({ key, tokenValue, cssVariable, jsPath }) => {
-          return (
-            <div key={key} style={{ fontFamily: 'monospace', fontSize: 12 }}>
-              <code style={{ fontWeight: 600 }}>{cssVariable}</code>
-              <span style={{ color: '#666' }}> = {tokenValue}</span>
-              <code style={{ fontSize: 10, color: '#999', marginLeft: 8 }}>
-                {jsPath.replace('tokens.', '')}
-              </code>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
+<SpecialDimensionsDisplay />
 
-<SpecialDimensions />
-
-> For detailed information about token architecture, usage patterns, and the 8px grid system, see the [Token Guide](/?path=/docs/getting-started-token-guide--docs).
 
 ## Reference Table
 

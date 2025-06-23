@@ -3,8 +3,9 @@ import { TableControls } from './components/TableControls';
 import { TokenRow } from './components/TokenRow';
 import { useTableState } from './hooks/useTableState';
 import { useTokenData } from './hooks/useTokenData';
+import styles from './styles/TokenReferenceTable.module.css';
 import { TokenReferenceTableProps } from './types';
-import { getUsageLabel } from './utils/tokenHelpers';
+import { getUsageLabel } from './utils/tokenReferenceHelpers';
 
 export const TokenReferenceTable: React.FC<TokenReferenceTableProps> = ({
   tier,
@@ -20,7 +21,7 @@ export const TokenReferenceTable: React.FC<TokenReferenceTableProps> = ({
   if (tokens.length === 0) return <div>No tokens found</div>;
 
   return (
-    <div style={{ marginBottom: 48 }}>
+    <div className={styles.container}>
       <TableControls
         usageFormat={usageFormat}
         onFormatChange={handleFormatChange}
@@ -28,14 +29,12 @@ export const TokenReferenceTable: React.FC<TokenReferenceTableProps> = ({
         totalCount={tokens.length}
         onToggleAll={toggleAllRows}
       />
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <table className={styles.table}>
         <thead>
-          <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-            <th style={{ padding: '12px 16px', textAlign: 'left', width: '40%' }}>Token</th>
-            <th style={{ padding: '12px 16px', textAlign: 'left', width: '35%' }}>Value</th>
-            <th style={{ padding: '12px 16px', textAlign: 'left', width: '25%' }}>
-              {getUsageLabel(usageFormat)}
-            </th>
+          <tr className={styles.headerRow}>
+            <th className={styles.headerCellToken}>Token</th>
+            <th className={styles.headerCellValue}>Value</th>
+            <th className={styles.headerCellUsage}>{getUsageLabel(usageFormat)}</th>
           </tr>
         </thead>
         <tbody>

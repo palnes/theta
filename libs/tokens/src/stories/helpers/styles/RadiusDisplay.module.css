@@ -1,0 +1,56 @@
+/* Component-specific styles only - common styles are in shared.module.css */
+
+.radiusGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sys-spacing-xl);
+  padding: var(--sys-spacing-xl) 0;
+}
+
+.radiusItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.radiusExample {
+  width: var(--sys-dimension-component-height-medium);
+  height: var(--sys-dimension-component-height-medium);
+  background-color: var(--sys-color-action-primary-default);
+  border: 1px solid var(--sys-color-border-default);
+  margin: var(--sys-spacing-lg) auto;
+  align-self: center;
+}
+
+.radiusName {
+  font-size: var(--sys-font-size-sm);
+  font-weight: var(--sys-font-weight-semibold);
+  margin-bottom: var(--sys-spacing-sm);
+}
+
+.radiusDetails {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-2xs);
+}
+
+.radiusFormat {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sys-spacing-xs);
+  font-size: var(--sys-font-size-xs);
+}
+
+.formatLabel {
+  color: var(--sys-color-text-muted);
+  min-width: 40px;
+}
+
+.radiusVariable,
+.radiusPath,
+.radiusValue {
+  font-family: var(--sys-font-family-code);
+  color: var(--sys-color-text-secondary);
+  margin: 0;
+}
+
+/* Selectable value styles moved to shared.module.css */

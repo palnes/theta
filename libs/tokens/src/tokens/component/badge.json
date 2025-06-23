@@ -17,7 +17,7 @@
         "$value": "{ref.fontSize.12}"
       },
       "fontWeight": {
-        "$value": "{ref.fontWeight.600}"
+        "$value": "{ref.fontWeight.semi-bold}"
       },
       "color": {
         "default": {

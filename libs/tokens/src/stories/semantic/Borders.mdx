@@ -1,98 +1,17 @@
 import { Meta } from '@storybook/addon-docs/blocks';
 import { TokenReferenceTable } from '../helpers/TokenReferenceTable';
-import { getSemanticBordersFromDocs } from '../helpers/semanticTokenHelpers';
-import { useDocumentationData } from '../helpers/useDocumentationData';
+import { BorderDisplay } from '../helpers/components/BorderDisplay';
 
 <Meta title="Token Reference/Semantic/Borders" />
 
 # Border Tokens
 
-Intent-based border tokens that adapt to themes and express design decisions. All border tokens are semantic - there are no primitive border tokens in this design system.
-
-export const BorderVisualization = () => {
-  const { data, loading, error } = useDocumentationData();
-  
-  if (loading) return <div>Loading borders...</div>;
-  if (error) return <div>Error loading borders: {error}</div>;
-  if (!data) return null;
-  
-  const borders = getSemanticBordersFromDocs(data.sys?.border || []);
-  
-  return (
-    <>
-      <h2>Border Widths</h2>
-      <div style={{ marginBottom: 48 }}>
-        <h3>Semantic Width Scale</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
-          {borders.width.map(({ key, value, description, cssVariable, jsPath }) => (
-            <div key={key} style={{ 
-              padding: 24, 
-              background: 'var(--sys-color-surface-secondary)', 
-              borderRadius: 'var(--sys-radius-large)',
-              border: `1px solid var(--sys-color-border-subtle)`
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <div style={{ 
-                  width: 80, 
-                  height: 80, 
-                  background: 'var(--sys-color-surface-raised-default)', 
-                  borderRadius: 'var(--sys-radius-medium)',
-                  border: `var(--sys-border-width-${key}) solid var(--sys-color-border-strong)`
-                }} />
-                <div>
-                  <h4 style={{ margin: '0 0 8px 0', textTransform: 'capitalize' }}>{key}</h4>
-                  <code style={{ fontSize: 13, color: 'var(--sys-color-text-secondary)' }}>
-                    {cssVariable}
-                  </code>
-                  <code style={{ display: 'block', fontSize: 12, color: 'var(--sys-color-text-tertiary)', marginTop: 2 }}>
-                    {jsPath.replace('tokens.', '')}
-                  </code>
-                  <div style={{ fontSize: 12, color: 'var(--sys-color-text-muted)', marginTop: 8 }}>
-                    {description}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      
-      <h2>Border Styles</h2>
-      <div style={{ marginBottom: 48 }}>
-        <h3>Semantic Style Options</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 16 }}>
-          {borders.style.map(({ key, value, description, cssVariable, jsPath }) => {
-            const borderStyle = key === 'none' ? 'none' : `var(--sys-border-width-medium) var(--sys-border-style-${key}) var(--sys-color-border-default)`;
-            return (
-              <div key={key} style={{ 
-                padding: 20, 
-                background: 'var(--sys-color-surface-secondary)', 
-                borderRadius: 'var(--sys-radius-medium)',
-                border: borderStyle
-              }}>
-                <h4 style={{ margin: '0 0 8px 0', textTransform: 'capitalize' }}>{key}</h4>
-                <code style={{ fontSize: 12, color: 'var(--sys-color-text-secondary)' }}>
-                  {cssVariable}
-                </code>
-                <code style={{ display: 'block', fontSize: 11, color: 'var(--sys-color-text-tertiary)', marginTop: 2 }}>
-                  {jsPath.replace('tokens.', '')}
-                </code>
-                <div style={{ fontSize: 11, color: 'var(--sys-color-text-muted)', marginTop: 8 }}>
-                  {description}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </>
-  );
-};
-
-<BorderVisualization />
+Border width and style tokens. All border tokens are semantic - there are no primitive border tokens.
 
 
-> For detailed information about token architecture, usage patterns, and semantic naming, see the [Token Guide](/?path=/docs/getting-started-token-guide--docs).
+<BorderDisplay />
+
+
 
 ## Border Guidelines
 

@@ -1,0 +1,142 @@
+/* Typography Showcase Styles */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-2xl);
+}
+
+.section {
+  margin-bottom: var(--sys-spacing-xl);
+}
+
+.tokenList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-lg);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.example {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-xs);
+  list-style: none;
+}
+
+.preview {
+  margin-bottom: var(--sys-spacing-xs);
+  color: var(--sys-color-text-primary);
+  line-height: 1.4;
+}
+
+.tokenInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-2xs);
+  margin-top: var(--sys-spacing-xs);
+}
+
+.tokenInfoInline {
+  display: flex;
+  gap: var(--sys-spacing-lg);
+  margin-top: var(--sys-spacing-xs);
+}
+
+.tokenRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sys-spacing-sm);
+  font-size: var(--sys-font-size-xs);
+}
+
+.tokenLabel {
+  color: var(--sys-color-text-muted);
+  min-width: 50px;
+  font-weight: var(--sys-font-weight-medium);
+}
+
+.tokenValue {
+  font-family: var(--sys-font-family-code);
+  color: var(--sys-color-text-secondary);
+  cursor: pointer;
+  user-select: all;
+  padding: var(--sys-spacing-3xs) var(--sys-spacing-2xs);
+  border-radius: var(--sys-radius-xs);
+  transition: background-color 100ms ease;
+}
+
+.tokenValue:hover {
+  background: var(--sys-color-surface-tertiary);
+}
+
+.tokenValue:active {
+  background: var(--sys-color-surface-secondary);
+}
+
+.tokenValue:focus {
+  outline: 2px solid var(--sys-color-action-primary-default);
+  outline-offset: 2px;
+}
+
+/* Font stack display */
+.fontStack {
+  font-family: var(--sys-font-family-code);
+  font-size: var(--sys-font-size-xs);
+  color: var(--sys-color-text-tertiary);
+  word-break: break-word;
+  margin-top: var(--sys-spacing-xs);
+}
+
+/* Action button styles */
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--sys-radius-md);
+  cursor: pointer;
+  background: var(--sys-color-action-primary-default);
+  color: var(--sys-color-text-on-action);
+  transition: background 100ms ease;
+}
+
+.actionButton:hover {
+  background: var(--sys-color-action-primary-hover);
+}
+
+.actionButtonSm {
+  padding: var(--sys-spacing-xs) var(--sys-spacing-md);
+}
+
+.actionButtonMd {
+  padding: var(--sys-spacing-xs) var(--sys-spacing-lg);
+}
+
+.actionButtonLg {
+  padding: var(--sys-spacing-sm) var(--sys-spacing-lg);
+}
+
+/* Code block styles */
+.codeBlock {
+  background: var(--sys-color-surface-secondary);
+  padding: var(--sys-spacing-md);
+  border-radius: var(--sys-radius-md);
+  margin: 0;
+  overflow-x: auto;
+}
+
+/* Loading and error states */
+.loading {
+  padding: var(--sys-spacing-xl);
+  text-align: center;
+  color: var(--sys-color-text-muted);
+}
+
+.error {
+  padding: var(--sys-spacing-xl);
+  text-align: center;
+  color: var(--sys-color-feedback-negative-text);
+}

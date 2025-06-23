@@ -8,20 +8,22 @@ interface TokenValueProps {
 }
 
 export const TokenValue: React.FC<TokenValueProps> = ({ value, type, format }) => {
+  const formattedValue = formatValue(value, type, format);
+
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      {formatValue(value, type, format)}
       {type === 'color' && (
         <div
           style={{
             width: 20,
             height: 20,
-            backgroundColor: value,
+            backgroundColor: formattedValue,
             border: '1px solid #e5e7eb',
             borderRadius: 4,
           }}
         />
       )}
+      {formattedValue}
     </div>
   );
 };

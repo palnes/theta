@@ -1,10 +1,17 @@
 import componentButtons from '../../tokens/component/button.json';
+import type { ButtonComponentTokens } from './types/buttonJson';
+import type { ButtonSizeTokens, ButtonVariant, ButtonVariantTokens } from './types/tokens';
 
-export const getButtonVariants = () => {
+const typedButtons = componentButtons as ButtonComponentTokens;
+
+/**
+ * Get available button variants with their tokens
+ */
+export const getButtonVariants = (): ButtonVariant[] => {
   const variants = ['primary', 'secondary', 'ghost'];
 
   return variants.map((variant) => {
-    const variantTokens = (componentButtons.cmp.button.color as any)[variant] || {};
+    const variantTokens = typedButtons.cmp.button.color?.[variant] || {};
     return {
       variant,
       tokens: variantTokens,
@@ -12,36 +19,62 @@ export const getButtonVariants = () => {
   });
 };
 
-export const getButtonSizes = () => {
+/**
+ * Get available button sizes in display order
+ */
+export const getButtonSizes = (): string[] => {
   // Get actual sizes from the button height tokens
-  const heightKeys = Object.keys(componentButtons.cmp.button.height || {});
+  const heightKeys = Object.keys(typedButtons.cmp.button.height || {});
 
   // Return the sizes in the order we want them displayed
   const orderedSizes = ['small', 'medium', 'large'];
   return orderedSizes.filter((size) => heightKeys.includes(size));
 };
 
-export const getButtonTokensForVariant = (variant: string) => {
-  const variantTokens = (componentButtons.cmp.button.color as any)[variant] || {};
+/**
+ * Get color tokens for a specific button variant
+ */
+export const getButtonTokensForVariant = (variant: string): ButtonVariantTokens => {
+  const variantTokens = typedButtons.cmp.button.color?.[variant] || {};
 
   return {
-    background: variantTokens.background?.$value,
-    backgroundHover: variantTokens.backgroundHover?.$value,
-    text: variantTokens.text?.$value,
-    textHover: variantTokens.textHover?.$value,
-    border: variantTokens.border?.$value,
-    borderHover: variantTokens.borderHover?.$value,
+    background: variantTokens.background?.default?.$value
+      ? String(variantTokens.background.default.$value)
+      : undefined,
+    backgroundHover: variantTokens.background?.hover?.$value
+      ? String(variantTokens.background.hover.$value)
+      : undefined,
+    text: variantTokens.text?.default?.$value
+      ? String(variantTokens.text.default.$value)
+      : undefined,
+    textHover: (variantTokens.text as any)?.hover?.$value
+      ? String((variantTokens.text as any).hover.$value)
+      : variantTokens.text?.default?.$value
+        ? String(variantTokens.text.default.$value)
+        : undefined,
+    border: variantTokens.border?.default?.$value
+      ? String(variantTokens.border.default.$value)
+      : undefined,
+    borderHover: undefined,
   };
 };
 
-export const getButtonSizeTokens = (size: string) => {
-  const button = componentButtons.cmp.button as any;
+/**
+ * Get size-related tokens for a button
+ */
+export const getButtonSizeTokens = (size: string): ButtonSizeTokens => {
+  const button = typedButtons.cmp.button;
+  const sizeKey = size as 'small' | 'medium' | 'large';
 
   return {
-    height: button.height?.[size]?.$value,
-    paddingX: button.paddingX?.[size]?.$value,
-    radius: button.radius?.[size]?.$value,
-    fontSize: button.fontSize?.[size]?.$value,
-    gap: button.gap?.[size]?.$value,
+    height: button.height?.[sizeKey]?.$value ? String(button.height[sizeKey].$value) : undefined,
+    paddingX: button.paddingX?.[sizeKey]?.$value
+      ? String(button.paddingX[sizeKey].$value)
+      : undefined,
+    radius: button.radius?.[sizeKey]?.$value ? String(button.radius[sizeKey].$value) : undefined,
+    fontSize: button.fontSize?.[sizeKey]?.$value
+      ? String(button.fontSize[sizeKey].$value)
+      : undefined,
+    gap: button.gap?.[sizeKey]?.$value ? String(button.gap[sizeKey].$value) : undefined,
   };
 };

@@ -48,8 +48,8 @@ export const useTokenData = ({ tier, category, filter }: UseTokenDataProps) => {
       tokens = tokens.filter(filter);
     }
 
-    // Sort tokens alphabetically by path
-    tokens.sort((a, b) => a.path.localeCompare(b.path));
+    // Sort tokens with natural ordering (handles numbers correctly)
+    tokens.sort((a, b) => a.path.localeCompare(b.path, undefined, { numeric: true }));
   }
 
   return { tokens, loading, error };

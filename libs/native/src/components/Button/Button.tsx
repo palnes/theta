@@ -1,4 +1,4 @@
-import { tokens } from '@theta/tokens';
+import tokens from '@theta/tokens';
 import React from 'react';
 import {
   StyleSheet,
@@ -36,6 +36,7 @@ export const Button = ({
   const textStyle: TextStyle[] = [
     styles.text,
     styles[`${variant}Text` as keyof typeof styles] as TextStyle,
+    styles[`${size}Text` as keyof typeof styles] as TextStyle,
   ];
 
   return (
@@ -54,40 +55,54 @@ export const Button = ({
 const styles = StyleSheet.create({
   container: {
     alignSelf: 'flex-start',
-    borderRadius: tokens.sysRadiusMd,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   text: {
-    fontSize: tokens.sysFontSizeBase,
-    fontWeight: '600',
+    fontSize: tokens.cmpButtonFontSizeMedium,
+    fontWeight: tokens.cmpButtonFontWeight,
   },
   // Variants
   primary: {
-    backgroundColor: tokens.sysColorActionPrimary,
+    backgroundColor: tokens.cmpButtonColorPrimaryBackgroundDefault,
   },
   secondary: {
-    backgroundColor: tokens.sysColorActionSecondary,
+    backgroundColor: tokens.cmpButtonColorSecondaryBackgroundDefault,
   },
   primaryText: {
-    color: tokens.refColorWhite,
+    color: tokens.cmpButtonColorPrimaryTextDefault,
   },
   secondaryText: {
-    color: tokens.refColorBlack,
+    color: tokens.cmpButtonColorSecondaryTextDefault,
   },
   // Sizes
   small: {
-    paddingHorizontal: tokens.sysSpacingXs,
-    paddingVertical: tokens.sysSpacing2xs,
+    paddingHorizontal: tokens.cmpButtonPaddingXSmall,
+    borderRadius: tokens.cmpButtonRadiusSmall,
+    height: tokens.cmpButtonHeightSmall,
   },
   medium: {
-    paddingHorizontal: tokens.sysSpacingLg,
-    paddingVertical: tokens.sysSpacingMd,
+    paddingHorizontal: tokens.cmpButtonPaddingXMedium,
+    borderRadius: tokens.cmpButtonRadiusMedium,
+    height: tokens.cmpButtonHeightMedium,
   },
   large: {
-    paddingHorizontal: tokens.sysSpacingXl,
-    paddingVertical: tokens.sysSpacingXs,
+    paddingHorizontal: tokens.cmpButtonPaddingXLarge,
+    borderRadius: tokens.cmpButtonRadiusLarge,
+    height: tokens.cmpButtonHeightLarge,
+  },
+  // Text sizes
+  smallText: {
+    fontSize: tokens.cmpButtonFontSizeSmall,
+  },
+  mediumText: {
+    fontSize: tokens.cmpButtonFontSizeMedium,
+  },
+  largeText: {
+    fontSize: tokens.cmpButtonFontSizeLarge,
   },
   // States
   disabled: {
-    opacity: 0.5,
+    opacity: tokens.cmpButtonOpacityDisabled,
   },
 });

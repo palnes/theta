@@ -2,16 +2,16 @@
   "sys": {
     "fontWeight": {
       "normal": {
-        "$value": "{ref.fontWeight.400}"
+        "$value": "{ref.fontWeight.regular}"
       },
       "medium": {
-        "$value": "{ref.fontWeight.500}"
+        "$value": "{ref.fontWeight.medium}"
       },
       "semibold": {
-        "$value": "{ref.fontWeight.600}"
+        "$value": "{ref.fontWeight.semi-bold}"
       },
       "bold": {
-        "$value": "{ref.fontWeight.700}"
+        "$value": "{ref.fontWeight.bold}"
       }
     },
     "lineHeight": {
@@ -30,7 +30,7 @@
     },
     "fontFamily": {
       "sans": {
-        "$value": "{ref.fontFamily.sans}"
+        "$value": "{ref.fontFamily.manrope}"
       },
       "mono": {
         "$value": "{ref.fontFamily.mono}"

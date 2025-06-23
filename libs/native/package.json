@@ -20,9 +20,7 @@
       "require": "./dist/*"
     }
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "license": "MIT",
   "scripts": {
     "start": "expo start",
@@ -67,14 +65,13 @@
     "@babel/preset-env": "^7.25.4",
     "@biomejs/biome": "*",
     "@expo/metro-runtime": "~5.0.4",
-    "@storybook/addon-docs": "*",
-    "@storybook/addon-ondevice-actions": "^9.0.6",
-    "@storybook/addon-ondevice-backgrounds": "^9.0.6",
-    "@storybook/addon-ondevice-controls": "^9.0.6",
-    "@storybook/addon-ondevice-notes": "^9.0.6",
-    "@storybook/react": "*",
-    "@storybook/react-native": "^9.0.6",
-    "@storybook/react-native-web-vite": "^9.0.6",
+    "@storybook/addon-docs": "9.0.13",
+    "@storybook/addon-ondevice-actions": "^9.0.9",
+    "@storybook/addon-ondevice-backgrounds": "^9.0.9",
+    "@storybook/addon-ondevice-controls": "^9.0.9",
+    "@storybook/addon-ondevice-notes": "^9.0.9",
+    "@storybook/react-native": "^9.0.9",
+    "@storybook/react-native-web-vite": "^9.0.13",
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^13.2.0",
     "@types/jest": "^29.5.14",
@@ -87,7 +84,7 @@
     "jest-expo": "^53.0.7",
     "react-native-web": "*",
     "react-test-renderer": "19.0.0",
-    "storybook": "*",
+    "storybook": "9.0.13",
     "turbo": "^2.5.4",
     "typescript": "*",
     "vite": "*"

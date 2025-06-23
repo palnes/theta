@@ -4,9 +4,9 @@ import { TokenInfo, UsageFormat } from '../types';
 export const useTableState = (tokens: TokenInfo[]) => {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [usageFormat, setUsageFormat] = useState<UsageFormat>(() => {
-    // Load from localStorage or default to 'css'
+    // Load from localStorage or default to 'js'
     const saved = localStorage.getItem('tokenTableUsageFormat');
-    return (saved as UsageFormat) || 'css';
+    return (saved as UsageFormat) || 'js';
   });
 
   const toggleRow = useCallback((tokenPath: string) => {

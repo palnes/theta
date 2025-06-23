@@ -1,148 +1,15 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { getSemanticColors, getSemanticColorsFromDocs } from '../helpers/semanticTokenHelpers';
+import { getSemanticColors } from '../helpers/tokenHelpers';
 import { Section } from '../helpers/DocComponents';
 import { TokenReferenceTable } from '../helpers/TokenReferenceTable';
 import { useDocumentationData } from '../helpers/useDocumentationData';
+import { ColorDisplay } from '../helpers/components/ColorDisplay';
 
 <Meta title="Token Reference/Semantic/Colors" />
 
 # Semantic Color System
 
-Purpose-driven colors that adapt based on the current theme. These colors reference primitive values to provide meaning and context.
-
-export const ColorSection = ({ category, colors, isText = false }) => {
-  const renderColorItem = (key, states, pathPrefix) => {
-    // Check if this is a token object with $type and $value
-    if (states && typeof states === 'object' && states.$type && states.$value) {
-      // It's a single token, render it
-      const cssVar = states.cssVariable || `--sys-color-${pathPrefix}`;
-      const jsPath = states.jsPath ? states.jsPath.replace('tokens.', '') : `sys.color.${pathPrefix.replace(/-/g, '.')}`;
-      
-      return (
-        <div key={key}>
-          <div
-            style={{
-              height: 80,
-              backgroundColor: isText ? '#f5f5f5' : `var(${cssVar})`,
-              border: '1px solid rgba(0, 0, 0, 0.1)',
-              borderRadius: 8,
-              marginBottom: 8,
-              ...(isText && {
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: `var(${cssVar})`,
-                fontWeight: 500,
-              })
-            }}
-          >
-            {isText && `${key.charAt(0).toUpperCase() + key.slice(1)} Text`}
-          </div>
-          <div style={{ fontSize: 12 }}>
-            <strong style={{ textTransform: 'capitalize' }}>{key}</strong>
-            <code style={{ display: 'block', fontSize: 11, color: '#666', marginTop: 4 }}>
-              {cssVar}
-            </code>
-            <code style={{ display: 'block', fontSize: 11, color: '#999', marginTop: 2 }}>
-              {jsPath}
-            </code>
-          </div>
-        </div>
-      );
-    } else if (states && typeof states === 'object' && states.default) {
-      // It has states, render each state
-      return Object.entries(states).map(([state, token]) => {
-        const cssVar = token.cssVariable || `--sys-color-${pathPrefix}-${state}`;
-        const jsPath = token.jsPath ? token.jsPath.replace('tokens.', '') : `sys.color.${pathPrefix}.${state}`;
-        
-        return (
-          <div key={`${key}-${state}`}>
-            <div
-              style={{
-                height: 80,
-                backgroundColor: isText ? '#f5f5f5' : `var(${cssVar})`,
-                border: '1px solid rgba(0, 0, 0, 0.1)',
-                borderRadius: 8,
-                marginBottom: 8,
-                ...(isText && {
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: `var(${cssVar})`,
-                  fontWeight: 500,
-                })
-              }}
-            >
-              {isText && `${key} (${state})`}
-            </div>
-            <div style={{ fontSize: 12 }}>
-              <strong style={{ textTransform: 'capitalize' }}>{key}</strong>
-              <div style={{ fontSize: 10, color: '#888' }}>{state}</div>
-              <code style={{ display: 'block', fontSize: 11, color: '#666', marginTop: 4 }}>
-                {cssVar}
-              </code>
-              <code style={{ display: 'block', fontSize: 11, color: '#999', marginTop: 2 }}>
-                {jsPath}
-              </code>
-            </div>
-          </div>
-        );
-      });
-    } else if (states && typeof states === 'object') {
-      // It's a nested category, recurse
-      return Object.entries(states).flatMap(([subKey, subStates]) => 
-        renderColorItem(subKey, subStates, `${pathPrefix}-${subKey}`)
-      );
-    } else {
-      // It's a simple value (legacy format)
-      const cssVar = `--sys-color-${pathPrefix}`;
-      const jsPath = `sys.color.${pathPrefix.replace(/-/g, '.')}`;
-      
-      return (
-        <div key={key}>
-          <div
-            style={{
-              height: 80,
-              backgroundColor: isText ? '#f5f5f5' : `var(${cssVar})`,
-              border: '1px solid rgba(0, 0, 0, 0.1)',
-              borderRadius: 8,
-              marginBottom: 8,
-              ...(isText && {
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: `var(${cssVar})`,
-                fontWeight: 500,
-              })
-            }}
-          >
-            {isText && `${key.charAt(0).toUpperCase() + key.slice(1)} Text`}
-          </div>
-          <div style={{ fontSize: 12 }}>
-            <strong style={{ textTransform: 'capitalize' }}>{key}</strong>
-            <code style={{ display: 'block', fontSize: 11, color: '#666', marginTop: 4 }}>
-              {cssVar}
-            </code>
-            <code style={{ display: 'block', fontSize: 11, color: '#999', marginTop: 2 }}>
-              {jsPath}
-            </code>
-          </div>
-        </div>
-      );
-    }
-  };
-
-  return (
-    <div style={{ marginBottom: 48 }}>
-      <h2>{category.label}</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
-        {Object.entries(colors).flatMap(([key, value]) => 
-          renderColorItem(key, value, `${category.name}-${key}`)
-        )}
-      </div>
-    </div>
-  );
-};
+Colors for UI elements like backgrounds, text, borders, and actions. They reference the primitive colors and can change with themes.
 
 export const AllSemanticColors = () => {
   const { data, loading, error } = useDocumentationData();
@@ -151,28 +18,72 @@ export const AllSemanticColors = () => {
   if (error) return <div>Error loading colors: {error}</div>;
   if (!data) return null;
   
-  const categories = getSemanticColorsFromDocs(data.sys?.color || []);
+  const categories = getSemanticColors(data.sys?.color || []);
   
   return (
     <>
-      {categories.map(category => (
-        <ColorSection 
-          key={category.name} 
-          category={category} 
-          colors={category.colors} 
-          isText={category.name === 'text'}
-        />
-      ))}
+      {categories.map(category => {
+        // Flatten the nested structure into a simple array of tokens
+        const tokens = [];
+        
+        const processColors = (colors, prefix = '') => {
+          Object.entries(colors).forEach(([key, value]) => {
+            // If it has states (default, hover, etc.)
+            if (value && typeof value === 'object' && value.default) {
+              Object.entries(value).forEach(([state, token]) => {
+                if (token && token.cssVariable) {
+                  tokens.push({
+                    name: `${key} ${state}`,
+                    value: token.$value || token.value,
+                    cssVariable: token.cssVariable,
+                    jsPath: token.jsPath || `sys.color.${category.name}.${key}.${state}`,
+                    jsFlat: token.jsFlat,
+                    path: `sys.color.${category.name}.${key}.${state}`
+                  });
+                }
+              });
+            } 
+            // If it's a direct token
+            else if (value && value.$type && value.$value) {
+              tokens.push({
+                name: key,
+                value: value.$value,
+                cssVariable: value.cssVariable || `--sys-color-${category.name}-${key}`,
+                jsPath: value.jsPath || `sys.color.${category.name}.${key}`,
+                jsFlat: value.jsFlat,
+                path: `sys.color.${category.name}.${key}`
+              });
+            }
+            // If it's a nested structure, recurse
+            else if (value && typeof value === 'object') {
+              processColors(value, `${prefix}${key}.`);
+            }
+          });
+        };
+        
+        processColors(category.colors);
+        
+        return (
+          <Section key={category.name}>
+            <ColorDisplay
+              title={category.label}
+              tokens={tokens}
+              isTextPreview={category.name === 'text'}
+              gridColumns="large"
+              groupBy={category.name === 'status' || category.name === 'state' ? 'category' : 'none'}
+            />
+          </Section>
+        );
+      })}
     </>
   );
 };
 
 <AllSemanticColors />
 
-> For detailed information about token architecture, usage patterns, and state nesting, see the [Token Guide](/?path=/docs/getting-started-token-guide--docs).
 
 ## Semantic Categories
-Our semantic colors express intent, not components:
+Semantic colors express intent:
 - **action**: Interactive elements (buttons, links)
 - **surface**: Background surfaces
 - **text**: Text colors

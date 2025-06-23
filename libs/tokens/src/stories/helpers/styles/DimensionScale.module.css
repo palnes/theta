@@ -1,0 +1,136 @@
+/* Dimension Scale Documentation Styles */
+
+.dimensionScale {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-lg);
+  margin-bottom: var(--sys-spacing-xl);
+}
+
+.dimensionItem {
+  display: flex;
+  align-items: center;
+  gap: var(--sys-spacing-lg);
+}
+
+.dimensionLabel {
+  width: 50px;
+  font-family: var(--sys-font-family-code);
+  font-size: var(--sys-font-size-sm);
+  font-weight: var(--sys-font-weight-semibold);
+  text-align: right;
+  color: var(--sys-color-text-primary);
+}
+
+.dimensionVisual {
+  display: flex;
+  align-items: center;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.zeroLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: var(--sys-color-border-subtle);
+}
+
+.dimensionBar {
+  height: 24px;
+  border-radius: var(--sys-radius-sm);
+  position: absolute;
+}
+
+.dimensionBarPositive {
+  background-color: var(--sys-color-action-primary-default);
+}
+
+.dimensionBarNegative {
+  background-color: var(--sys-color-status-error-default);
+}
+
+.dimensionInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--sys-spacing-xs);
+  flex: 1;
+  font-size: var(--sys-font-size-xs);
+  color: var(--sys-color-text-secondary);
+}
+
+.dimensionValue {
+  font-family: var(--sys-font-family-code);
+  font-weight: var(--sys-font-weight-semibold);
+  color: var(--sys-color-text-primary);
+}
+
+.dimensionSeparator {
+  color: var(--sys-color-text-tertiary);
+  font-family: system-ui, -apple-system, sans-serif;
+  user-select: none;
+}
+
+.dimensionInfo code.dimensionCode {
+  font-family: var(--sys-font-family-code);
+  color: var(--sys-color-text-secondary);
+  font-size: var(--sys-font-size-xs);
+  background: var(--sys-color-surface-input-default);
+  background-color: var(--sys-color-surface-input-default);
+  padding: var(--sys-spacing-3xs) var(--sys-spacing-2xs);
+  border-radius: var(--sys-radius-xs);
+  cursor: pointer;
+}
+
+/* Special Dimensions */
+
+.specialSection {
+  margin-bottom: var(--sys-spacing-xl);
+}
+
+.specialTitle {
+  font-size: var(--sys-font-size-xl);
+  font-weight: var(--sys-font-weight-semibold);
+  margin-bottom: var(--sys-spacing-lg);
+  color: var(--sys-color-text-primary);
+}
+
+.specialGrid {
+  display: grid;
+  gap: var(--sys-spacing-md);
+}
+
+.specialItem {
+  padding: var(--sys-spacing-md);
+  background: var(--sys-color-surface-secondary-default);
+  border-radius: var(--sys-radius-sm);
+  border: 1px solid var(--sys-color-border-subtle);
+  display: flex;
+  align-items: center;
+  gap: var(--sys-spacing-xs);
+  font-size: var(--sys-font-size-xs);
+}
+
+.specialValue {
+  font-family: var(--sys-font-family-code);
+  font-weight: var(--sys-font-weight-semibold);
+  color: var(--sys-color-text-primary);
+}
+
+.specialSeparator {
+  color: var(--sys-color-text-tertiary);
+  font-family: system-ui, -apple-system, sans-serif;
+  user-select: none;
+}
+
+.specialItem code.specialCode {
+  font-family: var(--sys-font-family-code);
+  color: var(--sys-color-text-secondary);
+  font-size: var(--sys-font-size-xs);
+  background: var(--sys-color-surface-input-default);
+  background-color: var(--sys-color-surface-input-default);
+  padding: var(--sys-spacing-3xs) var(--sys-spacing-2xs);
+  border-radius: var(--sys-radius-xs);
+  cursor: pointer;
+}

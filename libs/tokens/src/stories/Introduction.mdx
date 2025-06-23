@@ -1,12 +1,16 @@
-import { Meta } from '@storybook/addon-docs';
+import { Meta } from '@storybook/addon-docs/blocks';
 
 <Meta title="Getting Started/Overview" />
 
 # Theta Design Tokens
 
-Design tokens are the foundation of the Theta design system—the smallest reusable design decisions that ensure visual consistency across all platforms and components.
+Design tokens define visual properties like colors, spacing, and typography as reusable data that can be transformed into code for any platform.
 
-Most developers will use the pre-built components from `@theta/web` or `@theta/native` which handle tokens automatically. This documentation helps you understand how the design system works under the hood, customize and extend components, create new components that follow system patterns, build theme variations, and debug styling issues more effectively.
+Most developers use pre-built components from `@theta/web` or `@theta/native`. This documentation covers:
+- Token system architecture
+- Creating custom components
+- Building theme variations
+- Extending the design system
 
 ## Getting Started
 
@@ -54,16 +58,3 @@ If you're new to the token system, start with the [Token Guide](/docs/understand
 Tokens are automatically transformed into platform-specific formats:
 - **Web**: CSS custom properties and TypeScript types
 - **React Native**: JavaScript objects with platform-specific values
-
-## Quick Start
-
-```bash
-# Install dependencies
-npm install @theta/web  # or @theta/native
-
-# Use in your components
-import { Button } from '@theta/web';
-
-# Build custom tokens
-npm run build:tokens
-```

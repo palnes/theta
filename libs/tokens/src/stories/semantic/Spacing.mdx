@@ -1,8 +1,6 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { getSemanticSpacing, getSemanticSpacingFromDocs } from '../helpers/semanticTokenHelpers';
-import { SpacingExample } from '../helpers/DocComponents';
 import { TokenReferenceTable } from '../helpers/TokenReferenceTable';
-import { useDocumentationData } from '../helpers/useDocumentationData';
+import { SpacingDisplay, SpacingVisualExamples } from '../helpers/components/SpacingDisplay';
 
 <Meta title="Token Reference/Semantic/Spacing" />
 
@@ -10,90 +8,14 @@ import { useDocumentationData } from '../helpers/useDocumentationData';
 
 Consistent spacing values for margins, padding, and gaps. Based on an 8px grid system.
 
-export const SpacingScale = () => {
-  const { data, loading, error } = useDocumentationData();
-  
-  if (loading) return <div>Loading spacing...</div>;
-  if (error) return <div>Error loading spacing: {error}</div>;
-  if (!data) return null;
-  
-  const spacingTokens = getSemanticSpacingFromDocs(data.sys?.spacing || [])
-    .filter(({ key }) => ['none', '2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'].includes(key));
-  
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginBottom: 48 }}>
-      {spacingTokens.map(({ key, tokenValue, cssVariable }) => (
-        <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div style={{ width: 60, fontFamily: 'monospace', fontSize: 14, fontWeight: 600 }}>
-            {key.toUpperCase()}
-          </div>
-          <div
-            style={{
-              width: `var(--sys-spacing-${key})`,
-              maxWidth: key === '3xl' ? 200 : 'none',
-              height: 32,
-              backgroundColor: '#3b82f6',
-              borderRadius: 4,
-            }}
-          />
-          <div style={{ fontFamily: 'monospace', fontSize: 12, color: '#666' }}>
-            {tokenValue} • <code>{cssVariable}</code>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
 ## Spacing Scale
 
-<SpacingScale />
-
-export const VisualExamples = () => {
-  const { data, loading, error } = useDocumentationData();
-  
-  if (loading || error || !data) return null;
-  
-  const spacingTokens = getSemanticSpacingFromDocs(data.sys?.spacing || [])
-    .filter(({ key }) => ['none', 'xs', 'sm', 'md', 'lg', 'xl'].includes(key));
-  
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 24, marginTop: 48 }}>
-      {spacingTokens.map(({ key }) => (
-        <div key={key} style={{ textAlign: 'center' }}>
-          <div
-            style={{
-              width: 120,
-              height: 120,
-              backgroundColor: '#f0f0f0',
-              border: '2px dashed #ccc',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-        }}
-      >
-        <div
-          style={{
-            width: `calc(100% - var(--sys-spacing-${key}) * 2)`,
-            height: `calc(100% - var(--sys-spacing-${key}) * 2)`,
-            backgroundColor: '#3b82f6',
-            position: 'absolute',
-          }}
-        />
-      </div>
-          <div style={{ marginTop: 8, fontSize: 12, fontWeight: 600 }}>{key.toUpperCase()}</div>
-        </div>
-      ))}
-    </div>
-  );
-};
+<SpacingDisplay />
 
 ## Visual Examples
 
-<VisualExamples />
+<SpacingVisualExamples />
 
-> For detailed information about token architecture, usage patterns, and the 8px grid system, see the [Token Guide](/?path=/docs/getting-started-token-guide--docs).
 
 ## Spacing Guidelines
 

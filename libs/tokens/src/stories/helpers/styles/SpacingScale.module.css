@@ -1,0 +1,103 @@
+/* Spacing Scale Documentation Styles */
+
+.spacingList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-xl);
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--sys-spacing-xl) 0;
+}
+
+.spacingItem {
+  display: flex;
+  align-items: center;
+  gap: var(--sys-spacing-lg);
+  list-style: none;
+}
+
+.spacingLabel {
+  width: 60px;
+  font-family: var(--sys-font-family-code);
+  font-size: var(--sys-font-size-sm);
+  font-weight: var(--sys-font-weight-semibold);
+  color: var(--sys-color-text-primary);
+}
+
+.spacingBar {
+  height: var(--sys-spacing-xl);
+  background: var(--sys-color-action-primary-default);
+  border-radius: var(--sys-radius-sm);
+}
+
+.spacingInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--sys-spacing-xs);
+  flex: 1;
+  font-size: var(--sys-font-size-xs);
+  color: var(--sys-color-text-secondary);
+}
+
+.spacingValue {
+  font-family: var(--sys-font-family-code);
+  font-weight: var(--sys-font-weight-semibold);
+  color: var(--sys-color-text-primary);
+}
+
+.spacingSeparator {
+  color: var(--sys-color-text-tertiary);
+  font-family: system-ui, -apple-system, sans-serif;
+  user-select: none;
+}
+
+.spacingInfo code.spacingCode {
+  font-family: var(--sys-font-family-code);
+  color: var(--sys-color-text-secondary);
+  font-size: var(--sys-font-size-xs);
+  background: var(--sys-color-surface-input-default);
+  background-color: var(--sys-color-surface-input-default);
+  padding: var(--sys-spacing-3xs) var(--sys-spacing-2xs);
+  border-radius: var(--sys-radius-xs);
+  cursor: pointer;
+}
+
+/* Visual Examples */
+
+.visualGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--sys-spacing-xl);
+  margin-top: var(--sys-spacing-xl);
+  list-style: none;
+  padding: 0;
+}
+
+.visualItem {
+  text-align: center;
+  list-style: none;
+}
+
+.visualBox {
+  width: 120px;
+  height: 120px;
+  background-color: var(--sys-color-surface-secondary-default);
+  border: 2px dashed var(--sys-color-border-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 0 auto;
+}
+
+.visualInner {
+  background-color: var(--sys-color-action-primary-default);
+  position: absolute;
+}
+
+.visualLabel {
+  margin-top: var(--sys-spacing-sm);
+  font-size: var(--sys-font-size-xs);
+  font-weight: var(--sys-font-weight-semibold);
+  text-transform: uppercase;
+}
