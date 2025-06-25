@@ -13,7 +13,7 @@ export const useTokenData = ({ tier, category, filter }: UseTokenDataProps) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/docs/tokens-reference.json')
+    fetch('/generated/tokens-reference.json')
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);

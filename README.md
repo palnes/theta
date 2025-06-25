@@ -10,8 +10,47 @@ A monorepo containing design tokens and component libraries for web and React Na
 
 ## Prerequisites
 
-- Node.js >= 22.0.0 (required for Style Dictionary v5)
+- Node.js >= 22.0.0
 - Yarn 4.x (included via corepack)
+
+## Quick Start
+
+### Web Application
+
+```tsx
+// 1. Import CSS tokens in your app entry
+import '@theta/tokens/css/base.css';
+import '@theta/tokens/css/themes/light.css';
+import '@theta/tokens/css/themes/dark.css';
+
+// 2. Use components
+import { Button } from '@theta/web';
+
+// 3. Apply theme via data attribute
+function App() {
+  return (
+    <div data-theme="dark">
+      <Button variant="primary">Click me</Button>
+    </div>
+  );
+}
+```
+
+### React Native Application
+
+```tsx
+// 1. Import and setup ThemeProvider
+import { ThemeProvider, Button } from '@theta/native';
+
+// 2. Wrap your app
+function App() {
+  return (
+    <ThemeProvider defaultPreference="system">
+      <Button variant="primary" onPress={() => {}}>Click me</Button>
+    </ThemeProvider>
+  );
+}
+```
 
 ## Getting Started
 
@@ -118,11 +157,9 @@ yalc push
 ```
 theta/
 ├── libs/
-│   ├── tokens/          # Design tokens (Style Dictionary)
+│   ├── tokens/          # Design tokens (Terrazzo)
 │   ├── web/            # React components for web
 │   └── native/         # React Native components
-├── docs/               # End-user documentation
-├── node_modules/       # Dependencies
 ├── package.json        # Workspace configuration
 ├── turbo.json         # Turborepo configuration
 └── yarn.lock          # Lock file
@@ -134,11 +171,22 @@ This monorepo uses:
 - **Yarn Workspaces** for package management
 - **TypeScript** for type safety
 - **Turborepo** for build orchestration
-- **Style Dictionary v5** for design token management
+- **Terrazzo** for DTCG-compliant design tokens
 - **Vite** for web bundling
 - **Vitest** for testing
 - **Storybook** for component development
 - **Biome** for linting and formatting
+
+### Token System
+
+The design system uses a three-tier token architecture:
+- **Reference tokens** (`ref.*`) - Raw design values
+- **Semantic tokens** (`sys.*`) - Theme-aware tokens that reference primitives
+- **Component tokens** (`cmp.*`) - Component-specific tokens
+
+Tokens support light and dark themes out of the box, with different implementations:
+- **Web**: CSS custom properties with `data-theme` attribute
+- **Native**: JavaScript objects with `ThemeProvider` context
 
 ## Troubleshooting
 

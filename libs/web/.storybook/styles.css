@@ -2,7 +2,6 @@
 @import "@fontsource/manrope/400.css";
 
 /* Import design tokens from @theta/tokens package */
-@import "@theta/tokens/css";
-
-/* Import theme overrides */
-@import "@theta/tokens/css/themes";
+@import "@theta/tokens/css/base.css";
+@import "@theta/tokens/css/themes/light.css";
+@import "@theta/tokens/css/themes/dark.css";

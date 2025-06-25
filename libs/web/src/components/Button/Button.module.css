@@ -1,3 +1,5 @@
+@import "@theta/tokens/css/components/button.css";
+
 .button {
   display: inline-flex;
   align-items: center;
@@ -21,7 +23,7 @@
 }
 
 .focusVisible {
-  outline: var(--cmp-button-outline-width) solid var(--sys-color-state-focus);
+  outline: var(--cmp-button-outline-width) solid var(--sys-color-border-focus);
   outline-offset: var(--cmp-button-outline-offset);
 }
 
@@ -46,6 +48,10 @@
 
 .secondary.hovered {
   background-color: var(--cmp-button-color-secondary-background-hover);
+}
+
+.secondary.pressed {
+  background-color: var(--cmp-button-color-secondary-background-active);
 }
 
 .ghost {

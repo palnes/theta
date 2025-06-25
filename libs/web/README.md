@@ -2,7 +2,36 @@
 
 React component library for the Theta design system.
 
+## Installation
+
+```bash
+npm install @theta/web @theta/tokens
+```
+
 ## Setup
+
+### CSS Token Setup
+
+Import the design tokens in your application entry point or main CSS file:
+
+```css
+/* Required: Base tokens */
+@import '@theta/tokens/css/base.css';
+
+/* Theme files (import the ones you need) */
+@import '@theta/tokens/css/themes/light.css';
+@import '@theta/tokens/css/themes/dark.css';
+```
+
+Or in JavaScript:
+
+```js
+import '@theta/tokens/css/base.css';
+import '@theta/tokens/css/themes/light.css';
+import '@theta/tokens/css/themes/dark.css';
+```
+
+### Testing Setup
 
 This package uses Vitest browser mode for testing React components in real browsers.
 
@@ -99,6 +128,48 @@ export const Interactive: Story = {
   },
 };
 ```
+
+## Usage
+
+### Basic Usage
+
+```jsx
+import { Button } from '@theta/web';
+
+function App() {
+  return (
+    <Button variant="primary" size="medium">
+      Click me
+    </Button>
+  );
+}
+```
+
+### Theming
+
+The library uses CSS custom properties for theming. Apply themes using the `data-theme` attribute:
+
+```html
+<!-- Light theme (default) -->
+<body>
+  <App />
+</body>
+
+<!-- Dark theme -->
+<body data-theme="dark">
+  <App />
+</body>
+```
+
+You can apply the theme attribute to any parent element:
+
+```jsx
+<div data-theme="dark">
+  <Button variant="primary">Dark themed button</Button>
+</div>
+```
+
+Components automatically adapt to the active theme via CSS custom properties from `@theta/tokens`.
 
 ## Architecture
 

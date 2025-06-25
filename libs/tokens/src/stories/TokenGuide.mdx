@@ -23,11 +23,11 @@ Benefits:
 
 Theta uses a three-tier token architecture:
 
-1. **Primitive tokens** define your raw values (all the colors in your palette)
+1. **Reference tokens** define your raw values (all the colors in your palette)
 2. **Semantic tokens** assign meaning to those values (what "primary action" means)
 3. **Component tokens** specify how components use those meanings (button backgrounds)
 
-This structure lets you change how something looks (primitives), what it means (semantic), or how it's used (component) independently.
+This structure lets you change how something looks (reference), what it means (semantic), or how it's used (component) independently.
 
 ## Table of Contents
 
@@ -44,7 +44,7 @@ This structure lets you change how something looks (primitives), what it means (
 
 The token system uses a hierarchical structure where each tier references the tier below it:
 
-1. **Primitive tokens**: Raw values (colors, dimensions, fonts)
+1. **Reference tokens**: Raw values (colors, dimensions, fonts)
 2. **Semantic tokens**: Design decisions with intent
 3. **Component tokens**: Component-specific implementations
 

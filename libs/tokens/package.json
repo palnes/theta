@@ -5,27 +5,24 @@
   "description": "Design tokens for the Nordlys design system",
   "license": "UNLICENSED",
   "sideEffects": false,
-  "main": "./dist/tokens.js",
-  "types": "./dist/tokens.d.ts",
   "exports": {
-    ".": {
+    "./native": {
       "types": "./dist/tokens.d.ts",
       "import": "./dist/tokens.js",
       "require": "./dist/tokens.js"
     },
     "./css": {
-      "types": "./dist/css.d.ts",
-      "import": "./dist/tokens.css"
+      "types": "./dist/css.d.ts"
     },
-    "./css/themes": {
-      "import": "./dist/css/themes.css"
-    }
+    "./css/base.css": "./dist/css/base.css",
+    "./css/components/*.css": "./dist/css/components/*.css",
+    "./css/themes/*.css": "./dist/css/themes/*.css"
   },
-  "files": ["dist", "src"],
+  "files": ["dist"],
   "scripts": {
     "build": "node build.js",
     "dev": "node watch.js",
-    "clean": "rm -rf dist temp",
+    "clean": "rm -rf dist .tmp",
     "lint": "biome lint .",
     "format": "biome check . --write",
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",

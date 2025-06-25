@@ -199,48 +199,6 @@
           }
         }
       },
-      "semantic": {
-        "info": {
-          "default": {
-            "$type": "color",
-            "$value": "{ref.color.blue.400}"
-          },
-          "surface": {
-            "$type": "color",
-            "$value": "{ref.color.blue.900}"
-          }
-        },
-        "success": {
-          "default": {
-            "$type": "color",
-            "$value": "{ref.color.green.400}"
-          },
-          "surface": {
-            "$type": "color",
-            "$value": "{ref.color.green.900}"
-          }
-        },
-        "warning": {
-          "default": {
-            "$type": "color",
-            "$value": "{ref.color.yellow.400}"
-          },
-          "surface": {
-            "$type": "color",
-            "$value": "{ref.color.yellow.900}"
-          }
-        },
-        "error": {
-          "default": {
-            "$type": "color",
-            "$value": "{ref.color.red.400}"
-          },
-          "surface": {
-            "$type": "color",
-            "$value": "{ref.color.red.900}"
-          }
-        }
-      },
       "border": {
         "default": {
           "$type": "color",
@@ -265,16 +223,6 @@
         "disabled": {
           "$type": "color",
           "$value": "{ref.color.gray.800}"
-        }
-      },
-      "state": {
-        "disabled": {
-          "$type": "color",
-          "$value": "{ref.color.gray.600}"
-        },
-        "focus": {
-          "$type": "color",
-          "$value": "{ref.color.blue.400}"
         }
       }
     }

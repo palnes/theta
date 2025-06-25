@@ -1,0 +1,55 @@
+{
+  "cmp": {
+    "card": {
+      "padding": {
+        "small": {
+          "$value": "{sys.spacing.sm}"
+        },
+        "medium": {
+          "$value": "{sys.spacing.md}"
+        },
+        "large": {
+          "$value": "{sys.spacing.lg}"
+        }
+      },
+      "borderRadius": {
+        "$value": "{sys.radius.md}"
+      },
+      "borderWidth": {
+        "$value": "{sys.border.width.thin}"
+      },
+      "gap": {
+        "$value": "{sys.spacing.md}"
+      },
+      "shadow": {
+        "base": {
+          "$value": "{sys.shadow.base}"
+        },
+        "large": {
+          "$value": "{sys.shadow.large}"
+        },
+        "spread": {
+          "$value": "{sys.shadow.spread}"
+        }
+      },
+      "color": {
+        "background": {
+          "default": {
+            "$value": "{sys.color.surface.raised.default}"
+          },
+          "hover": {
+            "$value": "{sys.color.surface.secondary.default}"
+          }
+        },
+        "border": {
+          "default": {
+            "$value": "{sys.color.border.subtle}"
+          },
+          "hover": {
+            "$value": "{sys.color.border.default}"
+          }
+        }
+      }
+    }
+  }
+}

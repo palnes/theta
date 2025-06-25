@@ -10,6 +10,12 @@
       "borderWidth": {
         "$value": "{ref.dimension.2}"
       },
+      "borderRadius": {
+        "$value": "{sys.radius.full}"
+      },
+      "transitionDuration": {
+        "$value": "{sys.duration.fast}"
+      },
       "color": {
         "background": {
           "default": {
@@ -20,6 +26,9 @@
           },
           "selected": {
             "$value": "{sys.color.action.primary.default}"
+          },
+          "disabled": {
+            "$value": "{sys.color.surface.disabled.default}"
           }
         },
         "border": {

@@ -137,15 +137,21 @@
               "$value": "{sys.color.surface.secondary.default}"
             },
             "hover": {
-              "$value": "{sys.color.surface.tertiary.default}"
+              "$value": "{sys.color.surface.secondary.hover}"
             },
             "active": {
-              "$value": "{sys.color.surface.tertiary.default}"
+              "$value": "{sys.color.surface.secondary.active}"
+            },
+            "disabled": {
+              "$value": "{sys.color.surface.secondary.disabled}"
             }
           },
           "text": {
             "default": {
               "$value": "{sys.color.text.primary}"
+            },
+            "disabled": {
+              "$value": "{sys.color.text.disabled}"
             }
           }
         },

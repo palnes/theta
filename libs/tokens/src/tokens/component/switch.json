@@ -16,6 +16,9 @@
       "padding": {
         "$value": "{ref.dimension.2}"
       },
+      "transitionDuration": {
+        "$value": "{sys.duration.normal}"
+      },
       "color": {
         "track": {
           "default": {

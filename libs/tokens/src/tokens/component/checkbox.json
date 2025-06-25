@@ -8,7 +8,10 @@
         "$value": "{ref.dimension.2}"
       },
       "borderRadius": {
-        "$value": "{ref.dimension.4}"
+        "$value": "{sys.radius.sm}"
+      },
+      "transitionDuration": {
+        "$value": "{sys.duration.fast}"
       },
       "color": {
         "background": {
@@ -17,6 +20,9 @@
           },
           "hover": {
             "$value": "{sys.color.interaction.brand.subtle.hover}"
+          },
+          "active": {
+            "$value": "{sys.color.interaction.brand.subtle.active}"
           },
           "selected": {
             "$value": "{sys.color.action.primary.default}"

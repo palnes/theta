@@ -2,22 +2,54 @@
   "cmp": {
     "badge": {
       "height": {
-        "$value": "{ref.dimension.20}"
+        "small": {
+          "$value": "{sys.dimension.component.spacing.sm}"
+        },
+        "medium": {
+          "$value": "{sys.dimension.component.spacing.md}"
+        },
+        "large": {
+          "$value": "{sys.dimension.component.spacing.lg}"
+        }
       },
       "minWidth": {
-        "$value": "{ref.dimension.20}"
+        "small": {
+          "$value": "{sys.dimension.component.spacing.sm}"
+        },
+        "medium": {
+          "$value": "{sys.dimension.component.spacing.md}"
+        },
+        "large": {
+          "$value": "{sys.dimension.component.spacing.lg}"
+        }
       },
       "paddingX": {
-        "$value": "{ref.dimension.6}"
+        "small": {
+          "$value": "{sys.spacing.xs}"
+        },
+        "medium": {
+          "$value": "{sys.spacing.sm}"
+        },
+        "large": {
+          "$value": "{sys.spacing.md}"
+        }
       },
       "borderRadius": {
-        "$value": "{ref.dimension.max}"
+        "$value": "{sys.radius.full}"
       },
       "fontSize": {
-        "$value": "{ref.fontSize.12}"
+        "small": {
+          "$value": "{sys.fontSize.xs}"
+        },
+        "medium": {
+          "$value": "{sys.fontSize.sm}"
+        },
+        "large": {
+          "$value": "{sys.fontSize.base}"
+        }
       },
       "fontWeight": {
-        "$value": "{ref.fontWeight.semi-bold}"
+        "$value": "{sys.fontWeight.medium}"
       },
       "color": {
         "default": {

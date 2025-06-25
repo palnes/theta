@@ -1,10 +1,25 @@
 import { withBackgrounds } from '@storybook/addon-ondevice-backgrounds';
 import type { Preview } from '@storybook/react-native-web-vite';
+import React from 'react';
+import { ThemeProvider } from '../src/ThemeProvider';
 
 const preview: Preview = {
-  decorators: [withBackgrounds],
+  decorators: [
+    withBackgrounds,
+    (Story, context) => {
+      // Check darkMode boolean from args, or theme from parameters
+      const darkMode = context.args?.darkMode ?? false;
+      const theme = darkMode ? 'dark' : (context.parameters.theme || 'light');
+      return React.createElement(
+        ThemeProvider,
+        { key: theme, defaultPreference: theme, persist: false },
+        React.createElement(Story)
+      );
+    },
+  ],
 
   parameters: {
+    theme: 'light', // default theme
     backgrounds: {
       default: 'plain',
       values: [
@@ -18,6 +33,20 @@ const preview: Preview = {
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/,
+      },
+    },
+  },
+  
+  argTypes: {
+    darkMode: {
+      name: 'Dark Mode',
+      control: { type: 'boolean' },
+      defaultValue: false,
+      description: 'Toggle between light and dark theme',
+      table: {
+        category: 'Theme',
+        type: { summary: 'boolean' },
+        defaultValue: { summary: false },
       },
     },
   },

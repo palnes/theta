@@ -8,10 +8,9 @@ const execAsync = promisify(exec);
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const TOKEN_DIRS = [
-  join(__dirname, 'src/tokens/primitives'),
+  join(__dirname, 'src/tokens/reference'),
   join(__dirname, 'src/tokens/semantic'),
   join(__dirname, 'src/tokens/component'),
-  join(__dirname, 'src/tokens/themes'),
 ];
 
 let buildInProgress = false;

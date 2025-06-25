@@ -1,25 +1,60 @@
+import { exec } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 import { buildTokens } from './tools/build-tokens.js';
 import { mergeTokenFiles } from './tools/merge-tokens.js';
 
+const execAsync = promisify(exec);
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-console.log('\n🎨 Building Design Tokens with Terrazzo...\n');
+console.log('\n🎨 Building Design Tokens...\n');
 
-// 1. Merge all tokens
-const allTokens = await mergeTokenFiles(__dirname);
+// Clean previous build artifacts
+console.log('🧹 Cleaning previous build...');
+await execAsync('rm -rf dist .tmp', { cwd: __dirname });
+console.log('✓ Clean complete');
 
-// 2. Build tokens with Terrazzo (includes all plugins)
-await buildTokens(allTokens, __dirname);
+// 1. Build both themes
+const themes = ['light', 'dark'];
+const themeTokens = {};
+
+for (const theme of themes) {
+  console.log(`📦 Processing ${theme} theme...`);
+  themeTokens[theme] = await mergeTokenFiles(__dirname, theme);
+}
+
+// 2. Build tokens with all themes
+await buildTokens(themeTokens, __dirname);
+
+// 3. Compile TypeScript to JavaScript
+console.log('\n📝 Compiling TypeScript tokens...');
+try {
+  // Compile tokens
+  await execAsync(
+    'npx tsc .tmp/tokens.ts --declaration --outDir dist --target es2022 --module esnext --moduleResolution node --skipLibCheck',
+    {
+      cwd: __dirname,
+    }
+  );
+
+  console.log('✓ TypeScript compilation complete');
+
+  // Remove TypeScript source files from dist (keep only .js and .d.ts)
+  console.log('🧹 Removing TypeScript source files...');
+  await execAsync('find dist -name "*.ts" -not -name "*.d.ts" -type f -delete', { cwd: __dirname });
+  console.log('✓ TypeScript source files removed');
+} catch (error) {
+  console.error('TypeScript compilation failed:', error);
+  process.exit(1);
+}
 
 console.log('\n✅ Build completed successfully!');
-console.log('  → dist/tokens.css');
 console.log('  → dist/tokens.js');
-console.log('  → dist/tokens.json');
 console.log('  → dist/tokens.d.ts');
-console.log('  → dist/css/internal-all-tokens.css');
-console.log('  → dist/css/themes.css');
-console.log('  → dist/docs/tokens-reference.json');
+console.log('  → dist/tokens.json');
 console.log('  → dist/css.d.ts');
+console.log('  → dist/css/* (modular CSS)');
+console.log('  → .storybook/generated/tokens-reference.json');
 console.log('\n🎉 All build artifacts generated successfully!\n');

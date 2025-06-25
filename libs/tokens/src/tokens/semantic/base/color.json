@@ -150,6 +150,18 @@
           "default": {
             "$type": "color",
             "$value": "{ref.color.white}"
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "{ref.color.gray.50}"
+          },
+          "active": {
+            "$type": "color",
+            "$value": "{ref.color.gray.100}"
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "{ref.color.gray.50}"
           }
         },
         "tertiary": {

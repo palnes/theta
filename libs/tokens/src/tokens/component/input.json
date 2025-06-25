@@ -37,6 +37,20 @@
           "$value": "{sys.fontSize.base}"
         }
       },
+      "lineHeight": {
+        "small": {
+          "$value": "{sys.lineHeight.normal}"
+        },
+        "medium": {
+          "$value": "{sys.lineHeight.normal}"
+        },
+        "large": {
+          "$value": "{sys.lineHeight.normal}"
+        }
+      },
+      "fontWeight": {
+        "$value": "{sys.fontWeight.normal}"
+      },
       "color": {
         "background": {
           "default": {
@@ -69,6 +83,9 @@
           },
           "placeholder": {
             "$value": "{sys.color.text.tertiary}"
+          },
+          "disabled": {
+            "$value": "{sys.color.text.disabled}"
           }
         }
       }

@@ -5497,6 +5497,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@storybook/addon-themes@npm:^9.0.13":
+  version: 9.0.13
+  resolution: "@storybook/addon-themes@npm:9.0.13"
+  dependencies:
+    ts-dedent: "npm:^2.0.0"
+  peerDependencies:
+    storybook: ^9.0.13
+  checksum: 10c0/328fb7fbe7ba4e95c77aaa15b4ce7080b1e884767ed5d3b94d256eab477705991b7f8de5e77e600789b59e0c99258400c52c7ea0726cfb4c0160055620bf8d1e
+  languageName: node
+  linkType: hard
+
 "@storybook/addon-vitest@npm:^9.0.13":
   version: 9.0.13
   resolution: "@storybook/addon-vitest@npm:9.0.13"
@@ -15284,6 +15295,7 @@ __metadata:
     "@storybook/addon-a11y": "npm:^9.0.13"
     "@storybook/addon-docs": "npm:^9.0.13"
     "@storybook/addon-onboarding": "npm:^9.0.13"
+    "@storybook/addon-themes": "npm:^9.0.13"
     "@storybook/addon-vitest": "npm:^9.0.13"
     "@storybook/react-vite": "npm:^9.0.13"
     "@testing-library/jest-dom": "npm:^6.6.3"

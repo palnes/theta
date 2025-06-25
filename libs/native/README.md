@@ -1,57 +1,114 @@
-![picture of storybook](https://github.com/user-attachments/assets/cf98766d-8b90-44ab-b718-94ab16e63205)
+# @theta/native
 
-# getting started
+React Native component library for the Theta design system.
 
-```sh
-npx create-expo-app --template expo-template-storybook AwesomeStorybook
+## Installation
+
+```bash
+npm install @theta/native @theta/tokens
 ```
 
-or
+### Optional: Theme Persistence
+If you want theme preferences to persist across app restarts, install AsyncStorage:
 
-```sh
-yarn create expo-app --template expo-template-storybook AwesomeStorybook
+```bash
+npm install @react-native-async-storage/async-storage
 ```
 
-# app
+## Usage
 
-```sh
+### Basic Setup
+```tsx
+import { ThemeProvider, Button } from '@theta/native';
+
+function App() {
+  return (
+    <ThemeProvider defaultPreference="light">
+      <Button variant="primary" size="medium" onPress={() => {}}>
+        Hello Theta
+      </Button>
+    </ThemeProvider>
+  );
+}
+```
+
+### Styled Components (Recommended)
+```tsx
+import { createThemedStyles } from '@theta/native';
+
+const useStyles = createThemedStyles((tokens) => ({
+  container: {
+    backgroundColor: tokens.sysColorSurfaceBaseDefault,
+    borderRadius: tokens.sysRadiusMd,
+  }
+}));
+
+function MyComponent() {
+  const styles = useStyles();
+  return <View style={styles.container} />;
+}
+```
+
+## ThemeProvider
+
+Wrap your app with `ThemeProvider` to enable theming:
+
+```tsx
+import { ThemeProvider } from '@theta/native';
+
+function App() {
+  return (
+    <ThemeProvider 
+      defaultPreference="system"  // 'light', 'dark', or 'system'
+      persist={true}              // Save theme preference
+    >
+      {/* Your app */}
+    </ThemeProvider>
+  );
+}
+```
+
+### Using Theme in Components
+```tsx
+import { useTheme } from '@theta/native';
+
+function MyComponent() {
+  const { theme, preference, setPreference, tokens } = useTheme();
+  
+  return (
+    <View style={{ backgroundColor: tokens.sysColorSurfaceBaseDefault }}>
+      <Button onPress={() => setPreference(theme === 'light' ? 'dark' : 'light')}>
+        Toggle Theme
+      </Button>
+    </View>
+  );
+}
+```
+
+## Development
+
+```bash
+# Start Expo development server
 yarn start
-```
 
-# RN Storybook (ondevice)
+# Run on iOS
+yarn ios
 
-In this template you can now run `yarn storybook` to start ondevice storybook or `yarn start` to start your expo app.
-This works via env variables and expo constants.
+# Run on Android
+yarn android
 
-```sh
-# either
+# Run tests
+yarn test
+
+# Run Storybook
 yarn storybook
-
-# ios
-yarn storybook:ios
-
-# android
-yarn storybook:android
 ```
 
-If you add new stories on the native (ondevice version) you either need to have the watcher running or run the stories loader
+## Components
 
-To update the stories one time
+- Button - Primary action component with variants and sizes
+- More components coming soon...
 
-```sh
-yarn storybook-generate
-```
+## License
 
-# Web
-
-Start react native web storybook:
-
-```
-yarn storybook:web
-```
-
-build react native web storybook:
-
-```sh
-yarn build-storybook
-```
+UNLICENSED - Private package

@@ -1,6 +1,13 @@
 import { typeHandlers } from '../formatters/type-handlers.js';
 import { toCamelCase } from '../formatters/utils.js';
 
+// Constants
+const DEFAULT_FILENAME = 'docs/tokens-reference.json';
+const UPPERCASE_LETTER = /[A-Z]/g;
+const LEADING_DASH = /^-/;
+const DOT_SEPARATOR = '.';
+const CSS_VAR_PREFIX = '--';
+
 /**
  * Format dimension value for documentation display
  */
@@ -15,15 +22,17 @@ function formatDimensionForDocs(value) {
  * Convert camelCase to kebab-case (standard CSS property naming)
  */
 function toKebabCase(str) {
-  return str.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`).replace(/^-/, ''); // Remove leading dash if any
+  return str
+    .replace(UPPERCASE_LETTER, (match) => `-${match.toLowerCase()}`)
+    .replace(LEADING_DASH, '');
 }
 
 /**
  * Convert token path to CSS variable name
  */
 function pathToCssVariable(path) {
-  return `--${path
-    .split('.')
+  return `${CSS_VAR_PREFIX}${path
+    .split(DOT_SEPARATOR)
     .map((segment) => toKebabCase(segment))
     .join('-')}`;
 }
@@ -80,7 +89,7 @@ function extractReferences(value, tokens) {
  * Terrazzo plugin that generates documentation
  */
 export default function docsPlugin(options = {}) {
-  const { filename = 'docs/tokens-reference.json' } = options;
+  const { filename = DEFAULT_FILENAME } = options;
 
   return {
     name: 'docs',

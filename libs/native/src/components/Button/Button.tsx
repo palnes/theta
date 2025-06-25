@@ -1,13 +1,6 @@
-import tokens from '@theta/tokens';
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  TextStyle,
-  TouchableOpacity,
-  TouchableOpacityProps,
-  ViewStyle,
-} from 'react-native';
+import { Text, TextStyle, TouchableOpacity, TouchableOpacityProps, ViewStyle } from 'react-native';
+import { createThemedStyles } from '../../themedStyles';
 
 export interface ButtonProps extends Omit<TouchableOpacityProps, 'style'> {
   onPress: () => void;
@@ -26,6 +19,8 @@ export const Button = ({
   testID,
   ...props
 }: ButtonProps) => {
+  const styles = useStyles();
+
   const containerStyle: ViewStyle[] = [
     styles.container,
     styles[variant],
@@ -52,7 +47,7 @@ export const Button = ({
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = createThemedStyles((tokens) => ({
   container: {
     alignSelf: 'flex-start',
     justifyContent: 'center',
@@ -105,4 +100,4 @@ const styles = StyleSheet.create({
   disabled: {
     opacity: tokens.cmpButtonOpacityDisabled,
   },
-});
+}));
