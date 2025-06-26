@@ -1,0 +1,122 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sys-font-family-mono);
+  font-size: var(--sys-font-size-sm);
+}
+
+/* Override Storybook's default table margin */
+.container .table {
+  margin: 0;
+}
+
+.headerRow {
+  border-bottom: 2px solid var(--sys-color-border-default);
+}
+
+.headerCellToken,
+.headerCellValue,
+.headerCellUsage {
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: var(--sys-font-weight-semibold);
+  color: var(--sys-color-text-secondary);
+}
+
+.headerCellToken {
+  width: 40%;
+}
+
+.headerCellValue {
+  width: 30%;
+}
+
+.headerCellUsage {
+  width: 30%;
+}
+
+.row {
+  border-bottom: 1px solid var(--sys-color-border-subtle);
+  transition: background-color 0.2s;
+}
+
+.row:hover {
+  background-color: var(--sys-color-surface-secondary-hover);
+}
+
+.rowExpanded {
+  background-color: var(--sys-color-surface-secondary-default);
+}
+
+.tokenCell,
+.valueCell,
+.usageCell {
+  padding: 0.75rem;
+  vertical-align: middle;
+}
+
+.tokenCell {
+  cursor: pointer;
+}
+
+.tokenName {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.expandIcon {
+  font-size: 0.75rem;
+  transition: transform 0.2s;
+  user-select: none;
+}
+
+.expandIconRotated {
+  transform: rotate(90deg);
+}
+
+.themeIndicator {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.selectableValue {
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--sys-radius-sm);
+  background-color: var(--sys-color-surface-secondary-default);
+  transition: background-color 0.2s;
+}
+
+.selectableValue:hover {
+  background-color: var(--sys-color-surface-secondary-hover);
+}
+
+.selectableValue:focus {
+  outline: 2px solid var(--sys-color-border-focus);
+  outline-offset: 2px;
+}
+
+.tooltip {
+  position: absolute;
+  background: var(--sys-color-surface-overlay-default);
+  border: 1px solid var(--sys-color-border-default);
+  padding: 0.5rem;
+  border-radius: var(--sys-radius-md);
+  box-shadow: var(--sys-shadow-lg);
+  font-size: var(--sys-font-size-xs);
+  z-index: 10;
+  white-space: nowrap;
+}
+
+.noResults {
+  padding: 2rem;
+  text-align: center;
+  color: var(--sys-color-text-secondary);
+}

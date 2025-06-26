@@ -1,0 +1,31 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { TokenReferenceTable } from '../../../docblocks/components/TokenReferenceTable';
+
+<Meta title="Token Reference/Semantic/Colors/Overview" />
+
+# Semantic Color System
+
+Our semantic color system provides meaning and context to colors across the interface. These tokens reference primitive colors and adapt to different themes.
+
+## Color Categories
+
+### [Action Colors](/?path=/docs/token-reference-semantic-colors-action--docs)
+Interactive elements like buttons, links, and form controls. Includes primary, secondary, tertiary, and destructive actions with states (default, hover, active, disabled).
+
+### [Surface Colors](/?path=/docs/token-reference-semantic-colors-surface--docs)
+Backgrounds and containers at different elevation levels (primary, secondary, raised, overlay). Creates visual hierarchy through layered surfaces.
+
+### [Text Colors](/?path=/docs/token-reference-semantic-colors-text--docs)
+Typography colors for different contexts (primary, secondary, muted, disabled, inverted). Includes special cases like text on action backgrounds.
+
+### [Border Colors](/?path=/docs/token-reference-semantic-colors-border--docs)
+Edges, dividers, and separators in different strengths (subtle, default, strong, focus). Creates structure and boundaries between elements.
+
+### [Status Colors](/?path=/docs/token-reference-semantic-colors-status--docs)
+System states and feedback (success, warning, error, info). Each includes background, border, text, and icon color variants.
+
+## Complete Color Reference
+
+All semantic color tokens in one place:
+
+<TokenReferenceTable tier="sys" category="color" />

@@ -1,8 +1,6 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { extractColorShades, getSpecialColors, getColorScales } from '../helpers/tokenHelpers';
-import { TokenReferenceTable } from '../helpers/TokenReferenceTable';
-import { useDocumentationData } from '../helpers/useDocumentationData';
-import { ColorDisplay } from '../helpers/components/ColorDisplay';
+import { TokenReferenceTable } from '../../docblocks/components/TokenReferenceTable';
+import { ReferenceColorScales, SpecialColorsDisplay } from '../../docblocks/components';
 
 <Meta title="Token Reference/Reference/Colors" />
 
@@ -10,66 +8,9 @@ import { ColorDisplay } from '../helpers/components/ColorDisplay';
 
 Raw color values organized by hue and shade.
 
+<ReferenceColorScales />
 
-// No longer needed - using ColorDisplay
-
-export const SpecialColors = () => {
-  const { data, loading, error } = useDocumentationData();
-  
-  if (loading) return <div>Loading special colors...</div>;
-  if (error) return <div>Error loading colors: {error}</div>;
-  if (!data) return null;
-  
-  const specials = getSpecialColors(data.ref?.color || []);
-  
-  // Convert to unified format
-  const specialTokens = specials.map(({ name, token, cssVariable, jsPath }) => ({
-    name,
-    value: token.$value,
-    cssVariable,
-    jsPath,
-  }));
-  
-  return <ColorDisplay title="Special Colors" tokens={specialTokens} />;
-};
-
-export const AllColorScales = () => {
-  const { data, loading, error } = useDocumentationData();
-  
-  if (loading) return <div>Loading color scales...</div>;
-  if (error) return <div>Error loading colors: {error}</div>;
-  if (!data) return null;
-  
-  const colorScales = getColorScales(data.ref?.color || []);
-  
-  return (
-    <>
-      {colorScales.map(({ name, colors }) => {
-        // Convert to unified format
-        const scaleTokens = colors.map(({ shade, value, cssVariable, jsPath, jsFlat }) => ({
-          name: `${name}${shade}`,
-          value,
-          cssVariable,
-          jsPath,
-          jsFlat,
-        }));
-        
-        return (
-          <ColorDisplay 
-            key={name} 
-            title={`${name} Scale`} 
-            tokens={scaleTokens} 
-          />
-        );
-      })}
-    </>
-  );
-};
-
-<SpecialColors />
-
-<AllColorScales />
-
+<SpecialColorsDisplay />
 
 ## Reference Table
 

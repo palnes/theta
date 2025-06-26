@@ -1,6 +1,7 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../helpers/TokenReferenceTable';
-import { BorderDisplay } from '../helpers/components/BorderDisplay';
+import { TokenReferenceTable } from '../../docblocks/components/TokenReferenceTable';
+import { BorderWidths } from '../../docblocks/components/BorderWidths';
+import { BorderStyles } from '../../docblocks/components/BorderStyles';
 
 <Meta title="Token Reference/Semantic/Borders" />
 
@@ -8,22 +9,19 @@ import { BorderDisplay } from '../helpers/components/BorderDisplay';
 
 Border width and style tokens. All border tokens are semantic - there are no primitive border tokens.
 
+## Border Widths
 
-<BorderDisplay />
+Semantic width scale for consistent border thickness across components.
+
+<BorderWidths />
+
+## Border Styles
+
+Style options for different border treatments.
+
+<BorderStyles />
 
 
-
-## Border Guidelines
-
-- Use semantic naming that expresses intent, not visual properties
-- Ensure sufficient contrast with border colors for accessibility
-- Limited scale options maintain visual harmony across themes
-
-## Related Tokens
-
-- **Border Colors**: See [Semantic Colors](/?path=/docs/token-reference-semantic-colors--docs) for `sys.color.border.*`
-- **Border Radius**: See [Semantic Radius](/?path=/docs/token-reference-semantic-radius--docs) for corner rounding
-- **Spacing**: Borders often work with spacing tokens for visual rhythm
 
 ## Reference Table
 

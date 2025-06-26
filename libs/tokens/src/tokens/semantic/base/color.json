@@ -107,7 +107,7 @@
         "base": {
           "default": {
             "$type": "color",
-            "$value": "{ref.color.gray.900}"
+            "$value": "{ref.color.pink.0}"
           }
         },
         "raised": {

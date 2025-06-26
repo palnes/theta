@@ -2,18 +2,19 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { build, defineConfig, parse } from '@terrazzo/parser';
 import css from '@terrazzo/plugin-css';
+import thetaLintPlugin from './lint-rules.js';
 import cssModularPlugin from './plugins/css-modular.js';
 import cssTypesPlugin from './plugins/css-types.js';
-import cssPlugin from './plugins/css.js';
 import docsPlugin from './plugins/docs.js';
 import jsonPlugin from './plugins/json.js';
 import typescriptNativePlugin from './plugins/typescript-native.js';
-import typescriptPlugin from './plugins/typescript.js';
+import { withRegistry } from './registry-adapter.js';
+import { TokenRegistry } from './token-registry.js';
 
 // Constants
 const DIST_DIR = 'dist';
 const TEMP_DIR = '.tmp';
-const BASE_THEME = 'light';
+const DEFAULT_THEME = 'light';
 const LOG_LEVEL = 'error';
 
 /**
@@ -27,10 +28,31 @@ export async function buildTokens(themeTokens, rootDir) {
     {
       tokens: `${TEMP_DIR}/all-tokens.json`,
       outDir: `./${DIST_DIR}`,
-      plugins: [],
+      plugins: [
+        thetaLintPlugin(), // Add our custom lint rules
+      ],
       lint: {
-        build: { enabled: false },
-        rules: {},
+        build: { enabled: true }, // Enable linting during build
+        rules: {
+          // Terrazzo built-in rules
+          'core/consistent-naming': 'off', // We have established naming (mix of camelCase and kebab)
+          'core/duplicate-values': 'off', // Common in design systems to reuse values
+          'core/descriptions': 'off', // Not all tokens need descriptions
+          'core/colorspace': 'off', // We use various colorspaces
+          'core/max-gamut': 'off', // Not enforcing gamut limits
+          'core/required-children': 'off', // Flexible token structure
+          'core/required-modes': 'off', // Not all tokens need modes
+          'core/required-typography-properties': 'off', // Typography tokens vary
+          'a11y/min-contrast': 'off', // Would need to configure color pairs
+          'a11y/min-font-size': ['warn', { minSizePx: 12 }], // Enforce minimum font size
+
+          // Our custom rules
+          'theta/no-hardcoded-colors': 'warn', // Semantic tokens should reference base colors
+          'theta/component-naming': 'off', // Too strict for current structure
+          'theta/required-states': 'off', // Not all components need all states
+          'theta/no-circular-references': 'error', // Prevent reference loops
+          'theta/require-token-types': 'off', // Would be good to enable eventually
+        },
       },
       ignore: {
         tokens: [],
@@ -42,11 +64,11 @@ export async function buildTokens(themeTokens, rootDir) {
     { cwd: new URL(`file:///${rootDir}/`) }
   );
 
-  // Parse base theme tokens (light is our base)
+  // Parse base theme tokens (using default theme as base)
   const parseResult = await parse(
     [
       {
-        src: themeTokens[BASE_THEME],
+        src: themeTokens[DEFAULT_THEME],
         // Terrazzo requires filename to be a URL object, not a string
         filename: new URL(`file:///${rootDir}/${TEMP_DIR}/all-tokens.json`),
       },
@@ -146,38 +168,111 @@ export async function buildTokens(themeTokens, rootDir) {
     }
   }
 
+  // Create token registry
+  const registry = new TokenRegistry();
+
+  // Register all base tokens
+  Object.entries(parseResult.tokens).forEach(([id, token]) => {
+    registry.registerToken(id, token);
+  });
+
+  // Register theme variants for both themes
+  // Light theme
+  Object.entries(lightParseResult.tokens).forEach(([id, token]) => {
+    const baseToken = parseResult.tokens[id];
+    if (baseToken) {
+      // Always register light theme value (even if same as base)
+      registry.registerThemeVariant(id, LIGHT_THEME, token.$value);
+    }
+  });
+
+  // Dark theme
+  Object.entries(darkParseResult.tokens).forEach(([id, token]) => {
+    const baseToken = parseResult.tokens[id];
+    if (baseToken) {
+      // Always register dark theme value (even if same as base)
+      registry.registerThemeVariant(id, DARK_THEME, token.$value);
+    }
+  });
+
   // Build main outputs
   const mainConfig = defineConfig(
     {
       tokens: `${TEMP_DIR}/all-tokens.json`,
       outDir: `./${DIST_DIR}`,
       plugins: [
-        cssModularPlugin({
-          themes: {
-            [LIGHT_THEME]: lightParseResult.tokens,
-            [DARK_THEME]: darkParseResult.tokens,
-          },
-        }),
+        thetaLintPlugin(), // Include lint rules in build phase too
+        withRegistry(
+          cssModularPlugin({
+            themes: {
+              [LIGHT_THEME]: lightParseResult.tokens,
+              [DARK_THEME]: darkParseResult.tokens,
+            },
+          }),
+          registry
+        ),
         // NOTE: We generate tokens.ts since we only build React Native tokens now.
         // This means the React Native tokens get the clean "tokens.js" filename.
         // The native import path (@theta/tokens/native) still works via package.json exports.
-        typescriptNativePlugin({
-          filename: `../${TEMP_DIR}/tokens.ts`,
-          themes: {
-            [LIGHT_THEME]: lightParseResult.tokens,
-            [DARK_THEME]: darkParseResult.tokens,
-          },
-        }),
-        jsonPlugin({
-          filename: 'tokens.json',
-          themes: {
-            [LIGHT_THEME]: lightParseResult.tokens,
-            [DARK_THEME]: darkParseResult.tokens,
-          },
-        }),
+        withRegistry(
+          typescriptNativePlugin({
+            filename: `../${TEMP_DIR}/tokens.ts`,
+            themes: {
+              [LIGHT_THEME]: lightParseResult.tokens,
+              [DARK_THEME]: darkParseResult.tokens,
+            },
+          }),
+          registry
+        ),
+        withRegistry(
+          jsonPlugin({
+            filename: 'tokens.json',
+            themes: {
+              [LIGHT_THEME]: lightParseResult.tokens,
+              [DARK_THEME]: darkParseResult.tokens,
+            },
+          }),
+          registry
+        ),
         docsPlugin({
           filename: '../.storybook/generated/tokens-reference.json',
+          themes: {
+            [LIGHT_THEME]: lightParseResult.tokens,
+            [DARK_THEME]: darkParseResult.tokens,
+          },
         }),
+        // Registry-based documentation plugin
+        {
+          name: 'registry-docs',
+          enforce: 'post',
+          async build({ outputFile }) {
+            const documentation = registry.exportForDocumentation({
+              includeStats: true,
+              format: 'nested',
+            });
+
+            // Adapt to match the expected format
+            const adapted = {
+              tokens: documentation.tokens,
+              metadata: {
+                ...documentation.metadata,
+                stats: {
+                  total: documentation.metadata.stats.total,
+                  byType: documentation.metadata.stats.byType,
+                  byCategory: documentation.metadata.stats.byComponent,
+                  withOutputs: Object.values(documentation.tokens)
+                    .flat()
+                    .filter((t) => t?.outputs && Object.keys(t.outputs).length > 0).length,
+                },
+              },
+            };
+
+            await outputFile(
+              '../.storybook/generated/tokens-generic.json',
+              JSON.stringify(adapted, null, 2)
+            );
+          },
+        },
         cssTypesPlugin({
           filename: 'css.d.ts',
         }),

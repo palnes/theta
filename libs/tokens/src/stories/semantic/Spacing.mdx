@@ -1,6 +1,7 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../helpers/TokenReferenceTable';
-import { SpacingDisplay, SpacingVisualExamples } from '../helpers/components/SpacingDisplay';
+import { TokenReferenceTable } from '../../docblocks/components/TokenReferenceTable';
+import { SpacingScale } from '../../docblocks/components/SpacingScale';
+import { SpacingVisual } from '../../docblocks/components/SpacingVisual';
 
 <Meta title="Token Reference/Semantic/Spacing" />
 
@@ -10,20 +11,11 @@ Consistent spacing values for margins, padding, and gaps. Based on an 8px grid s
 
 ## Spacing Scale
 
-<SpacingDisplay />
+<SpacingScale />
 
 ## Visual Examples
 
-<SpacingVisualExamples />
-
-
-## Spacing Guidelines
-
-- Use smaller values (2xs, xs) for tight groupings
-- Use larger values (xl, 2xl) for major sections
-- Ensure at least 44×44px for interactive elements (use `lg` spacing or larger)
-- Apply `sm` or larger between text blocks for readability
-- Use `md` spacing between form fields to prevent mis-taps
+<SpacingVisual />
 
 ## Reference Table
 

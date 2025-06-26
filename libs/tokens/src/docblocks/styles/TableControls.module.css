@@ -1,0 +1,119 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.searchSection {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.searchInput {
+  flex: 1;
+  max-width: 300px;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--sys-color-border-default);
+  border-radius: var(--sys-radius-md);
+  background-color: var(--sys-color-surface-input-default);
+  font-size: var(--sys-font-size-sm);
+  color: var(--sys-color-text-primary);
+  transition: all 0.2s;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--sys-color-border-focus);
+  background-color: var(--sys-color-surface-input-focus);
+}
+
+.searchResults {
+  font-size: var(--sys-font-size-sm);
+  color: var(--sys-color-text-secondary);
+}
+
+.controlsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.formatSection {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.formatLabel {
+  font-size: var(--sys-font-size-sm);
+  color: var(--sys-color-text-secondary);
+  font-weight: var(--sys-font-weight-medium);
+}
+
+.formatButtons {
+  display: flex;
+  gap: 0.25rem;
+  background-color: var(--sys-color-surface-secondary-default);
+  border-radius: var(--sys-radius-md);
+  padding: 0.25rem;
+}
+
+.formatButton {
+  padding: 0.375rem 0.75rem;
+  border: none;
+  background: transparent;
+  border-radius: var(--sys-radius-sm);
+  font-size: var(--sys-font-size-sm);
+  font-weight: var(--sys-font-weight-medium);
+  color: var(--sys-color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.formatButton:hover {
+  color: var(--sys-color-text-primary);
+  background-color: var(--sys-color-surface-secondary-hover);
+}
+
+.formatButtonActive {
+  background-color: var(--sys-color-action-primary-default);
+  color: var(--sys-color-text-on-action);
+  box-shadow: var(--sys-shadow-sm);
+}
+
+.formatButtonActive:hover {
+  background-color: var(--sys-color-action-primary-hover);
+  color: var(--sys-color-text-on-action);
+}
+
+.expandToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.expandButton {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--sys-color-border-default);
+  background-color: var(--sys-color-surface-secondary-default);
+  border-radius: var(--sys-radius-md);
+  font-size: var(--sys-font-size-sm);
+  font-weight: var(--sys-font-weight-medium);
+  color: var(--sys-color-text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.expandButton:hover {
+  background-color: var(--sys-color-surface-secondary-hover);
+  border-color: var(--sys-color-border-strong);
+}
+
+.expandCount {
+  font-size: var(--sys-font-size-sm);
+  color: var(--sys-color-text-secondary);
+}

@@ -89,7 +89,7 @@ function extractReferences(value, tokens) {
  * Terrazzo plugin that generates documentation
  */
 export default function docsPlugin(options = {}) {
-  const { filename = DEFAULT_FILENAME } = options;
+  const { filename = DEFAULT_FILENAME, themes = {} } = options;
 
   return {
     name: 'docs',
@@ -101,6 +101,8 @@ export default function docsPlugin(options = {}) {
         metadata: {
           generatedAt: new Date().toISOString(),
           totalTokens: Object.keys(tokens).length,
+          themes: Object.keys(themes),
+          themeableTokens: 0, // Will be calculated after processing
         },
       };
 
@@ -156,6 +158,39 @@ export default function docsPlugin(options = {}) {
           }
         }
 
+        // Capture theme-specific values
+        const themeValues = {};
+        const overriddenIn = [];
+        let isThemeable = false;
+
+        // Process each theme to find variations
+        for (const [themeName, themeTokens] of Object.entries(themes)) {
+          const themeToken = themeTokens[path];
+          if (themeToken) {
+            // Format theme value the same way as base value
+            let themeFormattedValue = themeToken.$value;
+            if (themeToken.$type === 'dimension') {
+              themeFormattedValue = formatDimensionForDocs(themeToken.$value);
+            } else {
+              const handler = typeHandlers[themeToken.$type || token.$type];
+              if (handler) {
+                themeFormattedValue = handler(themeToken.$value);
+              }
+            }
+
+            themeValues[themeName] = themeFormattedValue;
+
+            // Check if this theme overrides the base value
+            if (JSON.stringify(themeFormattedValue) !== JSON.stringify(formattedValue)) {
+              overriddenIn.push(themeName);
+              isThemeable = true;
+            }
+          } else {
+            // Theme doesn't have this token, use base value
+            themeValues[themeName] = formattedValue;
+          }
+        }
+
         documentation[tier][category].push({
           name: parts[parts.length - 1],
           path: path,
@@ -168,7 +203,15 @@ export default function docsPlugin(options = {}) {
           jsFlat: toCamelCase(path),
           hasReferences: references.length > 0,
           references: references,
+          themeValues: themeValues,
+          isThemeable: isThemeable,
+          overriddenIn: overriddenIn,
         });
+
+        // Count themeable tokens
+        if (isThemeable) {
+          documentation.metadata.themeableTokens++;
+        }
       });
 
       const content = JSON.stringify(documentation, null, 2);

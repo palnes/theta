@@ -35,9 +35,8 @@ export async function mergeTokenFiles(rootDir, theme = DEFAULT_THEME) {
   // Always load reference and base semantic tokens
   const basePattern = [TOKEN_PATHS.reference, TOKEN_PATHS.semanticBase, TOKEN_PATHS.component];
 
-  // Add theme-specific overrides if not light theme
-  const patterns =
-    theme === DEFAULT_THEME ? basePattern : [...basePattern, TOKEN_PATHS.themeOverride(theme)];
+  // Always check for theme-specific overrides (even if empty)
+  const patterns = [...basePattern, TOKEN_PATHS.themeOverride(theme)];
 
   const allTokens = {};
 

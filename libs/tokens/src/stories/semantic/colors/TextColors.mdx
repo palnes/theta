@@ -1,0 +1,15 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { TokenReferenceTable } from '../../../docblocks/components/TokenReferenceTable';
+import { TextColors } from '../../../docblocks/components/TextColors';
+
+<Meta title="Token Reference/Semantic/Colors/Text" />
+
+# Text Colors
+
+Typography colors for different contexts and content hierarchies. Ensures readable, accessible text across all themes.
+
+<TextColors />
+
+## Reference Table
+
+<TokenReferenceTable tier="sys" category="color" filter={(token) => token.path.includes('.text.')} />

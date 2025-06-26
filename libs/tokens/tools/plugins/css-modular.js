@@ -1,3 +1,13 @@
+import { formatColor } from '../formatters/color.js';
+import {
+  formatArray,
+  formatDimension,
+  formatFontFamily,
+  formatLineHeight,
+  formatShadow,
+  isShadowArray,
+} from '../formatters/css.js';
+
 // Constants
 const DOT_SEPARATOR = /\./g;
 const CAMEL_TO_KEBAB = /([a-z])([A-Z])/g;
@@ -13,7 +23,7 @@ const DARK_THEME_SELECTOR = '[data-theme="dark"]';
  * - themes/*.css: theme-specific overrides
  */
 export default function cssModularPlugin(options = {}) {
-  const { themes = {} } = options;
+  const { themes = {}, mappingCollector } = options;
 
   // Convert token ID to CSS variable name
   const toCssVar = (id) => {
@@ -25,74 +35,40 @@ export default function cssModularPlugin(options = {}) {
 
   // Helper to format CSS value
   const formatValue = (value, type) => {
-    // Handle arrays first
+    // Handle arrays
     if (Array.isArray(value)) {
-      // Shadow array
-      if (value.length > 0 && typeof value[0] === 'object' && value[0].offsetX !== undefined) {
-        return value
-          .map((shadow) => {
-            const parts = [];
-            const formatDimension = (dim) => {
-              if (typeof dim === 'object' && dim.value !== undefined && dim.unit !== undefined) {
-                return `${dim.value}${dim.unit}`;
-              }
-              return dim;
-            };
-            if (shadow.offsetX !== undefined) parts.push(formatDimension(shadow.offsetX));
-            if (shadow.offsetY !== undefined) parts.push(formatDimension(shadow.offsetY));
-            if (shadow.blur !== undefined) parts.push(formatDimension(shadow.blur));
-            if (shadow.spread !== undefined) parts.push(formatDimension(shadow.spread));
-            if (shadow.color) {
-              if (
-                typeof shadow.color === 'object' &&
-                shadow.color.colorSpace &&
-                shadow.color.components
-              ) {
-                const [r, g, b, a = 1] = shadow.color.components;
-                parts.push(
-                  `rgba(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}, ${a})`
-                );
-              } else {
-                parts.push(shadow.color);
-              }
-            }
-            return parts.join(' ');
-          })
-          .join(', ');
+      if (isShadowArray(value)) {
+        return formatShadow(value);
       }
-
-      // Regular arrays (font families, etc.)
-      const filtered = value.filter((v) => v && (typeof v === 'string' ? v.trim() : true));
-      if (filtered.length === 0) return 'initial';
-
-      return filtered
-        .map((v) => {
-          if (typeof v === 'string' && v.includes(' ')) {
-            return `"${v}"`;
-          }
-          return String(v);
-        })
-        .join(', ');
+      return formatArray(value);
     }
 
+    // Handle objects
     if (typeof value === 'object' && value !== null) {
       // Dimension values
       if (value.value !== undefined && value.unit !== undefined) {
-        return `${value.value}${value.unit}`;
+        return formatDimension(value);
       }
+
       // Colors
-      if (type === 'color' && value.colorSpace && value.components) {
-        const [r, g, b, a = 1] = value.components;
-        return `rgba(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}, ${a})`;
+      if (type === 'color') {
+        return formatColor(value);
       }
-      // Typography composite
+
+      // Typography composite values - return as-is for special handling
       if (type === 'typography') {
-        return 'initial';
+        return value;
       }
-      // Shadow fallback
+
+      // Shadow
       if (type === 'shadow') {
-        return 'none';
+        return formatShadow(value);
       }
+    }
+
+    // String colors
+    if (type === 'color' && typeof value === 'string') {
+      return formatColor(value);
     }
 
     return String(value);
@@ -104,8 +80,33 @@ export default function cssModularPlugin(options = {}) {
 
     for (const [id, token] of Object.entries(tokens)) {
       const cssVar = toCssVar(id);
-      const value = formatValue(token.$value, token.$type);
-      lines.push(`  ${cssVar}: ${value};`);
+
+      // Handle typography tokens specially - spread them into individual properties
+      if (token.$type === 'typography' && typeof token.$value === 'object') {
+        const value = token.$value;
+
+        if (value.fontFamily) {
+          lines.push(`  ${cssVar}-font-family: ${formatFontFamily(value.fontFamily)};`);
+        }
+
+        if (value.fontSize) {
+          lines.push(`  ${cssVar}-font-size: ${formatDimension(value.fontSize)};`);
+        }
+
+        if (value.fontWeight) {
+          lines.push(`  ${cssVar}-font-weight: ${value.fontWeight};`);
+        }
+
+        if (value.lineHeight) {
+          lines.push(`  ${cssVar}-line-height: ${formatLineHeight(value.lineHeight)};`);
+        }
+      } else {
+        // For all other tokens, use the normal formatting
+        const value = formatValue(token.$value, token.$type);
+        if (value !== null && value !== undefined) {
+          lines.push(`  ${cssVar}: ${value};`);
+        }
+      }
     }
 
     lines.push('}');
@@ -126,6 +127,7 @@ export default function cssModularPlugin(options = {}) {
   return {
     name: 'css-modular',
     async build({ tokens, outputFile }) {
+      const mappings = {};
       // 1. Generate base.css (reference + semantic tokens)
       const baseTokens = {};
       for (const [id, token] of Object.entries(tokens)) {

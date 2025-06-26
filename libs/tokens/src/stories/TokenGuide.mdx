@@ -1,5 +1,4 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { Warning } from './helpers/DocComponents';
 
 <Meta title="Getting Started/Token Guide" />
 
@@ -121,9 +120,8 @@ Tokens can only reference tokens from higher tiers. This one-way flow prevents c
 | Semantic (sys.*) | ref.* | cmp.*, other sys.* |
 | Primitive (ref.*) | nothing | any tokens |
 
-<Warning>
-  Token references to non-existent tokens will cause build failures. The tier hierarchy rules are architectural guidelines - they're not currently enforced by tooling but following them ensures maintainable token architecture.
-</Warning>
+> **⚠️ Warning**  
+> Token references to non-existent tokens will cause build failures. The tier hierarchy rules are architectural guidelines - they're not currently enforced by tooling but following them ensures maintainable token architecture.
 
 ---
 
@@ -342,6 +340,84 @@ tokens/
    ls dist/css/tokens.css
    ls dist/js/tokens.js
    ```
+
+### Creating Themes
+
+Themes are configured in `$themes.json` and define which token sets are enabled for each theme:
+
+```json
+{
+  "$themes": [
+    {
+      "id": "light",
+      "name": "Light Theme",
+      "selectedTokenSets": {
+        "reference/color": "enabled",
+        "reference/dimension": "enabled",
+        "reference/number": "enabled",
+        "reference/typography": "enabled",
+        "semantic/base/color": "enabled",
+        "semantic/base/border": "enabled",
+        "semantic/base/radius": "enabled",
+        "semantic/base/shadow": "enabled",
+        "semantic/base/spacing": "enabled",
+        "semantic/base/typography": "enabled",
+        "semantic/base/zIndex": "enabled",
+        "semantic/base/fontSize": "enabled",
+        "semantic/base/dimension": "enabled",
+        "semantic/base/interaction": "enabled",
+        "semantic/base/font": "enabled",
+        "semantic/light/color": "enabled",
+        "component/button": "enabled",
+        "component/badge": "enabled",
+        "component/card": "enabled",
+        "component/checkbox": "enabled",
+        "component/input": "enabled",
+        "component/radioButton": "enabled",
+        "component/switch": "enabled"
+      }
+    },
+    {
+      "id": "dark",
+      "name": "Dark Theme",
+      "selectedTokenSets": {
+        "reference/color": "enabled",
+        "reference/dimension": "enabled",
+        "reference/number": "enabled",
+        "reference/typography": "enabled",
+        "semantic/base/color": "enabled",
+        "semantic/base/border": "enabled",
+        "semantic/base/radius": "enabled",
+        "semantic/base/shadow": "enabled",
+        "semantic/base/spacing": "enabled",
+        "semantic/base/typography": "enabled",
+        "semantic/base/zIndex": "enabled",
+        "semantic/base/fontSize": "enabled",
+        "semantic/base/dimension": "enabled",
+        "semantic/base/interaction": "enabled",
+        "semantic/base/font": "enabled",
+        "semantic/dark/color": "enabled",
+        "component/button": "enabled",
+        "component/badge": "enabled",
+        "component/card": "enabled",
+        "component/checkbox": "enabled",
+        "component/input": "enabled",
+        "component/radioButton": "enabled",
+        "component/switch": "enabled"
+      }
+    }
+  ]
+}
+```
+
+To create a new theme:
+
+1. **Create theme directory**: `src/tokens/semantic/my-theme/`
+2. **Add override files**: Only include tokens that differ from base
+3. **Register in $themes.json**: Add theme configuration with appropriate token sets
+4. **Build tokens**: The theme will be available after rebuild
+
+Themes inherit from base semantic tokens - you only need to override what changes.
 
 ### Testing Changes
 
