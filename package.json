@@ -25,6 +25,7 @@
     "dev:native": "turbo run dev --filter=@theta/native",
     "storybook": "turbo run storybook --parallel",
     "build-storybook": "turbo run build-storybook",
+    "quality": "turbo run format typecheck test",
     "check": "turbo run lint typecheck test --parallel",
     "ci": "turbo run lint typecheck test build",
     "changeset": "changeset",

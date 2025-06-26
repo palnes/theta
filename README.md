@@ -13,81 +13,40 @@ A monorepo containing design tokens and component libraries for web and React Na
 - Node.js >= 22.0.0
 - Yarn 4.x (included via corepack)
 
-## Quick Start
-
-### Web Application
-
-```tsx
-// 1. Import CSS tokens in your app entry
-import "@theta/tokens/css/base.css";
-import "@theta/tokens/css/themes/light.css";
-import "@theta/tokens/css/themes/dark.css";
-
-// 2. Use components
-import { Button } from "@theta/web";
-
-// 3. Apply theme via data attribute
-function App() {
-  return (
-    <div data-theme="dark">
-      <Button variant="primary">Click me</Button>
-    </div>
-  );
-}
-```
-
-### React Native Application
-
-```tsx
-// 1. Import and setup ThemeProvider
-import { ThemeProvider, Button } from "@theta/native";
-
-// 2. Wrap your app
-function App() {
-  return (
-    <ThemeProvider defaultPreference="system">
-      <Button variant="primary" onPress={() => {}}>
-        Click me
-      </Button>
-    </ThemeProvider>
-  );
-}
-```
-
 ## Getting Started
 
-### 1. Install Dependencies
-
 ```bash
+# Install dependencies
 yarn install
-```
 
-### 2. Build All Packages
-
-```bash
+# Build all packages (required before development)
 yarn build
+
+# Start development (runs all Storybooks)
+yarn start
 ```
 
-### 3. Available Commands
+**Note:** The initial build is mandatory as packages depend on built artifacts from other packages (especially tokens).
+
+### Available Commands
 
 ```bash
-# Run tokens Storybook
-yarn workspace @theta/tokens storybook
+# Development
+yarn start          # Run all Storybooks with live reload
+yarn dev:tokens     # Watch and rebuild tokens
+yarn dev:web        # Run web dev server  
+yarn dev:native     # Run native dev server
 
-# Run web Storybook (when available)
-yarn workspace @theta/web storybook
+# Quality checks
+yarn quality        # Run all checks (format, typecheck, test)
+yarn test           # Run tests
+yarn lint           # Run linter
+yarn format         # Format and lint code
+yarn typecheck      # Type check TypeScript
 
-# Run tests
-yarn test
-
-# Lint and format
-yarn lint
-yarn format
-
-# Build specific package
-yarn workspace @theta/web build
-yarn workspace @theta/native build
-yarn workspace @theta/tokens build
+# Build
+yarn build          # Build all packages
+yarn clean          # Clean all build artifacts
 ```
 
 ## Local Development with Other Projects
@@ -156,8 +115,8 @@ Tokens support light and dark themes out of the box, with different implementati
 
 1. Create a feature branch
 2. Make your changes
-3. Run tests: `yarn test`
-4. Run linting: `yarn lint`
+3. Run quality checks: `yarn quality`
+4. Add a changeset: `yarn changeset`
 5. Submit a pull request
 
 ## License
