@@ -1,6 +1,6 @@
 {
   "name": "@theta/tokens",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "description": "Design tokens for the Nordlys design system",
   "license": "UNLICENSED",
