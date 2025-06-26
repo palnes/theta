@@ -13,24 +13,26 @@ This package contains all design tokens for the Theta design system and generate
 ## Installation
 
 ```bash
-npm install @theta/tokens
+yarn add @theta/tokens
 ```
 
 ## Usage
 
 ### React Native Usage
+
 ```js
-import { tokens, getTokens } from '@theta/tokens/native';
+import { tokens, getTokens } from "@theta/tokens/native";
 
 // Access tokens directly (uses light theme)
 console.log(tokens.sysColorActionPrimaryDefault);
 
 // Or get theme-aware tokens
-const themed = getTokens('dark');
+const themed = getTokens("dark");
 console.log(themed.sysColorActionPrimaryDefault);
 ```
 
 ### Web Usage (CSS)
+
 ```css
 /* Import base tokens and themes */
 @import '@theta/tokens/css/base.css';
@@ -49,10 +51,10 @@ console.log(themed.sysColorActionPrimaryDefault);
 <html data-theme="dark">
 ```
 
-
 ## Token Structure
 
 Tokens are organized in JSON files under `src/tokens/`:
+
 - `reference/` - Base values
 - `semantic/base/` - Default theme tokens
 - `semantic/dark/` - Dark theme overrides
@@ -62,13 +64,18 @@ Tokens are organized in JSON files under `src/tokens/`:
 
 ```bash
 # Build all token outputs
-npm run build
+yarn run build
 
 # Watch mode for development
-npm run dev
+yarn run dev
+
+# Lint and format
+yarn run lint
+yarn run format
 ```
 
 Generated outputs:
+
 - `dist/tokens.js` - React Native tokens (ES module)
 - `dist/tokens.d.ts` - TypeScript definitions
 - `dist/tokens.json` - Flattened JSON
@@ -79,7 +86,7 @@ Generated outputs:
 View the token documentation and visual examples:
 
 ```bash
-npm run storybook
+yarn storybook
 ```
 
 ## License

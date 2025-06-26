@@ -5,21 +5,15 @@ React Native component library for the Theta design system.
 ## Installation
 
 ```bash
-npm install @theta/native @theta/tokens
-```
-
-### Optional: Theme Persistence
-If you want theme preferences to persist across app restarts, install AsyncStorage:
-
-```bash
-npm install @react-native-async-storage/async-storage
+yarn add @theta/native
 ```
 
 ## Usage
 
 ### Basic Setup
+
 ```tsx
-import { ThemeProvider, Button } from '@theta/native';
+import { ThemeProvider, Button } from "@theta/native";
 
 function App() {
   return (
@@ -33,14 +27,15 @@ function App() {
 ```
 
 ### Styled Components (Recommended)
+
 ```tsx
-import { createThemedStyles } from '@theta/native';
+import { createThemedStyles } from "@theta/native";
 
 const useStyles = createThemedStyles((tokens) => ({
   container: {
     backgroundColor: tokens.sysColorSurfaceBaseDefault,
     borderRadius: tokens.sysRadiusMd,
-  }
+  },
 }));
 
 function MyComponent() {
@@ -54,13 +49,13 @@ function MyComponent() {
 Wrap your app with `ThemeProvider` to enable theming:
 
 ```tsx
-import { ThemeProvider } from '@theta/native';
+import { ThemeProvider } from "@theta/native";
 
 function App() {
   return (
-    <ThemeProvider 
-      defaultPreference="system"  // 'light', 'dark', or 'system'
-      persist={true}              // Save theme preference
+    <ThemeProvider
+      defaultPreference="system" // 'light', 'dark', or 'system'
+      persist={true} // Save theme preference
     >
       {/* Your app */}
     </ThemeProvider>
@@ -69,15 +64,18 @@ function App() {
 ```
 
 ### Using Theme in Components
+
 ```tsx
-import { useTheme } from '@theta/native';
+import { useTheme } from "@theta/native";
 
 function MyComponent() {
   const { theme, preference, setPreference, tokens } = useTheme();
-  
+
   return (
     <View style={{ backgroundColor: tokens.sysColorSurfaceBaseDefault }}>
-      <Button onPress={() => setPreference(theme === 'light' ? 'dark' : 'light')}>
+      <Button
+        onPress={() => setPreference(theme === "light" ? "dark" : "light")}
+      >
         Toggle Theme
       </Button>
     </View>
@@ -88,8 +86,8 @@ function MyComponent() {
 ## Development
 
 ```bash
-# Start Expo development server
-yarn start
+# Run Storybook
+yarn storybook
 
 # Run on iOS
 yarn ios
@@ -99,9 +97,6 @@ yarn android
 
 # Run tests
 yarn test
-
-# Run Storybook
-yarn storybook
 ```
 
 ## Components

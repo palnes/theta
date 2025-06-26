@@ -5,7 +5,7 @@ React component library for the Theta design system.
 ## Installation
 
 ```bash
-npm install @theta/web @theta/tokens
+yarn add @theta/web
 ```
 
 ## Setup
@@ -16,19 +16,19 @@ Import the design tokens in your application entry point or main CSS file:
 
 ```css
 /* Required: Base tokens */
-@import '@theta/tokens/css/base.css';
+@import "@theta/tokens/css/base.css";
 
 /* Theme files (import the ones you need) */
-@import '@theta/tokens/css/themes/light.css';
-@import '@theta/tokens/css/themes/dark.css';
+@import "@theta/tokens/css/themes/light.css";
+@import "@theta/tokens/css/themes/dark.css";
 ```
 
 Or in JavaScript:
 
 ```js
-import '@theta/tokens/css/base.css';
-import '@theta/tokens/css/themes/light.css';
-import '@theta/tokens/css/themes/dark.css';
+import "@theta/tokens/css/base.css";
+import "@theta/tokens/css/themes/light.css";
+import "@theta/tokens/css/themes/dark.css";
 ```
 
 ### Testing Setup
@@ -94,6 +94,7 @@ This package uses a dual testing strategy:
 ### Why vitest-browser-react?
 
 We use `vitest-browser-react` instead of `@testing-library/react` because:
+
 - It's designed specifically for Vitest browser mode
 - Provides better integration with real browser testing
 - Eliminates act warnings when testing React Aria Components
@@ -102,20 +103,20 @@ We use `vitest-browser-react` instead of `@testing-library/react` because:
 ### Writing Tests
 
 ```typescript
-import { render } from 'vitest-browser-react';
-import { expect } from 'vitest';
+import { render } from "vitest-browser-react";
+import { expect } from "vitest";
 
-test('component renders', async () => {
+test("component renders", async () => {
   const screen = render(<MyComponent />);
-  await expect.element(screen.getByRole('button')).toBeVisible();
+  await expect.element(screen.getByRole("button")).toBeVisible();
 });
 ```
 
 ### Writing Story Tests
 
 ```typescript
-import { fn } from 'storybook/test';
-import { within, userEvent, expect } from 'storybook/test';
+import { fn } from "storybook/test";
+import { within, userEvent, expect } from "storybook/test";
 
 export const Interactive: Story = {
   args: {
@@ -123,7 +124,7 @@ export const Interactive: Story = {
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('button'));
+    await userEvent.click(canvas.getByRole("button"));
     await expect(args.onClick).toHaveBeenCalled();
   },
 };
@@ -134,7 +135,7 @@ export const Interactive: Story = {
 ### Basic Usage
 
 ```jsx
-import { Button } from '@theta/web';
+import { Button } from "@theta/web";
 
 function App() {
   return (

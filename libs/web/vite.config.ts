@@ -41,12 +41,7 @@ export default defineConfig(async () => {
         formats: ['es'],
       },
       rollupOptions: {
-        external: [
-          'react',
-          'react-dom',
-          'react/jsx-runtime',
-          'react-aria-components'
-        ],
+        external: ['react', 'react-dom', 'react/jsx-runtime', 'react-aria-components'],
         output: {
           preserveModules: true,
           preserveModulesRoot: 'src',
