@@ -44,11 +44,13 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@theta/tokens": "workspace:*"
+  },
+  "devDependencies": {
     "@gorhom/bottom-sheet": "^5.1.2",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-community/datetimepicker": "8.3.0",
     "@react-native-community/slider": "4.5.6",
-    "@theta/tokens": "workspace:*",
     "expo": "~53.0.11",
     "expo-constants": "~17.1.6",
     "expo-status-bar": "~2.2.3",
@@ -58,9 +60,7 @@
     "react-native-gesture-handler": "~2.24.0",
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
-    "react-native-svg": "15.11.2"
-  },
-  "devDependencies": {
+    "react-native-svg": "15.11.2",
     "@babel/core": "^7.24.0",
     "@babel/preset-env": "^7.25.4",
     "@biomejs/biome": "*",
@@ -92,5 +92,10 @@
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
     "react-native": ">=0.70.0"
+  },
+  "peerDependenciesMeta": {
+    "@react-native-async-storage/async-storage": {
+      "optional": true
+    }
   }
 }
