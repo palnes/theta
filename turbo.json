@@ -1,19 +1,39 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local", "tsconfig.base.json"],
+  "globalDependencies": [
+    "**/.env.*local",
+    "tsconfig.base.json",
+    "biome.json"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "build/**"],
-      "cache": true
-    },
-    "build:tokens": {
-      "outputs": ["dist/**"],
+      "outputs": [
+        "dist/**",
+        ".storybook/generated/**",
+        "storybook-static/**"
+      ],
+      "inputs": [
+        "src/**",
+        "!src/**/*.test.*",
+        "!src/**/*.stories.*",
+        "package.json",
+        "tsconfig*.json",
+        "vite.config.*",
+        "build.js",
+        "tools/**"
+      ],
       "cache": true
     },
     "test": {
       "dependsOn": ["^build"],
-      "outputs": [],
+      "outputs": ["coverage/**"],
+      "inputs": [
+        "src/**",
+        "test/**",
+        "vitest.config.*",
+        "jest.config.*"
+      ],
       "cache": true,
       "env": ["CI", "NODE_ENV"]
     },
@@ -29,6 +49,16 @@
     },
     "lint": {
       "outputs": [],
+      "inputs": [
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.json",
+        "!**/dist/**",
+        "!**/node_modules/**",
+        "!**/.turbo/**"
+      ],
       "cache": true
     },
     "format": {
@@ -38,6 +68,13 @@
     "typecheck": {
       "dependsOn": ["^build"],
       "outputs": [],
+      "inputs": [
+        "**/*.ts",
+        "**/*.tsx",
+        "tsconfig*.json",
+        "!**/dist/**",
+        "!**/node_modules/**"
+      ],
       "cache": true
     },
     "dev": {
@@ -50,6 +87,12 @@
       "cache": false,
       "persistent": true
     },
+    "storybook#@theta/native": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true,
+      "interactive": true
+    },
     "build-storybook": {
       "dependsOn": ["^build"],
       "outputs": ["storybook-static/**"],
@@ -57,6 +100,26 @@
     },
     "clean": {
       "cache": false
+    },
+    "prepublishOnly": {
+      "dependsOn": ["build"],
+      "cache": false
+    },
+    "start": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true
+    },
+    "start#@theta/tokens": {
+      "dependsOn": ["^build", "dev#@theta/tokens"],
+      "cache": false,
+      "persistent": true
+    },
+    "start#@theta/native": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true,
+      "interactive": true
     }
   }
 }

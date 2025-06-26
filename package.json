@@ -10,8 +10,8 @@
     "node": ">=22.0.0"
   },
   "scripts": {
+    "start": "turbo run start --ui=tui",
     "build": "turbo run build",
-    "build:tokens": "turbo run build --filter=@theta/tokens",
     "test": "turbo run test",
     "test:watch": "turbo run test:watch",
     "test:ui": "turbo run test:ui",
@@ -20,6 +20,9 @@
     "format": "turbo run format",
     "clean": "turbo run clean",
     "dev": "turbo run dev --parallel",
+    "dev:tokens": "turbo run dev --filter=@theta/tokens",
+    "dev:web": "turbo run dev --filter=@theta/web",
+    "dev:native": "turbo run dev --filter=@theta/native",
     "storybook": "turbo run storybook --parallel",
     "build-storybook": "turbo run build-storybook",
     "check": "turbo run lint typecheck test --parallel",

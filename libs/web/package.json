@@ -20,6 +20,7 @@
   },
   "files": ["dist"],
   "scripts": {
+    "start": "yarn storybook",
     "dev": "vite",
     "build": "tsc && vite build",
     "typecheck": "tsc --noEmit",
