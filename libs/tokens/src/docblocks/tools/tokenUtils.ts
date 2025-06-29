@@ -1,23 +1,4 @@
 /**
- * Create token formats object for TokenFormatDisplay
- */
-export const createTokenFormats = (
-  cssVariable: string,
-  jsPath: string | undefined,
-  key: string | undefined,
-  tokenType: string,
-  jsFlat?: string
-) => {
-  const jsonPath = jsPath || `sys.${tokenType}.${key}`;
-
-  return {
-    css: cssVariable,
-    json: jsonPath,
-    js: jsFlat || jsPath || '',
-  };
-};
-
-/**
  * Extract box shadow value from token value
  */
 export const extractBoxShadowValue = (value: unknown): string => {

@@ -1,15 +1,33 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../../../docblocks/components/TokenReferenceTable';
-import { TextColors } from '../../../docblocks/components/TextColors';
+import { TokenViewer, ColorRenderer } from '../../../docblocks';
+import { TokenTable } from '../../../docblocks/components';
+import { TokenSystemWrapper } from '../../../docblocks/components/TokenSystemWrapper';
 
 <Meta title="Token Reference/Semantic/Colors/Text" />
 
 # Text Colors
 
-Typography colors for different contexts and content hierarchies. Ensures readable, accessible text across all themes.
+Colors for typography across different contexts and importance levels. These ensure readable and accessible text throughout the interface.
 
-<TextColors />
+<TokenSystemWrapper>
+
+<TokenViewer 
+  tier="sys" 
+  category="color"
+  title="Text Colors"
+  renderer={new ColorRenderer()}
+  config={{
+    filters: {
+      include: (token) => token.path?.includes('.text.') || false
+    },
+    grouping: {
+      enabled: false
+    }
+  }}
+/>
 
 ## Reference Table
 
-<TokenReferenceTable tier="sys" category="color" filter={(token) => token.path.includes('.text.')} />
+<TokenTable tier="sys" category="color" filter={(token) => token.path?.includes('.text.') || false} />
+
+</TokenSystemWrapper>

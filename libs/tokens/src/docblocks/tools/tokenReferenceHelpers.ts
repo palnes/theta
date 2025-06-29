@@ -3,13 +3,13 @@ import { TokenInfo, UsageFormat } from '../types/tokenReferenceTable';
 export const getUsageValue = (token: TokenInfo, format: UsageFormat): string => {
   switch (format) {
     case 'css':
-      return token.cssVariable;
+      return token.usage.find((u) => u.label === 'CSS')?.value || '';
     case 'json':
-      return token.path;
+      return token.usage.find((u) => u.label === 'JSON')?.value || token.path;
     case 'js':
-      return token.jsFlat;
+      return token.usage.find((u) => u.label === 'JS')?.value || '';
     default:
-      return token.cssVariable;
+      return token.usage.find((u) => u.label === 'CSS')?.value || '';
   }
 };
 

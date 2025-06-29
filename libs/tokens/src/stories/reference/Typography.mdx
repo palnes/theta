@@ -1,27 +1,20 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../../docblocks/components/TokenReferenceTable';
-import { TypographyShowcase } from '../../docblocks/components/TypographyShowcase';
+import { TypographyShowcase } from '../../docblocks/components/typography/TypographyShowcase';
+import { TokenTable } from '../../docblocks/components';
+import { TokenSystemWrapper } from '../../docblocks/components/TokenSystemWrapper';
 
 <Meta title="Token Reference/Reference/Typography" />
 
-# Primitive Typography Values
+# Reference Typography
 
-Base typography values including font sizes, weights, line heights, and families.
+Base typography values for building the type system.
 
+<TokenSystemWrapper>
 
 <TypographyShowcase type="reference" />
 
+## Reference Table
 
-## Reference Tables
+<TokenTable tier="ref" category="typography" />
 
-### Font Sizes
-<TokenReferenceTable tier="ref" category="fontSize" />
-
-### Font Weights
-<TokenReferenceTable tier="ref" category="fontWeight" />
-
-### Line Heights
-<TokenReferenceTable tier="ref" category="lineHeightPx" />
-
-### Font Families
-<TokenReferenceTable tier="ref" category="fontFamily" />
+</TokenSystemWrapper>

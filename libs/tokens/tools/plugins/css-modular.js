@@ -2,11 +2,11 @@ import { formatColor } from '../formatters/color.js';
 import {
   formatArray,
   formatDimension,
-  formatFontFamily,
   formatLineHeight,
   formatShadow,
   isShadowArray,
 } from '../formatters/css.js';
+import { areTokenValuesEqual } from '../token-helpers.js';
 
 // Constants
 const DOT_SEPARATOR = /\./g;
@@ -21,9 +21,14 @@ const DARK_THEME_SELECTOR = '[data-theme="dark"]';
  * - base.css: reference + semantic tokens
  * - components/*.css: individual component token files
  * - themes/*.css: theme-specific overrides
+ *
+ * @param {Object} options - Plugin options
+ * @param {Object} options.themes - Theme tokens (e.g., { dark: {...} })
+ * @param {Object} options.registry - Token registry instance
+ * @returns {Object} Terrazzo plugin object
  */
 export default function cssModularPlugin(options = {}) {
-  const { themes = {}, mappingCollector } = options;
+  const { themes = {}, registry } = options;
 
   // Convert token ID to CSS variable name
   const toCssVar = (id) => {
@@ -33,45 +38,47 @@ export default function cssModularPlugin(options = {}) {
       .toLowerCase()}`;
   };
 
+  // Type-specific formatters for CSS values
+  const cssFormatters = {
+    color: formatColor,
+    dimension: formatDimension,
+    shadow: formatShadow,
+    fontFamily: formatArray,
+    typography: (value) => value, // Return as-is for special handling
+    // Default formatter
+    default: (value) => {
+      if (Array.isArray(value)) {
+        return isShadowArray(value) ? formatShadow(value) : formatArray(value);
+      }
+      if (typeof value === 'object' && value !== null) {
+        if (value.value !== undefined && value.unit !== undefined) {
+          return formatDimension(value);
+        }
+      }
+      return String(value);
+    },
+  };
+
   // Helper to format CSS value
   const formatValue = (value, type) => {
-    // Handle arrays
-    if (Array.isArray(value)) {
-      if (isShadowArray(value)) {
-        return formatShadow(value);
+    const formatter = cssFormatters[type] || cssFormatters.default;
+    return formatter(value);
+  };
+
+  // Format typography token into individual CSS properties
+  const formatTypographyToken = (value, cssVar, lines) => {
+    const typographyProperties = [
+      { prop: 'fontFamily', suffix: 'font-family', formatter: formatArray },
+      { prop: 'fontSize', suffix: 'font-size', formatter: formatDimension },
+      { prop: 'fontWeight', suffix: 'font-weight', formatter: (v) => v },
+      { prop: 'lineHeight', suffix: 'line-height', formatter: formatLineHeight },
+    ];
+
+    typographyProperties.forEach(({ prop, suffix, formatter }) => {
+      if (value[prop]) {
+        lines.push(`  ${cssVar}-${suffix}: ${formatter(value[prop])};`);
       }
-      return formatArray(value);
-    }
-
-    // Handle objects
-    if (typeof value === 'object' && value !== null) {
-      // Dimension values
-      if (value.value !== undefined && value.unit !== undefined) {
-        return formatDimension(value);
-      }
-
-      // Colors
-      if (type === 'color') {
-        return formatColor(value);
-      }
-
-      // Typography composite values - return as-is for special handling
-      if (type === 'typography') {
-        return value;
-      }
-
-      // Shadow
-      if (type === 'shadow') {
-        return formatShadow(value);
-      }
-    }
-
-    // String colors
-    if (type === 'color' && typeof value === 'string') {
-      return formatColor(value);
-    }
-
-    return String(value);
+    });
   };
 
   // Generate CSS content for a set of tokens
@@ -81,25 +88,9 @@ export default function cssModularPlugin(options = {}) {
     for (const [id, token] of Object.entries(tokens)) {
       const cssVar = toCssVar(id);
 
-      // Handle typography tokens specially - spread them into individual properties
       if (token.$type === 'typography' && typeof token.$value === 'object') {
-        const value = token.$value;
-
-        if (value.fontFamily) {
-          lines.push(`  ${cssVar}-font-family: ${formatFontFamily(value.fontFamily)};`);
-        }
-
-        if (value.fontSize) {
-          lines.push(`  ${cssVar}-font-size: ${formatDimension(value.fontSize)};`);
-        }
-
-        if (value.fontWeight) {
-          lines.push(`  ${cssVar}-font-weight: ${value.fontWeight};`);
-        }
-
-        if (value.lineHeight) {
-          lines.push(`  ${cssVar}-line-height: ${formatLineHeight(value.lineHeight)};`);
-        }
+        // Handle typography tokens specially - spread them into individual properties
+        formatTypographyToken(token.$value, cssVar, lines);
       } else {
         // For all other tokens, use the normal formatting
         const value = formatValue(token.$value, token.$type);
@@ -127,7 +118,6 @@ export default function cssModularPlugin(options = {}) {
   return {
     name: 'css-modular',
     async build({ tokens, outputFile }) {
-      const mappings = {};
       // 1. Generate base.css (reference + semantic tokens)
       const baseTokens = {};
       for (const [id, token] of Object.entries(tokens)) {
@@ -169,7 +159,7 @@ export default function cssModularPlugin(options = {}) {
         // Only include tokens that differ from base
         for (const [id, darkToken] of Object.entries(themes.dark)) {
           const baseToken = tokens[id];
-          if (!baseToken || JSON.stringify(darkToken.$value) !== JSON.stringify(baseToken.$value)) {
+          if (!baseToken || !areTokenValuesEqual(darkToken.$value, baseToken.$value)) {
             darkOverrides[id] = darkToken;
           }
         }
@@ -179,6 +169,18 @@ export default function cssModularPlugin(options = {}) {
           console.log(
             `✓ Generated css/themes/dark.css (${Object.keys(darkOverrides).length} overrides)`
           );
+        }
+      }
+
+      // Register outputs with registry if provided
+      if (registry) {
+        for (const [id, token] of Object.entries(tokens)) {
+          const cssVar = toCssVar(id);
+          registry.registerOutput(id, 'css', {
+            name: cssVar,
+            value: formatValue(token.$value, token.$type),
+            usage: `var(${cssVar})`,
+          });
         }
       }
     },

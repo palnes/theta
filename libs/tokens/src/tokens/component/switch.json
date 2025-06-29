@@ -2,19 +2,19 @@
   "cmp": {
     "switch": {
       "width": {
-        "$value": "{ref.dimension.48}"
+        "$value": "{sys.dimension.component.spacing.xl}"
       },
       "height": {
-        "$value": "{ref.dimension.24}"
+        "$value": "{sys.dimension.component.spacing.md}"
       },
       "thumbSize": {
-        "$value": "{ref.dimension.20}"
+        "$value": "{sys.dimension.component.spacing.sm}"
       },
       "borderRadius": {
-        "$value": "{ref.dimension.max}"
+        "$value": "{sys.radius.full}"
       },
       "padding": {
-        "$value": "{ref.dimension.2}"
+        "$value": "{sys.spacing.xs}"
       },
       "transitionDuration": {
         "$value": "{sys.duration.normal}"
@@ -36,7 +36,7 @@
         },
         "thumb": {
           "default": {
-            "$value": "{ref.color.white}"
+            "$value": "{sys.color.surface.primary.inverse}"
           },
           "disabled": {
             "$value": "{sys.color.surface.secondary.default}"

@@ -1,12 +1,15 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../../docblocks/components/TokenReferenceTable';
 import { ReferenceColorScales, SpecialColorsDisplay } from '../../docblocks/components';
+import { TokenTable } from '../../docblocks/components';
+import { TokenSystemWrapper } from '../../docblocks/components/TokenSystemWrapper';
 
 <Meta title="Token Reference/Reference/Colors" />
 
 # Reference Color Palette
 
 Raw color values organized by hue and shade.
+
+<TokenSystemWrapper>
 
 <ReferenceColorScales />
 
@@ -16,4 +19,6 @@ Raw color values organized by hue and shade.
 
 Complete listing of all primitive color tokens:
 
-<TokenReferenceTable tier="ref" category="color" />
+<TokenTable tier="ref" category="color" />
+
+</TokenSystemWrapper>

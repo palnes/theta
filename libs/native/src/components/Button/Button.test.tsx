@@ -1,26 +1,25 @@
-import { composeStories } from '@storybook/react';
 import { fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
-import * as stories from './Button.stories';
-
-const { Basic } = composeStories(stories);
+import { Button } from './Button';
 
 describe('Button', () => {
   it('renders correctly', () => {
-    const { getByText } = render(<Basic />);
+    const { getByText } = render(<Button text="Hello world" onPress={() => {}} />);
     expect(getByText('Hello world')).toBeTruthy();
   });
 
   it('handles press events', () => {
     const onPress = jest.fn();
-    const { getByText } = render(<Basic onPress={onPress} />);
+    const { getByText } = render(<Button text="Hello world" onPress={onPress} />);
 
     fireEvent.press(getByText('Hello world'));
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
   it('applies primary variant styles', () => {
-    const { getByTestId } = render(<Basic variant="primary" testID="button" />);
+    const { getByTestId } = render(
+      <Button text="Test" variant="primary" testID="button" onPress={() => {}} />
+    );
     const button = getByTestId('button');
 
     // Check that backgroundColor is set (not checking exact value)
@@ -30,9 +29,11 @@ describe('Button', () => {
   });
 
   it('applies secondary variant styles differently from primary', () => {
-    const { getByTestId: getPrimary } = render(<Basic variant="primary" testID="primary-button" />);
+    const { getByTestId: getPrimary } = render(
+      <Button text="Test" variant="primary" testID="primary-button" onPress={() => {}} />
+    );
     const { getByTestId: getSecondary } = render(
-      <Basic variant="secondary" testID="secondary-button" />
+      <Button text="Test" variant="secondary" testID="secondary-button" onPress={() => {}} />
     );
 
     const primaryButton = getPrimary('primary-button');
@@ -45,9 +46,15 @@ describe('Button', () => {
   });
 
   it('applies size styles', () => {
-    const { getByTestId: getSmall } = render(<Basic size="small" testID="small-button" />);
-    const { getByTestId: getMedium } = render(<Basic size="medium" testID="medium-button" />);
-    const { getByTestId: getLarge } = render(<Basic size="large" testID="large-button" />);
+    const { getByTestId: getSmall } = render(
+      <Button text="Test" size="small" testID="small-button" onPress={() => {}} />
+    );
+    const { getByTestId: getMedium } = render(
+      <Button text="Test" size="medium" testID="medium-button" onPress={() => {}} />
+    );
+    const { getByTestId: getLarge } = render(
+      <Button text="Test" size="large" testID="large-button" onPress={() => {}} />
+    );
 
     const smallButton = getSmall('small-button');
     const mediumButton = getMedium('medium-button');
@@ -59,13 +66,15 @@ describe('Button', () => {
   });
 
   it('renders with custom text', () => {
-    const { getByText } = render(<Basic text="Custom Text" />);
+    const { getByText } = render(<Button text="Custom Text" onPress={() => {}} />);
     expect(getByText('Custom Text')).toBeTruthy();
   });
 
   it('is disabled when disabled prop is true', () => {
     const onPress = jest.fn();
-    const { getByTestId } = render(<Basic disabled={true} onPress={onPress} testID="button" />);
+    const { getByTestId } = render(
+      <Button text="Test" disabled={true} onPress={onPress} testID="button" />
+    );
     const button = getByTestId('button');
 
     fireEvent.press(button);

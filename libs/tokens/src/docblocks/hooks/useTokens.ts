@@ -1,190 +1,98 @@
 import { useMemo } from 'react';
-import type { TokenInfo } from '../types/tokenReferenceTable';
-import { VISUAL_SPACING_KEYS } from '../constants/displayConstants';
-import * as tokenHelpers from '../tools/tokenHelpers';
-import { useDocumentationData } from './useDocumentationData';
-import { getTokenDisplayConfig } from '../tools/tokenRegistry';
+import { useTokenSystemConfig, useTokenSystemData } from '../contexts/TokenSystemContext';
+import { TokenInfo } from '../types/tokenReferenceTable';
 
-/**
- * Options for the unified useTokens hook
- */
 export interface UseTokensOptions {
-  // Basic filtering
-  tier?: 'ref' | 'sys' | 'cmp' | 'all';
-  category?: string | string[];
-
-  // Advanced filtering
+  /** Tier ID(s) to filter by */
+  tier?: string | string[] | 'all';
+  /** Category to filter by */
+  category?: string;
+  /** Custom filter function */
   filter?: (token: TokenInfo) => boolean;
-
-  // Processing options
-  process?: boolean; // Whether to run through extractors
-  groupBy?: 'category' | 'tier' | 'path' | 'none';
-
-  // Specific helpers
-  visualOnly?: boolean; // For spacing tokens
-  type?: 'reference' | 'semantic' | 'all'; // For color tokens
-}
-
-export interface TokensResult<T = any> {
-  data: T;
-  tokens: TokenInfo[];
-  loading: boolean;
-  error: string | null;
+  /** Optional token data in TokenData format - if not provided, will use context */
+  tokenData?: any;
 }
 
 /**
- * Unified hook for all token data fetching needs
- * Replaces all specialized token hooks with a single flexible API
+ * Hook to fetch tokens using the configuration system
  */
-export function useTokens<T = any>(options: UseTokensOptions = {}): TokensResult<T> {
-  const {
-    tier = 'all',
-    category,
-    filter,
-    process = true,
-    groupBy = 'none',
-    visualOnly = false,
-    type = 'all',
-  } = options;
+export const useTokens = (options: UseTokensOptions = {}) => {
+  const { tier = 'all', category, filter, tokenData: providedTokenData } = options;
+  const config = useTokenSystemConfig();
+  const { data: contextData, loading, error } = useTokenSystemData();
 
-  const { data: rawData, loading, error } = useDocumentationData();
+  // Use provided tokenData (already in correct format) or fall back to context
+  const data = providedTokenData || contextData;
 
-  const result = useMemo(() => {
-    if (!rawData) {
-      return { data: null as any, tokens: [] };
-    }
+  const tokens = useMemo(() => {
+    if (!data) return [];
 
-    // Collect all matching tokens
-    const allTokens: TokenInfo[] = [];
-    const processedData: any = {};
+    let allTokens: TokenInfo[] = [];
 
-    // Helper to process tokens for a specific tier/category
-    const processTokens = (tierName: 'ref' | 'sys' | 'cmp', categoryName?: string) => {
-      const tierData = rawData[tierName];
+    // Determine which tiers to include
+    const tierIds =
+      tier === 'all' ? config.tiers.map((t) => t.id) : Array.isArray(tier) ? tier : [tier];
+
+    // Collect tokens from specified tiers
+    tierIds.forEach((tierId) => {
+      const tierData = (data as any)[tierId];
       if (!tierData) return;
 
-      const categories = categoryName ? [categoryName] : Object.keys(tierData);
-
-      categories.forEach((cat) => {
-        const tokens = tierData[cat] || [];
-        const matchingTokens = filter ? tokens.filter(filter) : tokens;
-        allTokens.push(...matchingTokens);
-
-        if (process && categoryName) {
-          const config = getTokenDisplayConfig(tierName, cat);
-          if (config) {
-            const key = `${tierName}.${cat}`;
-            processedData[key] = config.extractor(matchingTokens);
-          }
+      if (category) {
+        // Get specific category from tier
+        const categoryTokens = tierData[category];
+        if (categoryTokens) {
+          allTokens.push(...categoryTokens);
         }
-      });
-    };
-
-    // Determine which tiers to process
-    const tiers: Array<'ref' | 'sys' | 'cmp'> = tier === 'all' ? ['ref', 'sys', 'cmp'] : [tier];
-
-    // Process each tier
-    tiers.forEach((t) => {
-      if (Array.isArray(category)) {
-        category.forEach((cat) => processTokens(t, cat));
-      } else if (category) {
-        processTokens(t, category);
       } else {
-        processTokens(t);
+        // Get all tokens from tier
+        Object.values(tierData).forEach((categoryTokens: any) => {
+          if (Array.isArray(categoryTokens)) {
+            allTokens.push(...categoryTokens);
+          }
+        });
       }
     });
 
-    // Apply grouping if requested
-    let finalData: any = process ? processedData : allTokens;
+    // Apply custom filter if provided
+    if (filter) {
+      allTokens = allTokens.filter(filter);
+    }
 
-    if (groupBy !== 'none' && allTokens.length > 0) {
-      const grouped: Record<string, TokenInfo[]> = {};
+    // Apply sorting based on configuration
+    const sortOrder = config.display?.sortOrders?.[category || ''];
+    if (sortOrder && category) {
+      allTokens.sort((a, b) => {
+        const aIndex = sortOrder.indexOf(a.name);
+        const bIndex = sortOrder.indexOf(b.name);
 
-      allTokens.forEach((token) => {
-        let key: string;
-        switch (groupBy) {
-          case 'category':
-            key = token.path.split('.')[2] || 'uncategorized';
-            break;
-          case 'tier':
-            key = token.path.split('.')[0] || 'unknown';
-            break;
-          case 'path':
-            key = token.path.split('.').slice(0, -1).join('.');
-            break;
-          default:
-            key = 'all';
+        if (aIndex === -1 && bIndex === -1) {
+          return a.name.localeCompare(b.name);
         }
-
-        if (!grouped[key]) grouped[key] = [];
-        grouped[key]!.push(token);
+        if (aIndex === -1) return 1;
+        if (bIndex === -1) return -1;
+        return aIndex - bIndex;
       });
-
-      finalData = grouped;
+    } else {
+      // Default sort by path
+      allTokens.sort((a, b) => a.path.localeCompare(b.path, undefined, { numeric: true }));
     }
 
-    // Handle special cases for backward compatibility
-    if (category === 'color' && type !== 'all') {
-      const colorTokens = allTokens;
-      finalData = {
-        colorScales: type === 'reference' ? tokenHelpers.getColorScales(colorTokens) : [],
-        specialColors: type === 'reference' ? tokenHelpers.getSpecialColors(colorTokens) : [],
-        semanticColors: type === 'semantic' ? tokenHelpers.getSemanticColors(colorTokens) : [],
-        allColorTokens: colorTokens,
-      };
-    }
+    return allTokens;
+  }, [data, tier, category, filter, config]);
 
-    if (category === 'spacing' && visualOnly) {
-      const filtered = allTokens.filter((t) => {
-        const key = t.path.split('.').pop() || '';
-        return VISUAL_SPACING_KEYS.includes(key as any);
-      });
-      finalData = tokenHelpers.getSemanticSpacing(filtered);
-    }
-
-    return { data: finalData, tokens: allTokens };
-  }, [rawData, tier, category, filter, process, groupBy, visualOnly, type]);
-
-  return {
-    ...result,
-    loading,
-    error,
-  };
-}
-
-/**
- * Convenience hooks for specific token types
- */
-export const useColorTokens = (options: Omit<UseTokensOptions, 'category'> = {}) =>
-  useTokens({ ...options, category: 'color' });
-
-export const useSpacingTokens = (visualOnly = false) =>
-  useTokens({ tier: 'sys', category: 'spacing', visualOnly });
-
-export const useTypographyTokens = (tier: 'ref' | 'sys' = 'ref') =>
-  useTokens({ tier, category: ['fontSize', 'fontWeight', 'lineHeight', 'fontFamily'] });
-
-export const useBorderTokens = () => {
-  const result = useTokens({ tier: 'sys', category: 'border' });
-  // Extract the processed border data from the result
-  const borderData = result.data ? (result.data as any)['sys.border'] : null;
-  return {
-    ...result,
-    data: borderData,
-  };
+  return { tokens, loading, error };
 };
 
-export const useShadowTokens = () => useTokens({ tier: 'sys', category: 'shadow' });
-
-export const useRadiusTokens = () => useTokens({ tier: 'sys', category: 'radius' });
-
-export const useDimensionTokens = () => useTokens({ tier: 'ref', category: 'dimension' });
-
 /**
- * Hook to get all tokens for a specific theme comparison
+ * Create category-specific hooks dynamically based on configuration
  */
-export const useThemeTokens = (themeName?: string) =>
-  useTokens({
-    tier: 'all',
-    filter: (token) => token.isThemeable && (!themeName || token.themeValues?.[themeName]),
-  });
+export const createCategoryHook = (categoryId: string, defaultTier?: string) => {
+  return (options: Omit<UseTokensOptions, 'category'> = {}) => {
+    return useTokens({
+      ...options,
+      category: categoryId,
+      tier: options.tier || defaultTier || 'all',
+    });
+  };
+};

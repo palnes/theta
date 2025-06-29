@@ -1,6 +1,7 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../../../docblocks/components/TokenReferenceTable';
-import { BorderColors } from '../../../docblocks/components/BorderColors';
+import { TokenViewer, ColorRenderer } from '../../../docblocks';
+import { TokenTable } from '../../../docblocks/components';
+import { TokenSystemWrapper } from '../../../docblocks/components/TokenSystemWrapper';
 
 <Meta title="Token Reference/Semantic/Colors/Border" />
 
@@ -8,8 +9,25 @@ import { BorderColors } from '../../../docblocks/components/BorderColors';
 
 Colors for edges, dividers, and separators. These create structure and visual boundaries between elements.
 
-<BorderColors />
+<TokenSystemWrapper>
+
+<TokenViewer 
+  tier="sys" 
+  category="color"
+  renderer={new ColorRenderer()}
+  showTitle={false}
+  config={{
+    filters: {
+      include: (token) => token.path?.includes('.border.') || false
+    },
+    grouping: {
+      enabled: false
+    }
+  }}
+/>
 
 ## Reference Table
 
-<TokenReferenceTable tier="sys" category="color" filter={(token) => token.path.includes('.border.')} />
+<TokenTable tier="sys" category="color" filter={(token) => token.path?.includes('.border.') || false} />
+
+</TokenSystemWrapper>

@@ -1,5 +1,124 @@
 /* Typography Documentation Styles */
 
+/* Typography Preview Component */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-xl);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-md);
+}
+
+.sectionTitle {
+  font-size: var(--sys-font-size-lg);
+  font-weight: var(--sys-font-weight-semibold);
+  color: var(--sys-color-text-primary);
+  margin: 0;
+  padding-bottom: var(--sys-spacing-xs);
+  border-bottom: 1px solid var(--sys-color-border-subtle);
+}
+
+.typographyTable {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.typographyRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--sys-spacing-xl);
+  align-items: start;
+  padding: var(--sys-spacing-sm) 0;
+  border-bottom: 1px solid var(--sys-color-border-subtle);
+}
+
+.typographyRow:last-child {
+  border-bottom: none;
+}
+
+.typographyExample {
+  color: var(--sys-color-text-primary);
+  margin: 0;
+  padding: 0;
+}
+
+.typographyInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-xs);
+  min-width: 280px;
+  margin: 0;
+  padding: 0;
+}
+
+.tokenUsage dl {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tokenUsage dl > div {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: start;
+  gap: var(--sys-spacing-xs);
+  line-height: 1.2;
+}
+
+.tokenUsage dl dt {
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 11px;
+  color: var(--sys-color-text-muted);
+  min-width: 35px;
+}
+
+.tokenUsage dl dd {
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+  flex: 1;
+}
+
+.tokenUsage dl dd code {
+  font-size: 11px;
+  padding: 2px 4px;
+  line-height: 1.2;
+  display: inline-block;
+}
+
+.typographyMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.tokenName {
+  font-size: var(--sys-font-size-sm);
+  font-weight: var(--sys-font-weight-medium);
+  color: var(--sys-color-text-primary);
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.tokenDetail {
+  font-family: var(--sys-font-family-code);
+  font-size: var(--sys-font-size-xs);
+  color: var(--sys-color-text-secondary);
+}
+
 /* Common styles aligned with SemanticTypographyDisplay */
 .example {
   display: flex;

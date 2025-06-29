@@ -1,12 +1,17 @@
 /**
- * Token Registry - A centralized system for tracking design tokens across formats
+ * Token Registry - Tracks design tokens and their outputs
  *
- * This registry provides a scalable solution for:
- * - Tracking token transformations across multiple output formats
- * - Managing relationships between tokens (references, aliases)
- * - Source mapping back to original token files
- * - Querying tokens by various criteria
+ * This registry provides:
+ * - Token storage and retrieval
+ * - Output format tracking (which tokens appear in which files)
+ * - Theme variant management
+ * - Token relationship tracking (references)
  */
+
+import { buildNestedStructure, extractAllReferences } from './token-helpers.js';
+
+// Constants
+const VALID_TOKEN_ID_REGEX = /^[a-zA-Z][a-zA-Z0-9._-]*$/;
 
 export class TokenRegistry {
   constructor() {
@@ -25,15 +30,32 @@ export class TokenRegistry {
 
     // Theme variants
     this.themes = new Map();
+  }
 
-    // Transformation history
-    this.transformations = new Map();
+  /**
+   * Validate token ID format
+   */
+  validateTokenId(id) {
+    if (!id || typeof id !== 'string') {
+      throw new Error('Token ID must be a non-empty string');
+    }
+    if (!VALID_TOKEN_ID_REGEX.test(id)) {
+      throw new Error(
+        `Invalid token ID format: ${id}. IDs must start with a letter and contain only letters, numbers, dots, underscores, and hyphens.`
+      );
+    }
   }
 
   /**
    * Register a token with its source information
+   * @param {string} id - Token ID (e.g., 'ref.color.blue')
+   * @param {Object} tokenData - Token data from parser
+   * @param {string} tokenData.$type - Token type
+   * @param {*} tokenData.$value - Token value
+   * @param {Object} [tokenData.source] - Source information
    */
   registerToken(id, tokenData) {
+    this.validateTokenId(id);
     const token = {
       id,
       value: tokenData.$value,
@@ -114,9 +136,6 @@ export class TokenRegistry {
       this.indexes.byFormat.set(format, new Set());
     }
     this.indexes.byFormat.get(format).add(tokenId);
-
-    // Track transformation
-    this.recordTransformation(tokenId, format, outputData);
   }
 
   /**
@@ -135,43 +154,33 @@ export class TokenRegistry {
   }
 
   /**
-   * Record a transformation for audit trail
+   * Record a transformation for audit trail with size limit
    */
   recordTransformation(tokenId, format, data) {
     if (!this.transformations.has(tokenId)) {
       this.transformations.set(tokenId, []);
     }
 
-    this.transformations.get(tokenId).push({
+    const history = this.transformations.get(tokenId);
+    history.push({
       format,
       timestamp: new Date().toISOString(),
       ...data,
     });
+
+    // Limit history size per token to prevent memory issues during build
+    if (history.length > MAX_TRANSFORMATION_HISTORY) {
+      history.shift(); // Remove oldest
+    }
   }
 
   /**
    * Extract token references from a value
+   * @param {*} value - Value to extract references from
+   * @returns {Set<string>} Set of referenced token IDs
    */
   extractReferences(value) {
-    const references = new Set();
-
-    if (typeof value === 'string') {
-      const matches = value.match(/\{([^}]+)\}/g);
-      if (matches) {
-        matches.forEach((match) => references.add(match.slice(1, -1)));
-      }
-    } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-      Object.values(value).forEach((val) => {
-        if (typeof val === 'string') {
-          const matches = val.match(/\{([^}]+)\}/g);
-          if (matches) {
-            matches.forEach((match) => references.add(match.slice(1, -1)));
-          }
-        }
-      });
-    }
-
-    return references;
+    return extractAllReferences(value);
   }
 
   // Query APIs
@@ -194,6 +203,7 @@ export class TokenRegistry {
 
   /**
    * Get all tokens
+   * @returns {Array<string>} Array of all token IDs
    */
   getAllTokens() {
     return Array.from(this.tokens.keys());
@@ -201,6 +211,8 @@ export class TokenRegistry {
 
   /**
    * Get tokens by type
+   * @param {string} type - Token type (e.g., 'color', 'dimension')
+   * @returns {Array<string>} Array of token IDs of the given type
    */
   getTokensByType(type) {
     return Array.from(this.indexes.byType.get(type) || []);
@@ -208,6 +220,8 @@ export class TokenRegistry {
 
   /**
    * Get tokens by format
+   * @param {string} format - Output format (e.g., 'css', 'typescript')
+   * @returns {Array<string>} Array of token IDs that have outputs in this format
    */
   getTokensByFormat(format) {
     return Array.from(this.indexes.byFormat.get(format) || []);
@@ -235,21 +249,23 @@ export class TokenRegistry {
   }
 
   /**
-   * Get impact analysis - what would be affected if a token changes
+   * Get tokens that would be affected if this token changes
    */
-  getImpactAnalysis(tokenId, visited = new Set()) {
-    if (visited.has(tokenId)) return [];
-    visited.add(tokenId);
+  getImpactedTokens(tokenId) {
+    // For now, just return direct references
+    // Could be extended to include transitive dependencies if needed
+    return this.getReferencingTokens(tokenId);
+  }
 
-    const directReferences = this.getReferencingTokens(tokenId);
-    const impact = [...directReferences];
-
-    // Recursively find all dependent tokens
-    directReferences.forEach((ref) => {
-      impact.push(...this.getImpactAnalysis(ref, visited));
+  /**
+   * Build nested token structure from flat token map
+   */
+  buildNestedTokenStructure() {
+    const flatTokens = {};
+    this.tokens.forEach((token, id) => {
+      flatTokens[id] = this.getToken(id);
     });
-
-    return [...new Set(impact)];
+    return buildNestedStructure(flatTokens);
   }
 
   /**
@@ -257,7 +273,6 @@ export class TokenRegistry {
    */
   exportForDocumentation(options = {}) {
     const {
-      includeTransformations = false,
       includeStats = true,
       format = 'nested', // 'nested' or 'flat'
     } = options;
@@ -273,19 +288,7 @@ export class TokenRegistry {
     // Build token data
     if (format === 'nested') {
       // Build nested structure (ref.color.blue.500 -> ref: { color: { blue: { 500: {...} } } })
-      this.tokens.forEach((token, id) => {
-        const parts = id.split('.');
-        let current = data.tokens;
-
-        for (let i = 0; i < parts.length - 1; i++) {
-          if (!current[parts[i]]) {
-            current[parts[i]] = {};
-          }
-          current = current[parts[i]];
-        }
-
-        current[parts[parts.length - 1]] = this.getToken(id);
-      });
+      data.tokens = this.buildNestedTokenStructure();
     } else {
       // Flat structure
       this.tokens.forEach((token, id) => {
@@ -311,31 +314,6 @@ export class TokenRegistry {
       };
     }
 
-    // Add transformations if requested
-    if (includeTransformations) {
-      data.transformations = Object.fromEntries(this.transformations);
-    }
-
     return data;
-  }
-}
-
-/**
- * Plugin interface for token registry
- */
-export class TokenRegistryPlugin {
-  constructor(registry) {
-    this.registry = registry;
-  }
-
-  /**
-   * Helper method for plugins to register outputs
-   */
-  registerOutputs(format, outputs) {
-    Object.entries(outputs).forEach(([tokenId, outputData]) => {
-      if (this.registry.tokens.has(tokenId)) {
-        this.registry.registerOutput(tokenId, format, outputData);
-      }
-    });
   }
 }

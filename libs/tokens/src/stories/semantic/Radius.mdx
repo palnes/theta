@@ -1,6 +1,7 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../../docblocks/components/TokenReferenceTable';
-import { RadiusDisplay } from '../../docblocks/components/RadiusDisplay';
+import { TokenTable } from '../../docblocks/components';
+import { TokenSystemWrapper } from '../../docblocks/components/TokenSystemWrapper';
+import { Radii } from '../../docblocks/components/spacing/Radii';
 
 <Meta title="Token Reference/Semantic/Radius" />
 
@@ -11,7 +12,9 @@ Consistent border radius values for rounded corners throughout the design system
 
 ## Radius Scale
 
-<RadiusDisplay />
+<TokenSystemWrapper>
+<Radii />
+</TokenSystemWrapper>
 
 
 
@@ -27,4 +30,6 @@ Use consistent radius values to create visual cohesion across your interface.
 
 ## Reference Table
 
-<TokenReferenceTable tier="sys" category="radius" />
+<TokenSystemWrapper>
+<TokenTable tier="sys" category="radius" />
+</TokenSystemWrapper>

@@ -1,5 +1,6 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../../docblocks/components/TokenReferenceTable';
+import { TokenTable } from '../../docblocks/components';
+import { TokenSystemWrapper } from '../../docblocks/components/TokenSystemWrapper';
 
 <Meta title="Token Reference/Component/Switch" />
 
@@ -18,4 +19,6 @@ Switch tokens follow the pattern: `cmp.switch.[category].[property].[state]`
 
 ## All Switch Tokens
 
-<TokenReferenceTable tier="cmp" category="switch" />
+<TokenSystemWrapper>
+<TokenTable tier="cmp" category="switch" />
+</TokenSystemWrapper>

@@ -1,3 +1,5 @@
+import { areTokenValuesEqual, buildNestedStructure } from '../token-helpers.js';
+
 // Constants
 const DEFAULT_FILENAME = 'tokens.json';
 
@@ -5,27 +7,13 @@ const DEFAULT_FILENAME = 'tokens.json';
  * Terrazzo plugin that generates JSON with theme support
  */
 export default function jsonPlugin(options = {}) {
-  const { filename = DEFAULT_FILENAME, themes = {} } = options;
+  const { filename = DEFAULT_FILENAME, themes = {}, registry } = options;
 
   return {
     name: 'json',
     async build({ tokens, outputFile }) {
       // Build nested structure for base tokens
-      const nestedTokens = {};
-
-      for (const [id, token] of Object.entries(tokens)) {
-        const parts = id.split('.');
-        let current = nestedTokens;
-
-        for (let i = 0; i < parts.length - 1; i++) {
-          if (!current[parts[i]]) {
-            current[parts[i]] = {};
-          }
-          current = current[parts[i]];
-        }
-
-        current[parts[parts.length - 1]] = token.$value;
-      }
+      const nestedTokens = buildNestedStructure(tokens, (token) => token.$value);
 
       // Build theme overrides
       const themeOverrides = {};
@@ -51,7 +39,7 @@ export default function jsonPlugin(options = {}) {
           if (
             themeValue &&
             themeValue.$value !== undefined &&
-            JSON.stringify(themeValue.$value) !== JSON.stringify(token.$value)
+            !areTokenValuesEqual(themeValue.$value, token.$value)
           ) {
             // Build nested path for override
             let current = overrides;
@@ -76,6 +64,17 @@ export default function jsonPlugin(options = {}) {
 
       await outputFile(filename, JSON.stringify(jsonContent, null, 2));
       console.log('✓ Generated JSON');
+
+      // Register outputs with registry if provided
+      if (registry) {
+        for (const [id, token] of Object.entries(tokens)) {
+          registry.registerOutput(id, 'json', {
+            name: id,
+            value: token.$value,
+            usage: id,
+          });
+        }
+      }
     },
   };
 }

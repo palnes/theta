@@ -1,10 +1,16 @@
 /**
+ * Token usage information
+ */
+export interface TokenUsage {
+  label: string;
+  value: string;
+}
+
+/**
  * Base token interface for all token types
  */
 export interface BaseToken {
-  cssVariable: string;
-  jsPath: string;
-  jsFlat?: string;
+  usage?: TokenUsage[];
   path?: string;
   name?: string;
   description?: string;

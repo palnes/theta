@@ -1,6 +1,7 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../../docblocks/components/TokenReferenceTable';
-import { DimensionDisplay, SpecialDimensionsDisplay } from '../../docblocks/components/DimensionDisplay';
+import { TokenTable } from '../../docblocks/components';
+import { TokenSystemWrapper } from '../../docblocks/components/TokenSystemWrapper';
+import { Dimensions, SpecialDimensions } from '../../docblocks/components/dimension/Dimensions';
 
 <Meta title="Token Reference/Reference/Dimensions" />
 
@@ -8,18 +9,20 @@ import { DimensionDisplay, SpecialDimensionsDisplay } from '../../docblocks/comp
 
 Base dimension values for spacing and sizing.
 
+<TokenSystemWrapper>
 
 ## Dimension Scale
 
-<DimensionDisplay />
+<Dimensions />
 
 ## Special Values
 
-<SpecialDimensionsDisplay />
-
+<SpecialDimensions />
 
 ## Reference Table
 
 Complete listing of all primitive dimension tokens:
 
-<TokenReferenceTable tier="ref" category="dimension" />
+<TokenTable tier="ref" category="dimension" />
+
+</TokenSystemWrapper>

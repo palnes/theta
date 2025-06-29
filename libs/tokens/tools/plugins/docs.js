@@ -1,222 +1,52 @@
-import { typeHandlers } from '../formatters/type-handlers.js';
-import { toCamelCase } from '../formatters/utils.js';
-
-// Constants
-const DEFAULT_FILENAME = 'docs/tokens-reference.json';
-const UPPERCASE_LETTER = /[A-Z]/g;
-const LEADING_DASH = /^-/;
-const DOT_SEPARATOR = '.';
-const CSS_VAR_PREFIX = '--';
-
 /**
- * Format dimension value for documentation display
- */
-function formatDimensionForDocs(value) {
-  if (typeof value === 'object' && value.value !== undefined && value.unit) {
-    return `${value.value}${value.unit}`;
-  }
-  return value;
-}
-
-/**
- * Convert camelCase to kebab-case (standard CSS property naming)
- */
-function toKebabCase(str) {
-  return str
-    .replace(UPPERCASE_LETTER, (match) => `-${match.toLowerCase()}`)
-    .replace(LEADING_DASH, '');
-}
-
-/**
- * Convert token path to CSS variable name
- */
-function pathToCssVariable(path) {
-  return `${CSS_VAR_PREFIX}${path
-    .split(DOT_SEPARATOR)
-    .map((segment) => toKebabCase(segment))
-    .join('-')}`;
-}
-
-/**
- * Extract references from a token value
- */
-function extractReferences(value, tokens) {
-  const references = [];
-
-  // Handle string references like "{ref.color.blue.600}"
-  if (typeof value === 'string') {
-    const matches = value.match(/\{([^}]+)\}/g);
-    if (matches) {
-      matches.forEach((match) => {
-        const refPath = match.slice(1, -1); // Remove { and }
-        const refToken = tokens[refPath];
-        if (refToken) {
-          references.push({
-            path: refPath,
-            value: refToken.$value,
-            type: refToken.$type || 'unknown',
-          });
-        }
-      });
-    }
-  }
-
-  // Handle object values that might contain references
-  else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-    Object.entries(value).forEach(([key, val]) => {
-      if (typeof val === 'string' && val.match(/\{([^}]+)\}/)) {
-        const matches = val.match(/\{([^}]+)\}/g);
-        matches?.forEach((match) => {
-          const refPath = match.slice(1, -1);
-          const refToken = tokens[refPath];
-          if (refToken) {
-            references.push({
-              path: refPath,
-              value: refToken.$value,
-              type: refToken.$type || 'unknown',
-              property: key,
-            });
-          }
-        });
-      }
-    });
-  }
-
-  return references;
-}
-
-/**
- * Terrazzo plugin that generates documentation
+ * Terrazzo plugin that generates documentation from token registry
  */
 export default function docsPlugin(options = {}) {
-  const { filename = DEFAULT_FILENAME, themes = {} } = options;
+  const { filename = '../.storybook/generated/tokens-generic.json', registry } = options;
 
   return {
     name: 'docs',
-    async build({ tokens, outputFile }) {
-      const documentation = {
-        ref: {},
-        sys: {},
-        cmp: {},
+    enforce: 'post',
+    async build({ outputFile }) {
+      if (!registry) {
+        throw new Error('Registry is required for docs plugin.');
+      }
+
+      const documentation = registry.exportForDocumentation({
+        includeStats: true,
+        format: 'nested',
+      });
+
+      // Remove source mapping from tokens
+      const removeSource = (obj) => {
+        if (!obj || typeof obj !== 'object') return obj;
+        if (Array.isArray(obj)) return obj.map(removeSource);
+
+        return Object.entries(obj).reduce((cleaned, [key, value]) => {
+          if (key !== 'source') {
+            cleaned[key] = removeSource(value);
+          }
+          return cleaned;
+        }, {});
+      };
+
+      // Adapt to match the expected format
+      const tokenValues = Object.values(documentation.tokens).flat();
+      const adapted = {
+        tokens: removeSource(documentation.tokens),
         metadata: {
-          generatedAt: new Date().toISOString(),
-          totalTokens: Object.keys(tokens).length,
-          themes: Object.keys(themes),
-          themeableTokens: 0, // Will be calculated after processing
+          ...documentation.metadata,
+          stats: {
+            total: documentation.metadata.stats.total,
+            byType: documentation.metadata.stats.byType,
+            byCategory: documentation.metadata.stats.byComponent,
+            withOutputs: tokenValues.filter((t) => t?.outputs && Object.keys(t.outputs).length > 0)
+              .length,
+          },
         },
       };
 
-      // Process tokens to create documentation structure
-      Object.entries(tokens).forEach(([path, token]) => {
-        const parts = path.split('.');
-        const tier = parts[0];
-        const category = parts[1];
-
-        if (!['ref', 'sys', 'cmp'].includes(tier)) return;
-
-        if (!documentation[tier]) documentation[tier] = {};
-        if (!documentation[tier][category]) {
-          documentation[tier][category] = [];
-        }
-
-        // Extract references from token metadata
-        const references = [];
-
-        // First check originalValue for the immediate reference (not fully resolved)
-        if (token.originalValue?.$value) {
-          const extractedRefs = extractReferences(token.originalValue.$value, tokens);
-          references.push(...extractedRefs);
-        }
-
-        // Only use aliasOf if we didn't find references in originalValue
-        // This ensures we show immediate references, not fully resolved ones
-        if (!references.length) {
-          const defaultMode = token.mode?.['.'];
-          if (defaultMode?.aliasOf) {
-            const refToken = tokens[defaultMode.aliasOf];
-            if (refToken) {
-              references.push({
-                path: defaultMode.aliasOf,
-                value: refToken.$value,
-                type: refToken.$type || 'unknown',
-              });
-            }
-          }
-        }
-
-        // Format value based on type for documentation
-        let formattedValue = token.$value;
-
-        // Special handling for dimensions in docs (keep units for display)
-        if (token.$type === 'dimension') {
-          formattedValue = formatDimensionForDocs(token.$value);
-        } else {
-          // Use type handlers for other types
-          const handler = typeHandlers[token.$type];
-          if (handler) {
-            formattedValue = handler(token.$value);
-          }
-        }
-
-        // Capture theme-specific values
-        const themeValues = {};
-        const overriddenIn = [];
-        let isThemeable = false;
-
-        // Process each theme to find variations
-        for (const [themeName, themeTokens] of Object.entries(themes)) {
-          const themeToken = themeTokens[path];
-          if (themeToken) {
-            // Format theme value the same way as base value
-            let themeFormattedValue = themeToken.$value;
-            if (themeToken.$type === 'dimension') {
-              themeFormattedValue = formatDimensionForDocs(themeToken.$value);
-            } else {
-              const handler = typeHandlers[themeToken.$type || token.$type];
-              if (handler) {
-                themeFormattedValue = handler(themeToken.$value);
-              }
-            }
-
-            themeValues[themeName] = themeFormattedValue;
-
-            // Check if this theme overrides the base value
-            if (JSON.stringify(themeFormattedValue) !== JSON.stringify(formattedValue)) {
-              overriddenIn.push(themeName);
-              isThemeable = true;
-            }
-          } else {
-            // Theme doesn't have this token, use base value
-            themeValues[themeName] = formattedValue;
-          }
-        }
-
-        documentation[tier][category].push({
-          name: parts[parts.length - 1],
-          path: path,
-          type: token.$type || 'unknown',
-          description: token.$description || '',
-          originalValue: token.originalValue || token.$value,
-          value: formattedValue,
-          cssVariable: pathToCssVariable(path),
-          jsPath: path,
-          jsFlat: toCamelCase(path),
-          hasReferences: references.length > 0,
-          references: references,
-          themeValues: themeValues,
-          isThemeable: isThemeable,
-          overriddenIn: overriddenIn,
-        });
-
-        // Count themeable tokens
-        if (isThemeable) {
-          documentation.metadata.themeableTokens++;
-        }
-      });
-
-      const content = JSON.stringify(documentation, null, 2);
-      await outputFile(filename, content);
-      console.log('✓ Documentation generated');
+      await outputFile(filename, JSON.stringify(adapted, null, 2));
     },
   };
 }

@@ -1,6 +1,7 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../../docblocks/components/TokenReferenceTable';
-import { ShadowDisplay } from '../../docblocks/components/ShadowDisplay';
+import { TokenTable } from '../../docblocks/components';
+import { TokenSystemWrapper } from '../../docblocks/components/TokenSystemWrapper';
+import { Shadows } from '../../docblocks/components/shadow/Shadows';
 
 <Meta title="Token Reference/Semantic/Shadows" />
 
@@ -10,7 +11,9 @@ Elevation shadows for creating depth and visual hierarchy in the interface.
 
 ## Shadow Scale
 
-<ShadowDisplay />
+<TokenSystemWrapper>
+<Shadows />
+</TokenSystemWrapper>
 
 ## Shadow Guidelines
 
@@ -22,4 +25,6 @@ Shadows indicate elevation levels. Apply consistently across similar components.
 
 ## Reference Table
 
-<TokenReferenceTable tier="sys" category="shadow" />
+<TokenSystemWrapper>
+<TokenTable tier="sys" category="shadow" />
+</TokenSystemWrapper>

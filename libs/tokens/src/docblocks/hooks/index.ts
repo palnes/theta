@@ -1,14 +1,10 @@
-// Unified token hook
+// Core hooks
 export * from './useTokens';
+export * from './useTokenData';
 
-// Specialized hooks (kept for backward compatibility)
-export { useThemeStatistics } from './useThemeStatistics';
-export { useSpacingTokens as useSpacingTokensLegacy } from './useSpacingTokens';
-export { useDimensionTokens as useDimensionTokensLegacy } from './useDimensionTokens';
-export { useColorTokens as useColorTokensLegacy, useSemanticColorTokens } from './useColorTokens';
-export { useSemanticTypography } from './useSemanticTypography';
-export { useTokenData } from './useTokenData';
+// Specialized hooks
 export { useTypographyTokens } from './useTypographyTokens';
+export { useDimensionTokens } from './useDimensionTokens';
 export { useSelectableContent } from './useSelectableContent';
-export { useThemeComparison } from './useThemeComparison';
-export { useThemeComparisonData } from './useThemeComparisonData';
+export { useColorTokens } from './useColorTokens';
+export { useSpacingTokens } from './useSpacingTokens';

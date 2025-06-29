@@ -1,7 +1,7 @@
 /* Color Scale Documentation Styles */
 
 .colorScale {
-  margin-bottom: var(--sys-spacing-2xl);
+  margin-bottom: var(--sys-spacing-lg);
 }
 
 .colorScaleTitle {
@@ -23,7 +23,7 @@
 }
 
 .colorGroupTitle:not(:first-child) {
-  margin-top: var(--sys-spacing-lg);
+  margin-top: var(--sys-spacing-md);
 }
 
 .colorGrid {

@@ -1,13 +1,16 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../../docblocks/components/TokenReferenceTable';
-import { SpacingScale } from '../../docblocks/components/SpacingScale';
-import { SpacingVisual } from '../../docblocks/components/SpacingVisual';
+import { SpacingScale } from '../../docblocks/components/spacing/SpacingScale';
+import { SpacingVisual } from '../../docblocks/components/spacing/SpacingVisual';
+import { TokenTable } from '../../docblocks/components';
+import { TokenSystemWrapper } from '../../docblocks/components/TokenSystemWrapper';
 
 <Meta title="Token Reference/Semantic/Spacing" />
 
 # Spacing System
 
 Consistent spacing values for margins, padding, and gaps. Based on an 8px grid system.
+
+<TokenSystemWrapper>
 
 ## Spacing Scale
 
@@ -19,4 +22,6 @@ Consistent spacing values for margins, padding, and gaps. Based on an 8px grid s
 
 ## Reference Table
 
-<TokenReferenceTable tier="sys" category="spacing" />
+<TokenTable tier="sys" category="spacing" />
+
+</TokenSystemWrapper>

@@ -1,15 +1,33 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../../../docblocks/components/TokenReferenceTable';
-import { SurfaceColors } from '../../../docblocks/components/SurfaceColors';
+import { TokenViewer, ColorRenderer } from '../../../docblocks';
+import { TokenTable } from '../../../docblocks/components';
+import { TokenSystemWrapper } from '../../../docblocks/components/TokenSystemWrapper';
 
 <Meta title="Token Reference/Semantic/Colors/Surface" />
 
 # Surface Colors
 
-Background colors for containers, cards, and surfaces at different elevation levels. These create visual hierarchy and depth.
+Background colors for various UI surfaces and containers. These create visual hierarchy and define different areas of the interface.
 
-<SurfaceColors />
+<TokenSystemWrapper>
+
+<TokenViewer 
+  tier="sys" 
+  category="color"
+  title="Surface Colors"
+  renderer={new ColorRenderer()}
+  config={{
+    filters: {
+      include: (token) => token.path?.includes('.surface.') || false
+    },
+    grouping: {
+      enabled: false
+    }
+  }}
+/>
 
 ## Reference Table
 
-<TokenReferenceTable tier="sys" category="color" filter={(token) => token.path.includes('.surface.')} />
+<TokenTable tier="sys" category="color" filter={(token) => token.path?.includes('.surface.') || false} />
+
+</TokenSystemWrapper>

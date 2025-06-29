@@ -1,37 +1,34 @@
 import { useMemo } from 'react';
 import { extractDimensions, extractSpecialDimensions } from '../tools/tokenHelpers';
-import type { NumericToken, StringToken } from '../types/tokens';
-import { useDocumentationData } from './useDocumentationData';
-
-export interface DimensionData {
-  dimensions: NumericToken[];
-  specials: StringToken[];
-  maxNegative: number;
-  maxPositive: number;
-}
+import { useTokens } from './useTokens';
 
 /**
- * Hook to process dimension tokens and calculate display metrics
+ * Hook for dimension tokens with special processing
+ * Maintains the old API for backward compatibility
  */
-export function useDimensionTokens(): DimensionData {
-  const { data } = useDocumentationData();
+export function useDimensionTokens() {
+  const { tokens, loading, error } = useTokens({ tier: 'ref', category: 'dimension' });
 
-  return useMemo(() => {
-    const dimensionTokens = data?.ref?.dimension || [];
-    const dimensions = extractDimensions(dimensionTokens);
-    const specials = extractSpecialDimensions(dimensionTokens);
+  const processedData = useMemo(() => {
+    if (!tokens || tokens.length === 0) {
+      return {
+        dimensions: [],
+        specials: [],
+        maxNegative: 0,
+        maxPositive: 0,
+      };
+    }
 
-    // Find the maximum negative value (most negative) and maximum positive value
-    const negativeValues = dimensions.filter((d) => d.value < 0);
-    const positiveValues = dimensions.filter((d) => d.value >= 0);
+    const dimensions = extractDimensions(tokens);
+    const specials = extractSpecialDimensions(tokens);
 
-    const maxNegative =
-      negativeValues.length > 0 ? Math.abs(Math.min(...negativeValues.map((d) => d.value))) : 0;
+    // Find the most negative value (smallest value)
+    const mostNegative = dimensions.reduce((min, d) => (d.value < min ? d.value : min), 0);
+    // maxNegative should be the absolute value of the most negative number
+    const maxNegative = Math.abs(mostNegative);
 
-    const maxPositive =
-      positiveValues.length > 0
-        ? Math.max(...positiveValues.map((d) => d.value), 100) // Default max of 100
-        : 100;
+    // Find the most positive value
+    const maxPositive = dimensions.reduce((max, d) => (d.value > max ? d.value : max), 0);
 
     return {
       dimensions,
@@ -39,5 +36,14 @@ export function useDimensionTokens(): DimensionData {
       maxNegative,
       maxPositive,
     };
-  }, [data]);
+  }, [tokens]);
+
+  return {
+    dimensions: processedData.dimensions,
+    specials: processedData.specials,
+    maxNegative: processedData.maxNegative,
+    maxPositive: processedData.maxPositive,
+    loading,
+    error,
+  };
 }

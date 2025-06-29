@@ -13,19 +13,10 @@ const TOKEN_DIRS = [
   join(__dirname, 'src/tokens/component'),
 ];
 
-let buildInProgress = false;
-let pendingBuild = false;
-
 /**
  * Run the build process
  */
-async function runBuild() {
-  if (buildInProgress) {
-    pendingBuild = true;
-    return;
-  }
-
-  buildInProgress = true;
+async function runBuildCore() {
   console.log('\n🔨 Building tokens...');
 
   try {
@@ -35,15 +26,29 @@ async function runBuild() {
     console.log(`✅ Build completed in ${elapsed}ms`);
   } catch (error) {
     console.error('❌ Build failed:', error.message);
-  } finally {
-    buildInProgress = false;
-
-    if (pendingBuild) {
-      pendingBuild = false;
-      runBuild();
+    // Optionally implement exponential backoff for retries
+    if (error.code === 'ENOENT') {
+      console.error('⚠️  Make sure build.js exists');
     }
   }
 }
+
+/**
+ * Simple debounce to handle rapid file changes
+ * @param {Function} fn - Function to debounce
+ * @param {number} delay - Delay in milliseconds
+ */
+function debounce(fn, delay) {
+  let timeoutId;
+
+  return function (...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+// Debounced build function to handle rapid file changes
+const runBuild = debounce(runBuildCore, 100);
 
 /**
  * Watch token directories for changes

@@ -23,9 +23,8 @@ const preview: Preview = {
     backgrounds: {
       default: 'plain',
       values: [
-        { name: 'plain', value: 'white' },
-        { name: 'warm', value: 'hotpink' },
-        { name: 'cool', value: 'deepskyblue' },
+        { name: 'light', value: 'white' },
+        { name: 'dark', value: 'black' },
       ],
     },
     actions: { argTypesRegex: '^on[A-Z].*' },
@@ -46,7 +45,6 @@ const preview: Preview = {
       table: {
         category: 'Theme',
         type: { summary: 'boolean' },
-        defaultValue: { summary: false },
       },
     },
   },

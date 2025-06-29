@@ -34,5 +34,5 @@ export const useTokenDisplay = (options?: TokenDisplayOptions): TokenDisplayResu
     return null;
   };
 
-  return { data, loading, error, renderState };
+  return { data, loading: loading || false, error, renderState };
 };

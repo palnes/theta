@@ -1,3 +1,10 @@
+export type UsageFormat = string;
+
+export interface TokenUsage {
+  label: string;
+  value: string;
+}
+
 export interface TokenInfo {
   name: string;
   path: string;
@@ -5,9 +12,7 @@ export interface TokenInfo {
   description: string;
   originalValue: any;
   value: any;
-  cssVariable: string;
-  jsPath: string;
-  jsFlat: string;
+  usage: TokenUsage[];
   hasReferences: boolean;
   references: Array<{
     path: string;
@@ -33,10 +38,28 @@ export interface TokenData {
   };
 }
 
-export interface TokenReferenceTableProps {
-  tier?: 'ref' | 'sys' | 'cmp';
-  category?: string;
-  filter?: (token: TokenInfo) => boolean;
+/**
+ * Generic token data structure that can work with any tier system
+ */
+export interface GenericTokenData {
+  /** Token tiers mapped by tier ID */
+  tiers: Record<string, Record<string, TokenInfo[]>>;
+  /** Metadata about the token collection */
+  metadata: {
+    generatedAt: string;
+    totalTokens: number;
+    themes?: string[];
+    themeableTokens?: number;
+  };
 }
 
-export type UsageFormat = 'css' | 'json' | 'js';
+/**
+ * Table props that work with any tier system
+ */
+export interface TokenTableProps {
+  tier?: string;
+  category?: string;
+  filter?: (token: TokenInfo) => boolean;
+  /** Optional token data in TokenData format - if not provided, will use context */
+  tokenData?: any;
+}

@@ -1,5 +1,29 @@
-import { TokenInfo } from '../types/tokenReferenceTable';
-import { RegistryToken } from '../hooks/useRegistryData';
+import { TokenInfo, TokenUsage } from '../types/tokenReferenceTable';
+
+export interface RegistryToken {
+  id: string;
+  value: any;
+  type: string;
+  outputs?: {
+    css?: {
+      name: string;
+      value: string;
+      usage: string;
+    };
+    js?: {
+      name: string;
+      value: string;
+      usage: string;
+    };
+    [format: string]: any;
+  };
+  references?: string[];
+  referencedBy?: string[];
+  themes?: Record<string, { value: any; outputs: any }>;
+  originalValue?: any;
+  source?: any;
+  metadata?: any;
+}
 
 /**
  * Convert a registry token to the TokenInfo format expected by components
@@ -109,69 +133,93 @@ export function registryTokenToTokenInfo(token: RegistryToken): TokenInfo | Toke
 
   // For typography tokens, expand into individual property tokens
   if (token.type === 'typography' && typeof formattedValue === 'object') {
-    const typographyTokens: TokenInfo[] = [];
-    const baseId = token.id;
-    const baseCssVar = token.id.replace(/\./g, '-');
+    // Only expand system and component typography tokens, not reference tokens
+    if (!token.id.startsWith('ref.')) {
+      const typographyTokens: TokenInfo[] = [];
+      const baseId = token.id;
+      const baseCssVar = token.id.replace(/\./g, '-');
 
-    // Create individual tokens for each typography property
-    const properties = ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing'];
+      // Create individual tokens for each typography property
+      const properties = ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing'];
 
-    properties.forEach((prop) => {
-      if (formattedValue[prop] !== undefined) {
-        const propKebab = prop.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+      properties.forEach((prop) => {
+        if (formattedValue[prop] !== undefined) {
+          const propKebab = prop.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 
-        // Get the actual value, resolving any objects
-        let propValue = formattedValue[prop];
+          // Get the actual value, resolving any objects
+          let propValue = formattedValue[prop];
 
-        // If it's an object with a value property, extract it
-        if (typeof propValue === 'object' && propValue !== null && 'value' in propValue) {
-          propValue = propValue.value;
-        }
+          // If it's an object with a value property, extract it
+          if (typeof propValue === 'object' && propValue !== null && 'value' in propValue) {
+            propValue = propValue.value;
+          }
 
-        // For fontFamily, ensure it's properly formatted
-        if (prop === 'fontFamily' && Array.isArray(propValue)) {
-          propValue = propValue.join(', ');
-        }
+          // For fontFamily, ensure it's properly formatted
+          if (prop === 'fontFamily' && Array.isArray(propValue)) {
+            propValue = propValue.join(', ');
+          }
 
-        // For dimension properties (fontSize, lineHeight), ensure they have units
-        if ((prop === 'fontSize' || prop === 'lineHeight') && typeof propValue === 'number') {
-          propValue = `${propValue}px`;
-        }
+          // For dimension properties (fontSize, lineHeight), ensure they have units
+          if ((prop === 'fontSize' || prop === 'lineHeight') && typeof propValue === 'number') {
+            propValue = `${propValue}px`;
+          }
 
-        // Determine the token type based on the property
-        let tokenType = 'string';
-        if (prop === 'fontSize' || prop === 'lineHeight') {
-          tokenType = 'dimension';
-        } else if (prop === 'fontWeight') {
-          tokenType = 'fontWeight';
-        } else if (prop === 'fontFamily') {
-          tokenType = 'fontFamily';
-        }
+          // Determine the token type based on the property
+          let tokenType = 'string';
+          if (prop === 'fontSize' || prop === 'lineHeight') {
+            tokenType = 'dimension';
+          } else if (prop === 'fontWeight') {
+            tokenType = 'fontWeight';
+          } else if (prop === 'fontFamily') {
+            tokenType = 'fontFamily';
+          }
 
-        typographyTokens.push({
-          name: `${name}-${propKebab}`,
-          path: `${baseId}.${prop}`,
-          type: tokenType,
-          description: '',
-          originalValue: formattedValue[prop],
-          value: propValue,
-          cssVariable: `--${baseCssVar}-${propKebab}`,
-          jsPath: `tokens.${baseId}.${prop}`,
-          jsFlat: `${baseId}.${prop}`
+          const cssVar = `--${baseCssVar}-${propKebab}`;
+          const jsonPath = `${baseId}.${prop}`;
+          const jsFlat = `${baseId}.${prop}`
             .split('.')
             .map((part, index) =>
               index === 0 ? part : part.charAt(0).toUpperCase() + part.slice(1)
             )
-            .join(''),
-          hasReferences: false,
-          references: [],
-          expandedValue: propValue,
-        });
-      }
-    });
+            .join('');
 
-    return typographyTokens;
+          const usage: TokenUsage[] = [
+            { label: 'CSS', value: cssVar },
+            { label: 'JSON', value: jsonPath },
+            { label: 'JS', value: jsFlat },
+          ];
+
+          typographyTokens.push({
+            name: `${name}-${propKebab}`,
+            path: `${baseId}.${prop}`,
+            type: tokenType,
+            description: '',
+            originalValue: formattedValue[prop],
+            value: propValue,
+            usage,
+            hasReferences: false,
+            references: [],
+            expandedValue: propValue,
+          });
+        }
+      });
+
+      return typographyTokens;
+    }
   }
+
+  const cssVar = cssOutput?.name || `--${token.id.replace(/\./g, '-')}`;
+  const jsonPath = token.id;
+  const jsFlat = token.id
+    .split('.')
+    .map((part, index) => (index === 0 ? part : part.charAt(0).toUpperCase() + part.slice(1)))
+    .join('');
+
+  const usage: TokenUsage[] = [
+    { label: 'CSS', value: cssVar },
+    { label: 'JSON', value: jsonPath },
+    { label: 'JS', value: jsFlat },
+  ];
 
   return {
     name,
@@ -180,12 +228,7 @@ export function registryTokenToTokenInfo(token: RegistryToken): TokenInfo | Toke
     description: token.metadata?.description || '',
     originalValue: token.originalValue || token.value,
     value: formattedValue,
-    cssVariable: cssOutput?.name || `--${token.id.replace(/\./g, '-')}`,
-    jsPath: `tokens.${token.id}`,
-    jsFlat: token.id
-      .split('.')
-      .map((part, index) => (index === 0 ? part : part.charAt(0).toUpperCase() + part.slice(1)))
-      .join(''),
+    usage,
     hasReferences: references.length > 0,
     references,
     expandedValue: formattedValue,
@@ -226,7 +269,7 @@ export function groupTokensByCategory(tokens: RegistryToken[]): Record<string, T
     const parts = token.id.split('.');
     // Category is the second part (e.g., ref.color.blue -> color)
     const category = parts.length > 1 ? parts[1] : 'other';
-    
+
     if (!category) return; // Skip if no category
 
     if (!grouped[category]) {
@@ -236,10 +279,16 @@ export function groupTokensByCategory(tokens: RegistryToken[]): Record<string, T
     const tokenInfo = registryTokenToTokenInfo(token);
     const categoryTokens = grouped[category];
     if (!categoryTokens) return; // This should never happen, but satisfies TypeScript
-    
+
     // Handle both single token and array of tokens (for expanded typography)
     if (Array.isArray(tokenInfo)) {
-      categoryTokens.push(...tokenInfo);
+      // For expanded tokens, ensure they maintain the correct tier prefix
+      const validTokens = tokenInfo.filter((t) => {
+        // Extract tier from the original token id
+        const tier = token.id.split('.')[0];
+        return t.path?.startsWith(`${tier}.`);
+      });
+      categoryTokens.push(...validTokens);
     } else {
       categoryTokens.push(tokenInfo);
     }

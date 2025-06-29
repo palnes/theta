@@ -13,9 +13,11 @@ function getAbsolutePath(value: string): string {
 }
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  typescript: {
+    reactDocgen: 'react-docgen-typescript',
+  },
   addons: [
     getAbsolutePath('@storybook/addon-onboarding'),
-    getAbsolutePath('@storybook/addon-themes'),
     {
       name: getAbsolutePath('@storybook/addon-docs'),
       options: {

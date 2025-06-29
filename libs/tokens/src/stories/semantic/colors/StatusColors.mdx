@@ -1,15 +1,101 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../../../docblocks/components/TokenReferenceTable';
-import { StatusColors } from '../../../docblocks/components/StatusColors';
+import { TokenViewer, ColorRenderer } from '../../../docblocks';
+import { TokenTable } from '../../../docblocks/components';
+import { TokenSystemWrapper } from '../../../docblocks/components/TokenSystemWrapper';
 
 <Meta title="Token Reference/Semantic/Colors/Status" />
 
 # Status Colors
 
-Semantic colors for communicating system states, feedback, and alerts. These colors have universal meaning across the interface.
+<TokenSystemWrapper>
 
-<StatusColors />
+## Info
+
+<TokenViewer 
+  tier="sys" 
+  category="color"
+  renderer={new ColorRenderer()}
+  showTitle={false}
+  config={{
+    filters: {
+      include: (token) => token.path?.includes('.status.info.') || false
+    },
+    grouping: {
+      enabled: false
+    }
+  }}
+/>
+
+## Success
+
+<TokenViewer 
+  tier="sys" 
+  category="color"
+  renderer={new ColorRenderer()}
+  showTitle={false}
+  config={{
+    filters: {
+      include: (token) => token.path?.includes('.status.success.') || false
+    },
+    grouping: {
+      enabled: false
+    }
+  }}
+/>
+
+## Warning
+
+<TokenViewer 
+  tier="sys" 
+  category="color"
+  renderer={new ColorRenderer()}
+  showTitle={false}
+  config={{
+    filters: {
+      include: (token) => token.path?.includes('.status.warning.') || false
+    },
+    grouping: {
+      enabled: false
+    }
+  }}
+/>
+
+## Error
+
+<TokenViewer 
+  tier="sys" 
+  category="color"
+  renderer={new ColorRenderer()}
+  showTitle={false}
+  config={{
+    filters: {
+      include: (token) => token.path?.includes('.status.error.') || false
+    },
+    grouping: {
+      enabled: false
+    }
+  }}
+/>
+
+## Brand
+
+<TokenViewer 
+  tier="sys" 
+  category="color"
+  renderer={new ColorRenderer()}
+  showTitle={false}
+  config={{
+    filters: {
+      include: (token) => token.path?.includes('.status.brand.') || false
+    },
+    grouping: {
+      enabled: false
+    }
+  }}
+/>
 
 ## Reference Table
 
-<TokenReferenceTable tier="sys" category="color" filter={(token) => token.path.includes('.status.')} />
+<TokenTable tier="sys" category="color" filter={(token) => token.path?.includes('.status.') || false} />
+
+</TokenSystemWrapper>

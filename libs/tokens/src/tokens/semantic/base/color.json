@@ -144,6 +144,10 @@
           "default": {
             "$type": "color",
             "$value": "{ref.color.pink.0}"
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "{ref.color.white}"
           }
         },
         "secondary": {

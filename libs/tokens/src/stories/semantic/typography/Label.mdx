@@ -1,0 +1,20 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { TypographyPreview } from '../../../docblocks/components/typography/TypographyPreview';
+import { TokenTable } from '../../../docblocks/components';
+import { TokenSystemWrapper } from '../../../docblocks/components/TokenSystemWrapper';
+
+<Meta title="Token Reference/Semantic/Typography/Label" />
+
+# Label Typography
+
+Typography tokens for form labels and UI annotations.
+
+<TokenSystemWrapper>
+
+<TypographyPreview tier="sys" filter={(token) => token.path?.includes('.label.') || false} />
+
+## Reference Table
+
+<TokenTable tier="sys" category="typography" filter={(token) => token.path?.includes('.label.') || false} />
+
+</TokenSystemWrapper>

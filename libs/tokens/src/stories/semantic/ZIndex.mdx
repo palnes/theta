@@ -1,6 +1,7 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../../docblocks/components/TokenReferenceTable';
-import { ZIndexDisplay } from '../../docblocks/components/ZIndexDisplay';
+import { TokenTable } from '../../docblocks/components';
+import { TokenSystemWrapper } from '../../docblocks/components/TokenSystemWrapper';
+import { ZIndex } from '../../docblocks/components/z-index/ZIndex';
 
 <Meta title="Token Reference/Semantic/Z-Index" />
 
@@ -11,7 +12,9 @@ Consistent z-index values for proper layering of UI elements.
 
 ## Visual Representation
 
-<ZIndexDisplay />
+<TokenSystemWrapper>
+<ZIndex />
+</TokenSystemWrapper>
 
 
 
@@ -24,4 +27,6 @@ Consistent z-index values for proper layering of UI elements.
 
 ## Reference Table
 
-<TokenReferenceTable tier="sys" category="zIndex" />
+<TokenSystemWrapper>
+<TokenTable tier="sys" category="zIndex" />
+</TokenSystemWrapper>

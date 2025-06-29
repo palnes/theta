@@ -2,13 +2,13 @@
   "cmp": {
     "radioButton": {
       "size": {
-        "$value": "{ref.dimension.20}"
+        "$value": "{sys.dimension.component.spacing.sm}"
       },
       "innerSize": {
-        "$value": "{ref.dimension.10}"
+        "$value": "{sys.dimension.component.spacing.xs}"
       },
       "borderWidth": {
-        "$value": "{ref.dimension.2}"
+        "$value": "{sys.border.width.thin}"
       },
       "borderRadius": {
         "$value": "{sys.radius.full}"
@@ -19,7 +19,7 @@
       "color": {
         "background": {
           "default": {
-            "$value": "{ref.color.white}"
+            "$value": "{sys.color.surface.primary.inverse}"
           },
           "hover": {
             "$value": "{sys.color.interaction.brand.subtle.hover}"
@@ -47,7 +47,7 @@
         },
         "dot": {
           "default": {
-            "$value": "{ref.color.white}"
+            "$value": "{sys.color.text.inverse}"
           }
         }
       }

@@ -91,6 +91,24 @@
   background: var(--sys-color-surface-input-default);
   background-color: var(--sys-color-surface-input-default);
   color: var(--sys-color-text-secondary);
+  transition: background-color 100ms ease;
+}
+
+/* Focus styles for selectable values */
+code.selectableValue:focus {
+  outline: 2px solid var(--sys-color-action-primary-default);
+  outline-offset: 2px;
+}
+
+/* Remove default browser focus outline */
+code.selectableValue:focus-visible {
+  outline: 2px solid var(--sys-color-action-primary-default);
+  outline-offset: 2px;
+}
+
+/* Hover state for selectable values */
+code.selectableValue:hover {
+  background-color: var(--sys-color-surface-input-hover);
 }
 
 /* Token Format Display */

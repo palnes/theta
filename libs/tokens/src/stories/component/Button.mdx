@@ -1,5 +1,6 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../../docblocks/components/TokenReferenceTable';
+import { TokenTable } from '../../docblocks/components';
+import { TokenSystemWrapper } from '../../docblocks/components/TokenSystemWrapper';
 
 <Meta title="Token Reference/Component/Button" />
 
@@ -11,6 +12,10 @@ Complete specification of all button component tokens organized by category.
 
 Button tokens follow the pattern: `cmp.button.[category].[variant].[property].[state]`
 
-## All Button Tokens
+## Reference Table
 
-<TokenReferenceTable tier="cmp" category="button" />
+<TokenSystemWrapper>
+
+<TokenTable tier="cmp" category="button" />
+
+</TokenSystemWrapper>

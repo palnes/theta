@@ -2,10 +2,10 @@
   "cmp": {
     "checkbox": {
       "size": {
-        "$value": "{ref.dimension.20}"
+        "$value": "{sys.dimension.component.spacing.sm}"
       },
       "borderWidth": {
-        "$value": "{ref.dimension.2}"
+        "$value": "{sys.border.width.thin}"
       },
       "borderRadius": {
         "$value": "{sys.radius.sm}"
@@ -16,7 +16,7 @@
       "color": {
         "background": {
           "default": {
-            "$value": "{ref.color.white}"
+            "$value": "{sys.color.surface.primary.inverse}"
           },
           "hover": {
             "$value": "{sys.color.interaction.brand.subtle.hover}"
@@ -50,7 +50,7 @@
         },
         "checkmark": {
           "default": {
-            "$value": "{ref.color.white}"
+            "$value": "{sys.color.text.inverse}"
           }
         }
       }

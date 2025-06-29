@@ -2,13 +2,6 @@
  * Shared constants for display components
  */
 
-// Common dimensions
-export const DIMENSIONS = {
-  small: 80,
-  medium: 120,
-  large: 160,
-} as const;
-
 // Dimension scale constants
 export const DIMENSION_SCALE = {
   defaultMax: 128,
@@ -32,48 +25,10 @@ export const Z_INDEX_SIZES = [160, 150, 140, 130, 120, 110] as const;
 export const SPACING_KEYS = ['none', '2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'] as const;
 export const VISUAL_SPACING_KEYS = ['none', 'xs', 'sm', 'md', 'lg', 'xl'] as const;
 
-// Dynamic spacing key detection
-export function getSpacingKeysFromTokens(tokens: Array<{ path: string }>): string[] {
-  const keys = new Set<string>();
-  tokens.forEach((token) => {
-    const parts = token.path.split('.');
-    if (parts[0] === 'sys' && parts[1] === 'spacing') {
-      const key = parts[parts.length - 1];
-      if (key) keys.add(key);
-    }
-  });
-  return Array.from(keys).sort();
-}
-
-// Filter for visual spacing tokens (excludes very small and very large values)
-export function filterVisualSpacingTokens(
-  tokens: Array<{ path: string }>
-): Array<{ path: string }> {
-  return tokens.filter((token) => {
-    const key = token.path.split('.').pop() || '';
-    return VISUAL_SPACING_KEYS.includes(key as any);
-  });
-}
-
 // Spacing display constraints
 export const SPACING_MAX_WIDTH = {
   '3xl': 200,
   default: 'none',
-} as const;
-
-// Grid breakpoints
-export const GRID_MIN_WIDTH = {
-  small: 100,
-  medium: 180,
-  large: 200,
-  xlarge: 250,
-  xxlarge: 300,
-} as const;
-
-// Animation durations
-export const ANIMATION = {
-  duration: '0.2s',
-  easing: 'ease',
 } as const;
 
 // Color display constants

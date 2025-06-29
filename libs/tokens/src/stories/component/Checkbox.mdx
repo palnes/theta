@@ -1,5 +1,6 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../../docblocks/components/TokenReferenceTable';
+import { TokenTable } from '../../docblocks/components';
+import { TokenSystemWrapper } from '../../docblocks/components/TokenSystemWrapper';
 
 <Meta title="Token Reference/Component/Checkbox" />
 
@@ -23,4 +24,6 @@ Checkbox supports multiple states:
 
 ## All Checkbox Tokens
 
-<TokenReferenceTable tier="cmp" category="checkbox" />
+<TokenSystemWrapper>
+<TokenTable tier="cmp" category="checkbox" />
+</TokenSystemWrapper>

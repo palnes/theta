@@ -1,40 +1,23 @@
-import { useEffect, useState } from 'react';
-import { TokenData } from '../types/tokenReferenceTable';
-import { useRegistryData } from './useRegistryData';
-import { flattenRegistryTokens, groupTokensByCategory } from '../tools/registryAdapter';
+import { useContext } from 'react';
+import { TokenSystemContext } from '../contexts/TokenSystemContext';
 
+/**
+ * Hook to get documentation data in the legacy TokenData format
+ * Uses the configurable system internally
+ */
 export const useDocumentationData = () => {
-  const { data: registryData, loading, error } = useRegistryData();
-  const [data, setData] = useState<TokenData | null>(null);
+  const context = useContext(TokenSystemContext);
 
-  useEffect(() => {
-    if (!registryData) return;
-
-    // Transform registry data to TokenData format
-    const transformedData: TokenData = {
-      ref: {},
-      sys: {},
-      cmp: {},
-      metadata: {
-        generatedAt: registryData.metadata?.timestamp || new Date().toISOString(),
-        totalTokens: registryData.metadata?.stats?.total || 0,
-        themes: ['light', 'dark'],
-        themeableTokens: 0,
-      },
+  if (!context) {
+    return {
+      data: null,
+      loading: false,
+      error: 'TokenSystemProvider not found',
     };
+  }
 
-    // Process each tier
-    ['ref', 'sys', 'cmp'].forEach((tierName) => {
-      const tierTokens = registryData.tokens[tierName as keyof typeof registryData.tokens];
-      if (tierTokens) {
-        const flatTokens = flattenRegistryTokens(tierTokens);
-        const grouped = groupTokensByCategory(flatTokens);
-        (transformedData as any)[tierName] = grouped;
-      }
-    });
+  const { data, loading } = context;
 
-    setData(transformedData);
-  }, [registryData]);
-
-  return { data, loading, error };
+  // Context already provides data in TokenData format
+  return { data, loading, error: null };
 };

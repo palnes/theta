@@ -1,36 +1,38 @@
 /**
- * Base token structure with common properties
+ * Common token usage information
  */
-export interface BaseToken {
-  cssVariable: string;
-  jsPath: string;
-  jsFlat?: string;
+export interface TokenUsage {
+  label: string;
+  value: string;
 }
 
 /**
  * Token with numeric value (dimensions, spacing, etc.)
  */
-export interface NumericToken extends BaseToken {
+export interface NumericToken {
   key: string;
   value: number;
   tokenValue: string;
+  usage?: TokenUsage[];
 }
 
 /**
  * Token with string value
  */
-export interface StringToken extends BaseToken {
+export interface StringToken {
   key: string;
   value: string;
   tokenValue: string;
+  usage?: TokenUsage[];
 }
 
 /**
  * Color token with shade information
  */
-export interface ColorShadeToken extends BaseToken {
+export interface ColorShadeToken {
   shade: string;
   value: string;
+  usage?: TokenUsage[];
 }
 
 /**
@@ -44,43 +46,47 @@ export interface ColorScale {
 /**
  * Special color token (white, black, transparent)
  */
-export interface SpecialColorToken extends BaseToken {
+export interface SpecialColorToken {
   name: string;
   token: {
     $value: string;
   };
+  usage?: TokenUsage[];
 }
 
 /**
  * Font size token
  */
-export interface FontSizeToken extends BaseToken {
+export interface FontSizeToken {
   size: number;
   value: string;
   key: string;
+  usage?: TokenUsage[];
 }
 
 /**
  * Font weight token
  */
-export interface FontWeightToken extends BaseToken {
+export interface FontWeightToken {
   name: string;
   value: number;
   token: {
     $value: string;
   };
+  usage?: TokenUsage[];
 }
 
 /**
  * Line height token
  */
-export interface LineHeightToken extends BaseToken {
+export interface LineHeightToken {
   name: string;
   key: string;
   description: string;
   token: {
     $value: string;
   };
+  usage?: TokenUsage[];
 }
 
 /**
@@ -89,18 +95,17 @@ export interface LineHeightToken extends BaseToken {
 export interface FontFamilyToken {
   key: string;
   value: string | string[];
-  cssVariable: string;
-  jsPath: string;
-  jsFlat?: string;
+  usage?: TokenUsage[];
 }
 
 /**
  * Border token
  */
-export interface BorderToken extends BaseToken {
+export interface BorderToken {
   key: string;
   value: string;
   description?: string;
+  usage?: TokenUsage[];
 }
 
 /**
@@ -124,41 +129,13 @@ export type ShadowValue =
 /**
  * Shadow token
  */
-export interface ShadowToken extends BaseToken {
+export interface ShadowToken {
   key: string;
   token: {
     $value: ShadowValue;
   };
   value: ShadowValue;
-}
-
-/**
- * Typography value type
- */
-export interface TypographyValue {
-  fontFamily?: string | string[];
-  fontSize?: string | number;
-  fontWeight?: string | number;
-  lineHeight?: string | number;
-  letterSpacing?: string | number;
-  textTransform?: string;
-  [key: string]: unknown;
-}
-
-/**
- * Typography variant token
- */
-export interface TypographyVariantToken extends BaseToken {
-  variant: string;
-  value: TypographyValue;
-}
-
-/**
- * Typography category with variants
- */
-export interface TypographyCategory {
-  category: string;
-  variants: TypographyVariantToken[];
+  usage?: TokenUsage[];
 }
 
 /**
@@ -167,9 +144,7 @@ export interface TypographyCategory {
 export interface ColorToken {
   $type: 'color';
   $value: string;
-  cssVariable: string;
-  jsPath: string;
-  jsFlat?: string;
+  usage?: TokenUsage[];
 }
 
 /**
@@ -215,10 +190,11 @@ export interface ButtonSizeTokens {
 /**
  * Generic token type for list displays
  */
-export interface GenericToken extends BaseToken {
+export interface GenericToken {
   key: string;
   value: any;
   tokenValue?: string;
+  usage?: TokenUsage[];
   [key: string]: any;
 }
 
@@ -235,10 +211,4 @@ export interface DocumentationData {
 /**
  * Token value types
  */
-export type TokenValue =
-  | string
-  | number
-  | boolean
-  | ShadowValue
-  | TypographyValue
-  | { [key: string]: any };
+export type TokenValue = string | number | boolean | ShadowValue | { [key: string]: any };

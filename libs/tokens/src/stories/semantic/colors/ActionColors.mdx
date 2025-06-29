@@ -1,6 +1,7 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../../../docblocks/components/TokenReferenceTable';
-import { ActionColors } from '../../../docblocks/components/ActionColors';
+import { TokenViewer, ColorRenderer } from '../../../docblocks';
+import { TokenTable } from '../../../docblocks/components';
+import { TokenSystemWrapper } from '../../../docblocks/components/TokenSystemWrapper';
 
 <Meta title="Token Reference/Semantic/Colors/Action" />
 
@@ -8,8 +9,25 @@ import { ActionColors } from '../../../docblocks/components/ActionColors';
 
 Colors for interactive elements like buttons, links, and form controls. These colors communicate interactivity and guide user actions.
 
-<ActionColors />
+<TokenSystemWrapper>
+
+<TokenViewer 
+  tier="sys" 
+  category="color"
+  renderer={new ColorRenderer()}
+  showTitle={false}
+  config={{
+    filters: {
+      include: (token) => token.path?.includes('.action.') || false
+    },
+    grouping: {
+      enabled: false
+    }
+  }}
+/>
 
 ## Reference Table
 
-<TokenReferenceTable tier="sys" category="color" filter={(token) => token.path.includes('.action.')} />
+<TokenTable tier="sys" category="color" filter={(token) => token.path?.includes('.action.') || false} />
+
+</TokenSystemWrapper>

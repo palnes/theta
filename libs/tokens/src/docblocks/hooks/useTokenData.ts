@@ -1,78 +1,57 @@
-import { useEffect, useState } from 'react';
-import { useRegistryData } from './useRegistryData';
-import { flattenRegistryTokens, groupTokensByCategory } from '../tools/registryAdapter';
-import { TokenData, TokenInfo } from '../types/tokenReferenceTable';
+import { useMemo } from 'react';
+import { useTokenSystemConfig } from '../contexts/TokenSystemContext';
+import { useTokens } from './useTokens';
 
 interface UseTokenDataProps {
-  tier?: 'ref' | 'sys' | 'cmp';
+  tier?: string;
   category?: string;
-  filter?: (token: TokenInfo) => boolean;
+  filter?: (token: any) => boolean;
 }
 
+/**
+ * Hook that provides token data in legacy format for backward compatibility
+ */
 export const useTokenData = ({ tier, category, filter }: UseTokenDataProps) => {
-  const { data: registryData, loading, error } = useRegistryData();
-  const [data, setData] = useState<TokenData | null>(null);
+  const config = useTokenSystemConfig();
+  const { tokens, loading, error } = useTokens({ tier, category, filter });
 
-  useEffect(() => {
-    if (!registryData) return;
+  // Transform tokens to legacy TokenData format for backward compatibility
+  const data = useMemo(() => {
+    if (!tokens || tokens.length === 0) return null;
 
-    // Transform registry data to TokenData format
-    const transformedData: TokenData = {
-      ref: {},
-      sys: {},
-      cmp: {},
+    // Group tokens by tier and category
+    const tokenData: any = {
       metadata: {
-        generatedAt: registryData.metadata?.timestamp || new Date().toISOString(),
-        totalTokens: registryData.metadata?.stats?.total || 0,
-        themes: ['light', 'dark'],
-        themeableTokens: 0,
+        generatedAt: new Date().toISOString(),
+        totalTokens: tokens.length,
+        themes: config.themes || ['light', 'dark'],
+        themeableTokens: tokens.filter((t) => t.isThemeable).length,
       },
     };
 
-    // Process each tier
-    ['ref', 'sys', 'cmp'].forEach((tierName) => {
-      const tierTokens = registryData.tokens[tierName as keyof typeof registryData.tokens];
-      if (tierTokens) {
-        const flatTokens = flattenRegistryTokens(tierTokens);
-        const grouped = groupTokensByCategory(flatTokens);
-        (transformedData as any)[tierName] = grouped;
+    // Initialize all tiers
+    config.tiers.forEach((tierConfig) => {
+      tokenData[tierConfig.id] = {};
+    });
 
-        // Debug log for ref tier
-        if (tierName === 'ref' && grouped.dimension) {
-          console.log(`Found ${grouped.dimension.length} dimension tokens in ref tier`);
+    // Group tokens
+    tokens.forEach((token) => {
+      const tokenTier = config.paths?.getTier ? config.paths.getTier(token.path) : null;
+      const tokenCategory = config.paths?.getCategory ? config.paths.getCategory(token.path) : null;
+
+      if (tokenTier && tokenCategory) {
+        if (!tokenData[tokenTier]) {
+          tokenData[tokenTier] = {};
         }
+        if (!tokenData[tokenTier][tokenCategory]) {
+          tokenData[tokenTier][tokenCategory] = [];
+        }
+        tokenData[tokenTier][tokenCategory].push(token);
       }
     });
 
-    setData(transformedData);
-  }, [registryData]);
+    return tokenData;
+  }, [tokens, config]);
 
-  // Get tokens based on tier and category
-  let tokens: TokenInfo[] = [];
-
-  if (data) {
-    if (tier && category && data[tier] && data[tier][category]) {
-      tokens = data[tier][category];
-    } else if (tier && !category) {
-      // Get all tokens from tier
-      tokens = Object.values(data[tier] || {}).flat();
-    } else {
-      // Get all tokens
-      tokens = [
-        ...Object.values(data.ref || {}).flat(),
-        ...Object.values(data.sys || {}).flat(),
-        ...Object.values(data.cmp || {}).flat(),
-      ];
-    }
-
-    // Apply custom filter if provided
-    if (filter) {
-      tokens = tokens.filter(filter);
-    }
-
-    // Sort tokens with natural ordering (handles numbers correctly)
-    tokens.sort((a, b) => a.path.localeCompare(b.path, undefined, { numeric: true }));
-  }
-
-  return { tokens, loading, error };
+  return { tokens, data, loading, error };
 };

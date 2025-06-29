@@ -3,6 +3,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import { buildTokens } from './tools/build-tokens.js';
+import { removeFilesWithPattern } from './tools/file-utils.js';
 import { mergeTokenFiles } from './tools/merge-tokens.js';
 
 const execAsync = promisify(exec);
@@ -11,19 +12,17 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 console.log('\n🎨 Building Design Tokens...\n');
 
-// Clean previous build artifacts
-console.log('🧹 Cleaning previous build...');
-await execAsync('rm -rf dist .tmp', { cwd: __dirname });
-console.log('✓ Clean complete');
-
-// 1. Build both themes
+// 1. Build both themes in parallel
 const themes = ['light', 'dark'];
-const themeTokens = {};
+console.log('📦 Processing themes...');
+const themeResults = await Promise.all(
+  themes.map(async (theme) => {
+    const tokens = await mergeTokenFiles(__dirname, theme);
+    return { theme, tokens };
+  })
+);
 
-for (const theme of themes) {
-  console.log(`📦 Processing ${theme} theme...`);
-  themeTokens[theme] = await mergeTokenFiles(__dirname, theme);
-}
+const themeTokens = Object.fromEntries(themeResults.map(({ theme, tokens }) => [theme, tokens]));
 
 // 2. Build tokens with all themes
 await buildTokens(themeTokens, __dirname);
@@ -43,7 +42,7 @@ try {
 
   // Remove TypeScript source files from dist (keep only .js and .d.ts)
   console.log('🧹 Removing TypeScript source files...');
-  await execAsync('find dist -name "*.ts" -not -name "*.d.ts" -type f -delete', { cwd: __dirname });
+  await removeFilesWithPattern(join(__dirname, 'dist'), /(?<!\.d)\.ts$/);
   console.log('✓ TypeScript source files removed');
 } catch (error) {
   console.error('TypeScript compilation failed:', error);
@@ -56,5 +55,5 @@ console.log('  → dist/tokens.d.ts');
 console.log('  → dist/tokens.json');
 console.log('  → dist/css.d.ts');
 console.log('  → dist/css/* (modular CSS)');
-console.log('  → .storybook/generated/tokens-reference.json');
+console.log('  → .storybook/generated/tokens-generic.json');
 console.log('\n🎉 All build artifacts generated successfully!\n');

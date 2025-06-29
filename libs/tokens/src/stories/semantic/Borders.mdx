@@ -1,13 +1,16 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { TokenReferenceTable } from '../../docblocks/components/TokenReferenceTable';
-import { BorderWidths } from '../../docblocks/components/BorderWidths';
-import { BorderStyles } from '../../docblocks/components/BorderStyles';
+import { TokenTable } from '../../docblocks/components';
+import { TokenSystemWrapper } from '../../docblocks/components/TokenSystemWrapper';
+import { BorderWidths } from '../../docblocks/components/border/BorderWidths';
+import { BorderStyles } from '../../docblocks/components/border/BorderStyles';
 
 <Meta title="Token Reference/Semantic/Borders" />
 
 # Border Tokens
 
 Border width and style tokens. All border tokens are semantic - there are no primitive border tokens.
+
+<TokenSystemWrapper>
 
 ## Border Widths
 
@@ -25,4 +28,6 @@ Style options for different border treatments.
 
 ## Reference Table
 
-<TokenReferenceTable tier="sys" category="border" />
+<TokenTable tier="sys" category="border" />
+
+</TokenSystemWrapper>
