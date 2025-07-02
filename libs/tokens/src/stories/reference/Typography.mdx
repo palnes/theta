@@ -15,6 +15,10 @@ Base typography values for building the type system.
 
 ## Reference Table
 
-<TokenTable tier="ref" category="typography" />
+<TokenTable tier="ref" filter={(token) => {
+  const path = token.path.split('.');
+  const category = path[1]; // ref.fontSize.16 -> fontSize
+  return ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'lineHeightPx', 'letterSpacing', 'typography'].includes(category);
+}} />
 
 </TokenSystemWrapper>

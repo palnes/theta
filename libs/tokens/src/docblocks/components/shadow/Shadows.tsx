@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import styles from '../../styles/ShadowDisplay.module.css';
 import sharedStyles from '../../styles/shared.module.css';
 import { extractBoxShadowValue } from '../../tools/tokenUtils';

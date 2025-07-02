@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import styles from '../../styles/RadiusDisplay.module.css';
 import sharedStyles from '../../styles/shared.module.css';
 import { TokenList } from '../token-display/TokenList';

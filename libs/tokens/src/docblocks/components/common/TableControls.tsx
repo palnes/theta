@@ -1,6 +1,6 @@
-import React from 'react';
+import type React from 'react';
 import styles from '../../styles/TableControls.module.css';
-import { UsageFormat } from '../../types/tokenReferenceTable';
+import type { UsageFormat } from '../../types/tokenReferenceTable';
 
 interface TableControlsProps {
   usageFormat: UsageFormat;

@@ -1,37 +1,37 @@
 // Re-export everything from components
 export * from './components';
-
+// Export configuration
+export * from './config/defaultTokenSystemConfig';
+export { defaultTokenSystemConfig, mergeWithDefaults } from './config/defaultTokenSystemConfig';
+export * from './contexts/TokenSystemContext';
 // Export hooks
 export * from './hooks';
-
-// Export types
-export * from './types';
-
-// Export configuration
-export * from './config/defaultConfig';
-export type {
-  TokenSystemConfig,
-  TokenTierConfig,
-  TokenCategoryConfig,
-  TokenPathConfig,
-  TokenFormatConfig,
-} from './types/TokenSystemConfig';
-export { DEFAULT_TOKEN_CONFIG } from './types/TokenSystemConfig';
-export * from './contexts/TokenSystemContext';
-
 // Export renderer system
 export {
-  registerDefaultRenderers,
   ColorRenderer,
-  TypographyRenderer,
-  SpacingRenderer,
   GenericRenderer,
   globalRendererRegistry,
+  registerDefaultRenderers,
+  SpacingRenderer,
+  TypographyRenderer,
 } from './renderers';
-export type {
-  TokenRenderer,
-  TokenDisplayConfig,
-} from './types/config';
-
 // Export utilities
 export * from './tools';
+// Export types
+export * from './types';
+export type {
+  TokenDisplayConfig,
+  TokenRenderer,
+} from './types/config';
+// Export new flexible configuration types
+export type {
+  CategoryConfig,
+  DisplayConfig,
+  FileConfig,
+  FlexibleTokenSystemConfig,
+  PathConfig,
+  TierConfig,
+  TransformConfig,
+  TypeConfig,
+  ValidationConfig,
+} from './types/FlexibleTokenSystemConfig';

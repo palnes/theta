@@ -18,12 +18,16 @@ export function extractAllReferences(value) {
   if (typeof value === 'string') {
     const matches = value.match(/\{([^}]+)\}/g);
     if (matches) {
-      matches.forEach((match) => references.add(match.slice(1, -1)));
+      for (const match of matches) {
+        references.add(match.slice(1, -1));
+      }
     }
   } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-    Object.values(value).forEach((val) => {
-      extractAllReferences(val).forEach((ref) => references.add(ref));
-    });
+    for (const val of Object.values(value)) {
+      for (const ref of extractAllReferences(val)) {
+        references.add(ref);
+      }
+    }
   }
 
   return references;

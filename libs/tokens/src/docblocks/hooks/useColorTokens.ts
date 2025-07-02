@@ -1,4 +1,4 @@
-import { UseTokensOptions, useTokens } from './useTokens';
+import { type UseTokensOptions, useTokens } from './useTokens';
 
 /**
  * Convenience hook for fetching color tokens

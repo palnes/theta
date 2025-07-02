@@ -148,20 +148,20 @@ div.calculator {
   font: inherit;
 }
 
-.codeWrapper:hover .code {
-  background: var(--sys-color-surface-tertiary);
-}
-
-.codeWrapper:active .code {
-  background: var(--sys-color-surface-secondary);
-}
-
 .code {
   margin: 0;
   padding: var(--sys-spacing-sm);
   background: var(--sys-color-surface-primary-default);
   border: var(--sys-border-width-thin) solid var(--sys-color-border-subtle);
   border-radius: var(--sys-radius-sm);
+}
+
+.codeWrapper:hover .code {
+  background: var(--sys-color-surface-tertiary);
+}
+
+.codeWrapper:active .code {
+  background: var(--sys-color-surface-secondary);
   font-family: var(--sys-font-family-code);
   font-size: var(--sys-font-size-xs);
   color: var(--sys-color-text-secondary);

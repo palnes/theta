@@ -41,7 +41,7 @@ export abstract class BaseTokenRenderer implements TokenRenderer {
       filteredTokens = filteredTokens.filter(filters.include);
     }
     if (filters?.exclude) {
-      filteredTokens = filteredTokens.filter((token) => !filters.exclude!(token));
+      filteredTokens = filteredTokens.filter((token) => !filters.exclude?.(token));
     }
 
     // Apply sorting
@@ -53,19 +53,19 @@ export abstract class BaseTokenRenderer implements TokenRenderer {
     if (grouping?.enabled && grouping?.groupBy) {
       const groups = new Map<string, TokenInfo[]>();
 
-      filteredTokens.forEach((token) => {
+      for (const token of filteredTokens) {
         const group = grouping.groupBy(token);
         if (!groups.has(group)) {
           groups.set(group, []);
         }
-        groups.get(group)!.push(token);
-      });
+        groups.get(group)?.push(token);
+      }
 
       // Sort groups if order is provided
       const sortedGroups = grouping.groupOrder
         ? Array.from(groups.entries()).sort(([a], [b]) => {
-            const orderA = grouping.groupOrder!.indexOf(a);
-            const orderB = grouping.groupOrder!.indexOf(b);
+            const orderA = grouping.groupOrder?.indexOf(a) ?? -1;
+            const orderB = grouping.groupOrder?.indexOf(b) ?? -1;
             if (orderA === -1) return 1;
             if (orderB === -1) return -1;
             return orderA - orderB;

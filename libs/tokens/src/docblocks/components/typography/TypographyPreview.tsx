@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { useTokens } from '../../hooks/useTokens';
 import styles from '../../styles/Typography.module.css';
 import { TokenFormats } from '../token-display/TokenFormats';
@@ -8,6 +8,151 @@ interface TypographyPreviewProps {
   category?: string;
   filter?: (token: any) => boolean;
 }
+
+interface TypographyTokenRowProps {
+  token: any;
+  property: string;
+}
+
+// Base style for all previews
+const basePreviewStyle = {
+  margin: 0,
+  padding: 0,
+  lineHeight: 1.4,
+};
+
+// Get preview text based on property
+const getPreviewText = (property: string) => {
+  if (property === 'lineHeight') {
+    return (
+      <>
+        Line one
+        <br />
+        Line two
+        <br />
+        Line three
+      </>
+    );
+  }
+  return 'The quick brown fox jumps over the lazy dog';
+};
+
+// Format font family value
+const formatFontFamily = (value: any) => {
+  return Array.isArray(value) ? value.join(', ') : value;
+};
+
+// Get style for specific property
+const getPropertyStyle = (value: any, property: string) => {
+  switch (property) {
+    case 'fontSize':
+      return {
+        fontSize: typeof value === 'number' ? `${value}px` : value,
+      };
+    case 'fontWeight':
+      return {
+        fontWeight: value,
+        fontSize: '16px',
+      };
+    case 'lineHeight':
+      return {
+        lineHeight: typeof value === 'number' ? `${value}px` : value,
+        fontSize: '16px',
+      };
+    case 'fontFamily':
+      return {
+        fontFamily: formatFontFamily(value),
+        fontSize: '16px',
+      };
+    default:
+      return {};
+  }
+};
+
+// Get style for composite typography token
+const getCompositeStyle = (value: any) => {
+  if (typeof value !== 'object' || value === null || !('fontFamily' in value)) {
+    return null;
+  }
+
+  return {
+    fontFamily: formatFontFamily(value.fontFamily),
+    fontSize: typeof value.fontSize === 'number' ? `${value.fontSize}px` : value.fontSize,
+    fontWeight: value.fontWeight,
+    lineHeight: typeof value.lineHeight === 'number' ? `${value.lineHeight}px` : value.lineHeight,
+  };
+};
+
+// Helper component to render token preview
+const TokenPreview: React.FC<{ value: any; property: string }> = ({ value, property }) => {
+  // Handle composite tokens first
+  if (
+    property === 'default' ||
+    !['fontSize', 'fontWeight', 'lineHeight', 'fontFamily'].includes(property)
+  ) {
+    const compositeStyle = getCompositeStyle(value);
+    if (compositeStyle) {
+      return (
+        <div style={{ ...basePreviewStyle, ...compositeStyle }}>{getPreviewText(property)}</div>
+      );
+    }
+    return <div>{String(value)}</div>;
+  }
+
+  // Handle specific properties
+  const propertyStyle = getPropertyStyle(value, property);
+  return <div style={{ ...basePreviewStyle, ...propertyStyle }}>{getPreviewText(property)}</div>;
+};
+
+// Helper component to format token detail value
+const TokenDetailValue: React.FC<{ value: any; property: string }> = ({ value, property }) => {
+  if (property === 'fontSize') {
+    return <>{typeof value === 'number' ? `${value}px` : value}</>;
+  }
+
+  if (property === 'fontWeight' || property === 'lineHeight') {
+    return <>{value}</>;
+  }
+
+  if (property === 'fontFamily') {
+    return <>{Array.isArray(value) ? value[0] : value}</>;
+  }
+
+  // Handle composite typography tokens
+  if (typeof value === 'object' && value !== null && 'fontFamily' in value) {
+    return <>{Array.isArray(value.fontFamily) ? value.fontFamily[0] : value.fontFamily}</>;
+  }
+
+  return null;
+};
+
+// Typography token row component
+const TypographyTokenRow: React.FC<TypographyTokenRowProps> = ({ token, property }) => {
+  const value = token.value;
+  const tokenName =
+    token.path && token.path.split('.').length > 3
+      ? token.path.split('.').slice(2).join('-')
+      : token.name;
+
+  return (
+    <div className={styles.typographyRow}>
+      <div className={styles.typographyExample}>
+        <TokenPreview value={value} property={property} />
+      </div>
+      <div className={styles.typographyInfo}>
+        <div className={styles.typographyMeta}>
+          <h3 className={styles.tokenName}>{tokenName}</h3>
+          <span className={styles.tokenDetail}>
+            <TokenDetailValue value={value} property={property} />
+          </span>
+        </div>
+        <div className={styles.tokenUsage}>
+          <TokenFormats usage={token.usage} />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const TypographyPreview: React.FC<TypographyPreviewProps> = ({
   tier,
@@ -42,46 +187,65 @@ export const TypographyPreview: React.FC<TypographyPreviewProps> = ({
     {} as Record<string, any[]>
   );
 
+  // Extract the variant from the path
+  const getVariant = (token: any) => {
+    const parts = token.path?.split('.') || [];
+    // For sys.typography.heading.3xl.fontSize -> "3xl"
+    return parts[parts.length - 2] || '';
+  };
+
+  // Compare tokens by semantic size order
+  const compareBySizeOrder = (aVariant: string, bVariant: string) => {
+    const sizeOrder = ['3xl', '2xl', 'xl', 'lg', 'md', 'sm', 'xs', '2xs'];
+    const aIndex = sizeOrder.indexOf(aVariant);
+    const bIndex = sizeOrder.indexOf(bVariant);
+
+    if (aIndex !== -1 && bIndex !== -1) {
+      return aIndex - bIndex;
+    }
+    return null;
+  };
+
+  // Compare tokens by numeric value based on property type
+  const compareByNumericValue = (a: any, b: any, property: string) => {
+    if (property === 'fontSize') {
+      const aNum = Number.parseInt(a.value);
+      const bNum = Number.parseInt(b.value);
+      if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) {
+        return bNum - aNum; // Larger sizes first
+      }
+    }
+
+    if (property === 'fontWeight') {
+      const aNum = Number.parseInt(a.value);
+      const bNum = Number.parseInt(b.value);
+      if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) {
+        return aNum - bNum; // Lighter weights first
+      }
+    }
+
+    return null;
+  };
+
   // Sort tokens within each property group
   const sortTokens = (tokensArray: any[], property: string) => {
     return tokensArray.sort((a, b) => {
-      // For semantic tokens, use size order
-      const sizeOrder = ['3xl', '2xl', 'xl', 'lg', 'md', 'sm', 'xs', '2xs'];
-
-      // Extract the variant from the path
-      const getVariant = (token: any) => {
-        const parts = token.path?.split('.') || [];
-        // For sys.typography.heading.3xl.fontSize -> "3xl"
-        return parts[parts.length - 2] || '';
-      };
-
       const aVariant = getVariant(a);
       const bVariant = getVariant(b);
 
-      const aIndex = sizeOrder.indexOf(aVariant);
-      const bIndex = sizeOrder.indexOf(bVariant);
-
-      if (aIndex !== -1 && bIndex !== -1) {
-        return aIndex - bIndex;
+      // Try semantic size order first
+      const sizeComparison = compareBySizeOrder(aVariant, bVariant);
+      if (sizeComparison !== null) {
+        return sizeComparison;
       }
 
-      // For ref tokens or others, try numeric sort
-      if (property === 'fontSize') {
-        const aNum = Number.parseInt(a.value);
-        const bNum = Number.parseInt(b.value);
-        if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) {
-          return bNum - aNum; // Larger sizes first
-        }
+      // Try numeric comparison based on property type
+      const numericComparison = compareByNumericValue(a, b, property);
+      if (numericComparison !== null) {
+        return numericComparison;
       }
 
-      if (property === 'fontWeight') {
-        const aNum = Number.parseInt(a.value);
-        const bNum = Number.parseInt(b.value);
-        if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) {
-          return aNum - bNum; // Lighter weights first
-        }
-      }
-
+      // Fallback to alphabetical
       return a.name.localeCompare(b.name);
     });
   };
@@ -115,102 +279,9 @@ export const TypographyPreview: React.FC<TypographyPreviewProps> = ({
             <h2 className={styles.sectionTitle}>{propertyLabels[property] || property}</h2>
 
             <div className={styles.typographyTable}>
-              {sortedTokens.map((token) => {
-                let preview: React.ReactNode;
-                const value = token.value;
-
-                switch (property) {
-                  case 'fontSize':
-                    preview = (
-                      <div
-                        style={{
-                          fontSize: typeof value === 'number' ? `${value}px` : value,
-                          lineHeight: 1.4,
-                          margin: 0,
-                          padding: 0,
-                        }}
-                      >
-                        The quick brown fox jumps over the lazy dog
-                      </div>
-                    );
-                    break;
-
-                  case 'fontWeight':
-                    preview = (
-                      <div
-                        style={{
-                          fontWeight: value,
-                          fontSize: '16px',
-                          lineHeight: 1.4,
-                          margin: 0,
-                          padding: 0,
-                        }}
-                      >
-                        The quick brown fox jumps over the lazy dog
-                      </div>
-                    );
-                    break;
-
-                  case 'lineHeight':
-                    preview = (
-                      <div style={{ lineHeight: value, fontSize: '16px', margin: 0, padding: 0 }}>
-                        Line one
-                        <br />
-                        Line two
-                        <br />
-                        Line three
-                      </div>
-                    );
-                    break;
-
-                  case 'fontFamily': {
-                    const fontValue = Array.isArray(value) ? value.join(', ') : value;
-                    preview = (
-                      <div
-                        style={{
-                          fontFamily: fontValue,
-                          fontSize: '16px',
-                          lineHeight: 1.4,
-                          margin: 0,
-                          padding: 0,
-                        }}
-                      >
-                        The quick brown fox jumps over the lazy dog
-                      </div>
-                    );
-                    break;
-                  }
-
-                  default:
-                    preview = <div>{String(value)}</div>;
-                }
-
-                return (
-                  <div key={token.name} className={styles.typographyRow}>
-                    <div className={styles.typographyExample}>{preview}</div>
-                    <div className={styles.typographyInfo}>
-                      <div className={styles.typographyMeta}>
-                        <h3 className={styles.tokenName}>
-                          {/* For semantic tokens, show more context */}
-                          {token.path && token.path.split('.').length > 3
-                            ? token.path.split('.').slice(2).join('-')
-                            : token.name}
-                        </h3>
-                        <span className={styles.tokenDetail}>
-                          {property === 'fontSize' &&
-                            (typeof value === 'number' ? `${value}px` : value)}
-                          {property === 'fontWeight' && value}
-                          {property === 'lineHeight' && value}
-                          {property === 'fontFamily' && (Array.isArray(value) ? value[0] : value)}
-                        </span>
-                      </div>
-                      <div className={styles.tokenUsage}>
-                        <TokenFormats usage={token.usage} />
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+              {sortedTokens.map((token) => (
+                <TypographyTokenRow key={token.name} token={token} property={property} />
+              ))}
             </div>
           </section>
         );

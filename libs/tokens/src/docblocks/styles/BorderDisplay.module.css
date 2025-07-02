@@ -10,7 +10,7 @@
 
 .styleGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--sys-spacing-md);
   list-style: none;
   padding: 0;

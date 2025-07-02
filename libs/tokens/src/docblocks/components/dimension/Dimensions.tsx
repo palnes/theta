@@ -24,7 +24,9 @@ export const Dimensions: React.FC<DimensionsProps> = () => {
               <div className={styles.dimensionLabel}>{value}</div>
               <div
                 className={styles.dimensionVisual}
-                style={{ width: maxNegative + maxPositive + DIMENSION_SCALE.axisOffset }}
+                style={{
+                  width: maxNegative + maxPositive + DIMENSION_SCALE.axisOffset,
+                }}
               >
                 {/* Zero axis line */}
                 <div className={styles.zeroLine} style={{ left: maxNegative }} />

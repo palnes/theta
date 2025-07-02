@@ -63,7 +63,7 @@ export class ColorRenderer extends BaseTokenRenderer {
       filteredTokens = filteredTokens.filter(filters.include);
     }
     if (filters?.exclude) {
-      filteredTokens = filteredTokens.filter((token) => !filters.exclude!(token));
+      filteredTokens = filteredTokens.filter((token) => !filters.exclude?.(token));
     }
 
     // Apply sorting
@@ -85,15 +85,15 @@ export class ColorRenderer extends BaseTokenRenderer {
         }
         const colorToken = colorTokens[index];
         if (colorToken) {
-          groups.get(group)!.push(colorToken);
+          groups.get(group)?.push(colorToken);
         }
       });
 
       // Sort groups if order is provided
       const sortedGroups = grouping.groupOrder
         ? Array.from(groups.entries()).sort(([a], [b]) => {
-            const orderA = grouping.groupOrder!.indexOf(a);
-            const orderB = grouping.groupOrder!.indexOf(b);
+            const orderA = grouping.groupOrder?.indexOf(a) ?? -1;
+            const orderB = grouping.groupOrder?.indexOf(b) ?? -1;
             if (orderA === -1) return 1;
             if (orderB === -1) return -1;
             return orderA - orderB;

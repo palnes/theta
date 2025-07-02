@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { useSpacingTokens } from '../../hooks/useSpacingTokens';
 import styles from '../../styles/SpacingScale.module.css';
 

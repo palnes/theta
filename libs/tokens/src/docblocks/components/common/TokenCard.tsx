@@ -1,6 +1,7 @@
-import React, { ReactNode } from 'react';
+import type React from 'react';
+import type { ReactNode } from 'react';
 import sharedStyles from '../../styles/shared.module.css';
-import { TokenFormat, TokenFormats } from '../token-display/TokenFormats';
+import { type TokenFormat, TokenFormats } from '../token-display/TokenFormats';
 
 interface TokenCardProps {
   title: string;

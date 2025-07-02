@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-import { TokenData } from '../types/tokenReferenceTable';
+import type { ReactNode } from 'react';
+import type { TokenData } from '../types/tokenReferenceTable';
 import { useDocumentationData } from './useDocumentationData';
 
 interface TokenDisplayOptions {

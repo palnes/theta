@@ -1,6 +1,6 @@
-import React from 'react';
+import type React from 'react';
 import styles from '../../styles/shared.module.css';
-import { TokenRendererDefinition, TokenRendererProps } from '../TokenRenderer';
+import type { TokenRendererDefinition, TokenRendererProps } from '../TokenRenderer';
 
 /**
  * Renderer for shadow tokens
@@ -25,6 +25,7 @@ export const ShadowTokenRenderer: React.FC<TokenRendererProps> = ({
           alignItems: 'center',
           justifyContent: 'center',
         }}
+        role="img"
         aria-label={'Shadow preview'}
       >
         <span style={{ fontSize: '12px', color: 'var(--sys-color-text-secondary)' }}>Shadow</span>

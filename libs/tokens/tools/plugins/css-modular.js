@@ -28,7 +28,14 @@ const DARK_THEME_SELECTOR = '[data-theme="dark"]';
  * @returns {Object} Terrazzo plugin object
  */
 export default function cssModularPlugin(options = {}) {
-  const { themes = {}, registry } = options;
+  const { themes = {}, registry, config } = options;
+
+  // Use default configuration if none provided
+  const pathConfig = config?.paths || {
+    getTier: (id) => id.split('.')[0],
+    isComponent: (id) => id.startsWith('cmp.'),
+    getComponent: (id) => (id.startsWith('cmp.') ? id.split('.')[1] : null),
+  };
 
   // Convert token ID to CSS variable name
   const toCssVar = (id) => {
@@ -71,14 +78,18 @@ export default function cssModularPlugin(options = {}) {
       { prop: 'fontFamily', suffix: 'font-family', formatter: formatArray },
       { prop: 'fontSize', suffix: 'font-size', formatter: formatDimension },
       { prop: 'fontWeight', suffix: 'font-weight', formatter: (v) => v },
-      { prop: 'lineHeight', suffix: 'line-height', formatter: formatLineHeight },
+      {
+        prop: 'lineHeight',
+        suffix: 'line-height',
+        formatter: formatLineHeight,
+      },
     ];
 
-    typographyProperties.forEach(({ prop, suffix, formatter }) => {
+    for (const { prop, suffix, formatter } of typographyProperties) {
       if (value[prop]) {
         lines.push(`  ${cssVar}-${suffix}: ${formatter(value[prop])};`);
       }
-    });
+    }
   };
 
   // Generate CSS content for a set of tokens
@@ -115,74 +126,137 @@ export default function cssModularPlugin(options = {}) {
     return filtered;
   };
 
+  // Helper functions to break down complexity
+  const generateBaseCSS = async (tokens, outputFile) => {
+    const baseTokens = {};
+    for (const [id, token] of Object.entries(tokens)) {
+      const tier = pathConfig.getTier(id);
+      // Include all non-component tiers in base CSS
+      if (tier && !pathConfig.isComponent(id)) {
+        baseTokens[id] = token;
+      }
+    }
+    await outputFile('css/base.css', generateCSS(baseTokens));
+    console.log('✓ Generated css/base.css');
+  };
+
+  const generateComponentCSS = async (tokens, outputFile) => {
+    const components = new Set();
+    for (const id of Object.keys(tokens)) {
+      if (pathConfig.isComponent(id)) {
+        const component = pathConfig.getComponent(id);
+        if (component) {
+          components.add(component);
+        }
+      }
+    }
+
+    for (const component of components) {
+      const componentTokens = filterTokens(tokens, `cmp.${component}.`);
+      if (Object.keys(componentTokens).length > 0) {
+        const filename = `css/components/${component}.css`;
+        await outputFile(filename, generateCSS(componentTokens));
+        console.log(`✓ Generated ${filename}`);
+      }
+    }
+  };
+
+  const generateLightThemeCSS = async (outputFile) => {
+    await outputFile('css/themes/light.css', '/* Light theme - inherits from base */\n');
+  };
+
+  const generateDarkThemeCSS = async (tokens, themes, outputFile) => {
+    if (!themes.dark) return;
+
+    const darkOverrides = {};
+    for (const [id, darkToken] of Object.entries(themes.dark)) {
+      const baseToken = tokens[id];
+      if (!baseToken || !areTokenValuesEqual(darkToken.$value, baseToken.$value)) {
+        darkOverrides[id] = darkToken;
+      }
+    }
+
+    if (Object.keys(darkOverrides).length > 0) {
+      await outputFile('css/themes/dark.css', generateCSS(darkOverrides, DARK_THEME_SELECTOR));
+      console.log(
+        `✓ Generated css/themes/dark.css (${Object.keys(darkOverrides).length} overrides)`
+      );
+    }
+  };
+
+  const registerTokenOutput = (id, token, registry) => {
+    const cssVar = toCssVar(id);
+    registry.registerOutput(id, 'css', {
+      name: cssVar,
+      value: formatValue(token.$value, token.$type),
+      usage: `var(${cssVar})`,
+    });
+  };
+
+  const getTypographyPropType = (prop) => {
+    if (prop === 'fontFamily') return 'fontFamily';
+    if (prop === 'fontSize' || prop === 'lineHeight') return 'dimension';
+    return 'string';
+  };
+
+  const registerSingleTypographyProperty = (id, token, prop, suffix, cssVar, registry) => {
+    if (token.$value[prop] === undefined) return;
+
+    const expandedId = `${id}.${prop}`;
+    const expandedCssVar = `${cssVar}-${suffix}`;
+    const propType = getTypographyPropType(prop);
+
+    try {
+      registry.registerOutput(expandedId, 'css', {
+        name: expandedCssVar,
+        value: formatValue(token.$value[prop], propType),
+        usage: `var(${expandedCssVar})`,
+      });
+    } catch (_e) {
+      // Expanded token might not exist in registry yet
+    }
+  };
+
+  const registerTypographyProperties = (id, token, registry) => {
+    if (token.$type !== 'typography' || typeof token.$value !== 'object') return;
+
+    const cssVar = toCssVar(id);
+    const typographyProperties = [
+      { prop: 'fontFamily', suffix: 'font-family' },
+      { prop: 'fontSize', suffix: 'font-size' },
+      { prop: 'fontWeight', suffix: 'font-weight' },
+      { prop: 'lineHeight', suffix: 'line-height' },
+    ];
+
+    for (const { prop, suffix } of typographyProperties) {
+      registerSingleTypographyProperty(id, token, prop, suffix, cssVar, registry);
+    }
+  };
+
+  const registerOutputs = (tokens, registry) => {
+    if (!registry) return;
+
+    for (const [id, token] of Object.entries(tokens)) {
+      registerTokenOutput(id, token, registry);
+      registerTypographyProperties(id, token, registry);
+    }
+  };
+
   return {
     name: 'css-modular',
     async build({ tokens, outputFile }) {
       // 1. Generate base.css (reference + semantic tokens)
-      const baseTokens = {};
-      for (const [id, token] of Object.entries(tokens)) {
-        if (id.startsWith('ref.') || id.startsWith('sys.')) {
-          baseTokens[id] = token;
-        }
-      }
-      await outputFile('css/base.css', generateCSS(baseTokens));
-      console.log('✓ Generated css/base.css');
+      await generateBaseCSS(tokens, outputFile);
 
       // 2. Generate component CSS files
-      const components = new Set();
-      for (const id of Object.keys(tokens)) {
-        if (id.startsWith('cmp.')) {
-          const component = id.split('.')[1];
-          if (component) {
-            components.add(component);
-          }
-        }
-      }
-
-      for (const component of components) {
-        const componentTokens = filterTokens(tokens, `cmp.${component}.`);
-        if (Object.keys(componentTokens).length > 0) {
-          const filename = `css/components/${component}.css`;
-          await outputFile(filename, generateCSS(componentTokens));
-          console.log(`✓ Generated ${filename}`);
-        }
-      }
+      await generateComponentCSS(tokens, outputFile);
 
       // 3. Generate theme files
-      // Light theme (empty for now, but maintains symmetry)
-      await outputFile('css/themes/light.css', '/* Light theme - inherits from base */\n');
+      await generateLightThemeCSS(outputFile);
+      await generateDarkThemeCSS(tokens, themes, outputFile);
 
-      // Dark theme (overrides only)
-      if (themes.dark) {
-        const darkOverrides = {};
-
-        // Only include tokens that differ from base
-        for (const [id, darkToken] of Object.entries(themes.dark)) {
-          const baseToken = tokens[id];
-          if (!baseToken || !areTokenValuesEqual(darkToken.$value, baseToken.$value)) {
-            darkOverrides[id] = darkToken;
-          }
-        }
-
-        if (Object.keys(darkOverrides).length > 0) {
-          await outputFile('css/themes/dark.css', generateCSS(darkOverrides, DARK_THEME_SELECTOR));
-          console.log(
-            `✓ Generated css/themes/dark.css (${Object.keys(darkOverrides).length} overrides)`
-          );
-        }
-      }
-
-      // Register outputs with registry if provided
-      if (registry) {
-        for (const [id, token] of Object.entries(tokens)) {
-          const cssVar = toCssVar(id);
-          registry.registerOutput(id, 'css', {
-            name: cssVar,
-            value: formatValue(token.$value, token.$type),
-            usage: `var(${cssVar})`,
-          });
-        }
-      }
+      // 4. Register outputs with registry
+      registerOutputs(tokens, registry);
     },
   };
 }

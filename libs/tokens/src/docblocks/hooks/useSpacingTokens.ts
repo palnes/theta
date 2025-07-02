@@ -5,8 +5,11 @@ import { useTokens } from './useTokens';
 /**
  * Hook for fetching spacing tokens with optional visual filtering
  */
-export const useSpacingTokens = (visualOnly = false) => {
-  const { tokens, loading, error } = useTokens({ tier: 'sys', category: 'spacing' });
+export const useSpacingTokens = (visualOnly = false, tier = 'sys') => {
+  const { tokens, loading, error } = useTokens({
+    tier,
+    category: 'spacing',
+  });
 
   const filteredTokens = useMemo(() => {
     if (!visualOnly) return tokens;

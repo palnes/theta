@@ -1,5 +1,6 @@
 import { getTokens } from '@theta/tokens/native';
-import React, {
+import type React from 'react';
+import {
   createContext,
   useCallback,
   useContext,
@@ -34,7 +35,7 @@ interface ThemeContextValue {
   tokens: ReturnType<typeof getTokens>;
 }
 
-const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
+export const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 // Cache token objects to maintain referential equality
 const tokenCache = new Map<Theme, ReturnType<typeof getTokens>>();

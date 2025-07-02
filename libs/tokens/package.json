@@ -18,7 +18,9 @@
     "./css/components/*.css": "./dist/css/components/*.css",
     "./css/themes/*.css": "./dist/css/themes/*.css"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "start": "yarn storybook",
     "build": "node build.js",
@@ -31,12 +33,12 @@
     "build-storybook": "storybook build"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.0.6",
     "@fontsource/manrope": "^5.2.6",
-    "@storybook/addon-a11y": "9.0.15",
-    "@storybook/addon-docs": "9.0.15",
-    "@storybook/addon-onboarding": "9.0.15",
-    "@storybook/react-vite": "9.0.15",
+    "@storybook/addon-a11y": "^9.0.15",
+    "@storybook/addon-docs": "^9.0.15",
+    "@storybook/addon-onboarding": "^9.0.15",
+    "@storybook/react-vite": "^9.0.15",
     "@terrazzo/cli": "^0.8.1",
     "@terrazzo/parser": "^0.8.1",
     "@terrazzo/plugin-css": "^0.8.1",
@@ -49,7 +51,7 @@
     "react-dom": "^19.0.0",
     "remark-gfm": "^4.0.1",
     "remark-toc": "^9.0.0",
-    "storybook": "9.0.15",
+    "storybook": "^9.0.15",
     "typescript": "^5.8.3",
     "vite": "^7.0.0"
   },

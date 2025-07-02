@@ -1,33 +1,46 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
-    "useIgnoreFile": true
+    "useIgnoreFile": true,
+    "defaultBranch": "main"
   },
   "files": {
-    "ignore": [
-      "**/dist",
-      "**/node_modules",
-      "**/.turbo",
-      "**/storybook-static",
-      "**/coverage",
-      "**/.rnstorybook"
-    ]
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/node_modules",
+      "!**/.turbo",
+      "!**/storybook-static",
+      "!**/coverage",
+      "!**/.rnstorybook",
+      "!**/.storybook/generated/*.json"
+    ],
+    "maxSize": 2097152
   },
-  "organizeImports": {
-    "enabled": true
-  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
       "complexity": {
-        "noForEach": "off"
+        "noForEach": "error",
+        "noExcessiveCognitiveComplexity": "error"
       },
       "style": {
-        "useImportType": "off",
-        "noNonNullAssertion": "off"
+        "useImportType": "error",
+        "noNonNullAssertion": "error",
+        "noParameterAssign": "error",
+        "useAsConstAssertion": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "error",
+        "noUselessElse": "error"
       },
       "suspicious": {
         "noExplicitAny": "off"
@@ -43,6 +56,7 @@
     "lineEnding": "lf"
   },
   "javascript": {
+    "jsxRuntime": "reactClassic",
     "formatter": {
       "quoteStyle": "single",
       "jsxQuoteStyle": "double",

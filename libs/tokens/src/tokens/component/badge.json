@@ -37,19 +37,8 @@
       "borderRadius": {
         "$value": "{sys.radius.full}"
       },
-      "fontSize": {
-        "small": {
-          "$value": "{sys.fontSize.xs}"
-        },
-        "medium": {
-          "$value": "{sys.fontSize.sm}"
-        },
-        "large": {
-          "$value": "{sys.fontSize.base}"
-        }
-      },
-      "fontWeight": {
-        "$value": "{sys.fontWeight.medium}"
+      "typography": {
+        "$value": "{sys.typography.label.sm}"
       },
       "color": {
         "default": {

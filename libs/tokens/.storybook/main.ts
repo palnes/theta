@@ -1,8 +1,7 @@
+import { dirname, join } from 'node:path';
 import type { StorybookConfig } from '@storybook/react-vite';
 import remarkGfm from 'remark-gfm';
 import remarkToc from 'remark-toc';
-
-import { dirname, join } from 'node:path';
 
 /**
  * This function is used to resolve the absolute path of a package.

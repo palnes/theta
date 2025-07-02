@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { Z_INDEX_COLORS, Z_INDEX_POSITIONS, Z_INDEX_SIZES } from '../../constants/displayConstants';
 import styles from '../../styles/ZIndexDisplay.module.css';
 import { getSemanticZIndex } from '../../tools/tokenHelpers';
@@ -31,13 +31,8 @@ export const ZIndex: React.FC<ZIndexProps> = () => {
                     backgroundColor: colors[index],
                     zIndex: `var(--sys-z-index-${key})`,
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.zIndex = 'calc(var(--sys-z-index-tooltip) + 1)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.zIndex = `var(--sys-z-index-${key})`;
-                  }}
-                  aria-label={`${key} z-index layer with value ${value}`}
+                  data-z-index-key={key}
+                  title={`${key} z-index layer with value ${value}`}
                 >
                   <div className={styles.cardLabel}>{key?.toUpperCase() || ''}</div>
                   <div className={styles.cardValue}>{value}</div>

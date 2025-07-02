@@ -1,6 +1,6 @@
-import React from 'react';
+import type React from 'react';
 import styles from '../../styles/shared.module.css';
-import { TokenRendererDefinition, TokenRendererProps } from '../TokenRenderer';
+import type { TokenRendererDefinition, TokenRendererProps } from '../TokenRenderer';
 
 /**
  * Renderer for spacing tokens
@@ -23,6 +23,7 @@ export const SpacingTokenRenderer: React.FC<TokenRendererProps> = ({
             backgroundColor: 'var(--sys-color-action-primary-default)',
             borderRadius: 'var(--sys-radius-xs)',
           }}
+          role="img"
           aria-label={`Spacing preview: ${spacingValue}`}
         />
         <span className={styles.tokenValue}>{spacingValue}</span>

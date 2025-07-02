@@ -1,10 +1,11 @@
 import React, { createContext, useContext } from 'react';
+import { mergeWithDefaults } from '../config/defaultTokenSystemConfig';
 import { flattenRegistryTokens, groupTokensByCategory } from '../tools/registryAdapter';
-import { DEFAULT_TOKEN_CONFIG, TokenSystemConfig } from '../types/TokenSystemConfig';
-import { TokenData } from '../types/tokenReferenceTable';
+import type { FlexibleTokenSystemConfig } from '../types/FlexibleTokenSystemConfig';
+import type { TokenData } from '../types/tokenReferenceTable';
 
 interface TokenSystemContextValue {
-  config: TokenSystemConfig;
+  config: FlexibleTokenSystemConfig;
   data: TokenData;
   loading?: boolean;
 }
@@ -18,46 +19,56 @@ export const TokenSystemContext = createContext<TokenSystemContextValue | null>(
  * Provider component for token system configuration
  */
 export interface TokenSystemProviderProps {
-  config?: Partial<TokenSystemConfig>;
+  config?: Partial<FlexibleTokenSystemConfig>;
   data: any; // Registry data - REQUIRED
   children: React.ReactNode;
 }
+
+// Helper function to create metadata
+const createTokenMetadata = (registryData: any, themes: string[]): TokenData['metadata'] => ({
+  generatedAt: registryData.metadata?.timestamp || new Date().toISOString(),
+  totalTokens: registryData.metadata?.stats?.total || 0,
+  themes: themes || [],
+  themeableTokens: 0,
+});
+
+// Helper function to filter typography tokens for reference tier
+const filterReferenceTypography = (
+  grouped: any,
+  tierId: string,
+  pathConfig: FlexibleTokenSystemConfig['paths']
+) => {
+  if (pathConfig.isReference?.(tierId) && grouped.typography) {
+    grouped.typography = grouped.typography.filter(
+      (t: any) => pathConfig.isReference?.(t.path || '') || false
+    );
+  }
+};
+
+// Helper function to process a single tier
+const processTier = (
+  tier: any,
+  registryData: any,
+  pathConfig: FlexibleTokenSystemConfig['paths']
+) => {
+  const tierTokens = registryData.tokens[tier.id as keyof typeof registryData.tokens];
+  if (!tierTokens) return null;
+
+  const flatTokens = flattenRegistryTokens(tierTokens);
+  const tierFilteredTokens = flatTokens.filter((token) => pathConfig.getTier(token.id) === tier.id);
+  const grouped = groupTokensByCategory(tierFilteredTokens);
+
+  filterReferenceTypography(grouped, tier.id, pathConfig);
+  return grouped;
+};
 
 export const TokenSystemProvider: React.FC<TokenSystemProviderProps> = ({
   config,
   data: registryData,
   children,
 }) => {
-  // Merge provided config with defaults
-  const mergedConfig: TokenSystemConfig = React.useMemo(
-    () => ({
-      ...DEFAULT_TOKEN_CONFIG,
-      ...config,
-      tiers: config?.tiers || DEFAULT_TOKEN_CONFIG.tiers,
-      categories: config?.categories || DEFAULT_TOKEN_CONFIG.categories,
-      themes: config?.themes || DEFAULT_TOKEN_CONFIG.themes,
-      paths: {
-        ...DEFAULT_TOKEN_CONFIG.paths,
-        ...config?.paths,
-      },
-      formats: config?.formats
-        ? {
-            ...DEFAULT_TOKEN_CONFIG.formats,
-            ...config.formats,
-            formats: config.formats.formats || DEFAULT_TOKEN_CONFIG.formats?.formats || [],
-          }
-        : DEFAULT_TOKEN_CONFIG.formats,
-      display: {
-        ...DEFAULT_TOKEN_CONFIG.display,
-        ...config?.display,
-        sortOrders: {
-          ...DEFAULT_TOKEN_CONFIG.display?.sortOrders,
-          ...config?.display?.sortOrders,
-        },
-      },
-    }),
-    [config]
-  );
+  // Merge provided config with defaults using the helper function
+  const mergedConfig = React.useMemo(() => mergeWithDefaults(config), [config]);
 
   // Transform registry data to TokenData format synchronously
   const tokenData = React.useMemo(() => {
@@ -66,41 +77,20 @@ export const TokenSystemProvider: React.FC<TokenSystemProviderProps> = ({
     }
 
     const transformedData: TokenData = {
-      ref: {},
-      sys: {},
-      cmp: {},
-      metadata: {
-        generatedAt: registryData.metadata?.timestamp || new Date().toISOString(),
-        totalTokens: registryData.metadata?.stats?.total || 0,
-        themes: mergedConfig.themes || [],
-        themeableTokens: 0,
-      },
-    };
+      metadata: createTokenMetadata(registryData, mergedConfig.themes),
+    } as any;
 
-    // Process each tier
-    ['ref', 'sys', 'cmp'].forEach((tierName) => {
-      const tierTokens = registryData.tokens[tierName as keyof typeof registryData.tokens];
-      if (tierTokens) {
-        const flatTokens = flattenRegistryTokens(tierTokens);
-        // Filter tokens to ensure they belong to the correct tier
-        const tierFilteredTokens = flatTokens.filter((token) =>
-          token.id.startsWith(`${tierName}.`)
-        );
-        const grouped = groupTokensByCategory(tierFilteredTokens);
-
-        // Additional filter for typography to remove expanded system tokens from ref
-        if (tierName === 'ref' && grouped.typography) {
-          grouped.typography = grouped.typography.filter(
-            (t) => t.path?.startsWith('ref.') || false
-          );
-        }
-
-        (transformedData as any)[tierName] = grouped;
+    // Initialize and process tiers
+    for (const tier of mergedConfig.tiers) {
+      (transformedData as any)[tier.id] = {};
+      const processedTier = processTier(tier, registryData, mergedConfig.paths);
+      if (processedTier) {
+        (transformedData as any)[tier.id] = processedTier;
       }
-    });
+    }
 
     return transformedData;
-  }, [registryData, mergedConfig.themes]);
+  }, [registryData, mergedConfig.themes, mergedConfig.tiers, mergedConfig.paths]);
 
   const contextValue: TokenSystemContextValue = {
     config: mergedConfig,

@@ -1,3 +1,4 @@
 // Export all types
-export * from './tokenReferenceTable';
+
 export * from './config';
+export * from './tokenReferenceTable';

@@ -4,7 +4,7 @@ import { areTokenValuesEqual } from '../token-helpers.js';
 // Constants
 const DEFAULT_FILENAME = 'tokens.native.ts';
 const DIMENSION_REGEX = /^(-?\d+(?:\.\d+)?)(px|pt|dp|sp)?$/;
-const FONT_WEIGHT_THRESHOLD = 10;
+const _FONT_WEIGHT_THRESHOLD = 10;
 const FONT_FAMILY_KEYS = ['fontfamily', 'font-family'];
 const FONT_WEIGHT_KEYS = ['fontweight', 'font-weight'];
 
@@ -17,7 +17,7 @@ const transformStrategies = {
   }),
 
   shadow: (value) => {
-    const { boxShadow, ...nativeShadow } = value;
+    const { boxShadow: _boxShadow, ...nativeShadow } = value;
     return nativeShadow;
   },
 
@@ -102,44 +102,49 @@ function transformForNative(value, type, key) {
 export default function typescriptNativePlugin(options = {}) {
   const { filename = DEFAULT_FILENAME, themes = {}, registry } = options;
 
-  return {
-    name: 'typescript-native',
-    async build({ tokens, outputFile }) {
-      // Build base tokens with React Native transforms
-      const baseTokens = {};
+  // Helper to process a single token
+  const processToken = (id, token) => {
+    const camelCaseKey = dotNotationToCamelCase(id);
+    const handler = typeHandlers[token.$type] ?? ((v) => v);
+    const processedValue = handler(token.$value);
+    return {
+      key: camelCaseKey,
+      value: transformForNative(processedValue, token.$type, camelCaseKey),
+    };
+  };
 
-      for (const [id, token] of Object.entries(tokens)) {
-        const camelCaseKey = dotNotationToCamelCase(id);
-        const handler = typeHandlers[token.$type] ?? ((v) => v);
-        const processedValue = handler(token.$value);
-        baseTokens[camelCaseKey] = transformForNative(processedValue, token.$type, camelCaseKey);
-      }
+  // Helper to build base tokens
+  const buildBaseTokens = (tokens) => {
+    const baseTokens = {};
+    for (const [id, token] of Object.entries(tokens)) {
+      const { key, value } = processToken(id, token);
+      baseTokens[key] = value;
+    }
+    return baseTokens;
+  };
 
-      // Build theme overrides with transforms
-      const themeOverrides = {};
+  // Helper to build theme overrides
+  const buildThemeOverrides = (themes, tokens) => {
+    const themeOverrides = {};
 
-      for (const [themeName, themeTokens] of Object.entries(themes)) {
-        themeOverrides[themeName] = {};
+    for (const [themeName, themeTokens] of Object.entries(themes)) {
+      themeOverrides[themeName] = {};
 
-        // Only include tokens that differ from base
-        for (const [id, themeToken] of Object.entries(themeTokens)) {
-          const baseToken = tokens[id];
-
-          if (!baseToken || !areTokenValuesEqual(themeToken.$value, baseToken.$value)) {
-            const camelCaseKey = dotNotationToCamelCase(id);
-            const handler = typeHandlers[themeToken.$type || baseToken?.$type] ?? ((v) => v);
-            const processedValue = handler(themeToken.$value);
-            themeOverrides[themeName][camelCaseKey] = transformForNative(
-              processedValue,
-              themeToken.$type || baseToken?.$type,
-              camelCaseKey
-            );
-          }
+      for (const [id, themeToken] of Object.entries(themeTokens)) {
+        const baseToken = tokens[id];
+        if (!baseToken || !areTokenValuesEqual(themeToken.$value, baseToken.$value)) {
+          const { key, value } = processToken(id, themeToken);
+          themeOverrides[themeName][key] = value;
         }
       }
+    }
 
-      // Generate React Native specific TypeScript content
-      const tsContent = `/**
+    return themeOverrides;
+  };
+
+  // Helper to generate TypeScript content
+  const generateTSContent = (baseTokens, themeOverrides) => {
+    return `/**
  * Do not edit directly, this file was auto-generated.
  * React Native compatible tokens
  */
@@ -160,21 +165,39 @@ export function getTokens<T extends Theme = 'light'>(theme?: T): T extends keyof
 
 export default tokens;
 `;
+  };
+
+  // Helper to register outputs
+  const registerOutputs = (tokens, baseTokens, registry) => {
+    if (!registry) return;
+
+    for (const [id, _token] of Object.entries(tokens)) {
+      const camelCaseKey = dotNotationToCamelCase(id);
+      registry.registerOutput(id, 'typescript', {
+        name: camelCaseKey,
+        value: baseTokens[camelCaseKey],
+        usage: `tokens.${camelCaseKey}`,
+      });
+    }
+  };
+
+  return {
+    name: 'typescript-native',
+    async build({ tokens, outputFile }) {
+      // Build base tokens with React Native transforms
+      const baseTokens = buildBaseTokens(tokens);
+
+      // Build theme overrides with transforms
+      const themeOverrides = buildThemeOverrides(themes, tokens);
+
+      // Generate React Native specific TypeScript content
+      const tsContent = generateTSContent(baseTokens, themeOverrides);
 
       await outputFile(filename, tsContent);
       console.log('✓ Generated React Native TypeScript');
 
-      // Register outputs with registry if provided
-      if (registry) {
-        for (const [id, token] of Object.entries(tokens)) {
-          const camelCaseKey = dotNotationToCamelCase(id);
-          registry.registerOutput(id, 'typescript', {
-            name: camelCaseKey,
-            value: baseTokens[camelCaseKey],
-            usage: `tokens.${camelCaseKey}`,
-          });
-        }
-      }
+      // Register outputs with registry
+      registerOutputs(tokens, baseTokens, registry);
     },
   };
 }
