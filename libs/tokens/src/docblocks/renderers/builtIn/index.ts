@@ -19,6 +19,6 @@ registerBuiltInRenderers();
 
 // Export individual renderers for customization
 export * from './ColorRenderer';
-export * from './SpacingRenderer';
 export * from './ShadowRenderer';
+export * from './SpacingRenderer';
 export * from './TypographyRenderer';

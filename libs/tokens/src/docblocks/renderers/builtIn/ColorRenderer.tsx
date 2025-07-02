@@ -1,6 +1,6 @@
-import React from 'react';
+import type React from 'react';
 import styles from '../../styles/shared.module.css';
-import { TokenRendererDefinition, TokenRendererProps } from '../TokenRenderer';
+import type { TokenRendererDefinition, TokenRendererProps } from '../TokenRenderer';
 
 /**
  * Renderer for color tokens
@@ -23,6 +23,7 @@ export const ColorTokenRenderer: React.FC<TokenRendererProps> = ({
           borderRadius: 'var(--sys-radius-sm)',
           border: '1px solid var(--sys-color-border-subtle)',
         }}
+        role="img"
         aria-label={`Color preview: ${colorValue}`}
       />
       {showDetails && (

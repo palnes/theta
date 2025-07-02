@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { TokenInfo, UsageFormat } from '../types/tokenReferenceTable';
+import type { TokenInfo, UsageFormat } from '../types/tokenReferenceTable';
 
 export const useTableState = (tokens: TokenInfo[]) => {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());

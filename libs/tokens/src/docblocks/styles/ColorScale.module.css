@@ -64,6 +64,31 @@
   margin-bottom: var(--sys-spacing-sm);
 }
 
+.colorSwatch {
+  width: 100%;
+  height: var(--sys-dimension-component-height-medium);
+  border-radius: var(--sys-radius-md);
+  margin-bottom: var(--sys-spacing-sm);
+  box-shadow: 0 0 0 1px var(--sys-color-border-subtle);
+  border: none;
+  padding: 0;
+  background: none;
+}
+
+.colorSwatchClickable {
+  cursor: pointer;
+  transition:
+    transform 100ms ease-in-out,
+    box-shadow 100ms ease-in-out;
+}
+
+.colorSwatchClickable:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 1px var(--sys-color-border-subtle),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .themeSwatches:hover {
   box-shadow: 0 0 0 2px var(--sys-color-border-focus);
 }
@@ -96,27 +121,6 @@
   margin-left: var(--sys-spacing-xs);
   opacity: 0.7;
   cursor: help;
-}
-
-.colorSwatch {
-  width: 100%;
-  height: var(--sys-dimension-component-height-medium);
-  border-radius: var(--sys-radius-md);
-  margin-bottom: var(--sys-spacing-sm);
-  box-shadow: 0 0 0 1px var(--sys-color-border-subtle);
-  border: none;
-  padding: 0;
-  background: none;
-}
-
-.colorSwatchClickable {
-  cursor: pointer;
-  transition: transform 100ms ease-in-out, box-shadow 100ms ease-in-out;
-}
-
-.colorSwatchClickable:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 0 1px var(--sys-color-border-subtle), 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .colorSwatchClickable:active {

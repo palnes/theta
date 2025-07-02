@@ -14,7 +14,7 @@ import { buildNestedStructure, extractAllReferences } from './token-helpers.js';
 const VALID_TOKEN_ID_REGEX = /^[a-zA-Z][a-zA-Z0-9._-]*$/;
 
 export class TokenRegistry {
-  constructor() {
+  constructor(config = {}) {
     // Core token data indexed by ID
     this.tokens = new Map();
 
@@ -30,6 +30,20 @@ export class TokenRegistry {
 
     // Theme variants
     this.themes = new Map();
+
+    // Store configuration with defaults
+    this.config = {
+      paths: {
+        getTier: (id) => id.split('.')[0],
+        isComponent: (id) => id.startsWith('cmp.'),
+        getComponent: (id) => (id.startsWith('cmp.') ? id.split('.')[1] : null),
+        isReference: (id) => id.startsWith('ref.'),
+      },
+      types: {
+        nonExpandable: ['shadow', 'border', 'gradient'],
+      },
+      ...config,
+    };
   }
 
   /**
@@ -47,16 +61,10 @@ export class TokenRegistry {
   }
 
   /**
-   * Register a token with its source information
-   * @param {string} id - Token ID (e.g., 'ref.color.blue')
-   * @param {Object} tokenData - Token data from parser
-   * @param {string} tokenData.$type - Token type
-   * @param {*} tokenData.$value - Token value
-   * @param {Object} [tokenData.source] - Source information
+   * Create a new token object from token data
    */
-  registerToken(id, tokenData) {
-    this.validateTokenId(id);
-    const token = {
+  createToken(id, tokenData) {
+    return {
       id,
       value: tokenData.$value,
       type: tokenData.$type,
@@ -70,45 +78,148 @@ export class TokenRegistry {
       referencedBy: new Set(),
       themes: new Map(),
     };
+  }
 
-    this.tokens.set(id, token);
+  /**
+   * Update type index for a token
+   */
+  updateTypeIndex(tokenId, tokenType) {
+    if (!tokenType) return;
 
-    // Update indexes
-    if (token.type) {
-      if (!this.indexes.byType.has(token.type)) {
-        this.indexes.byType.set(token.type, new Set());
-      }
-      this.indexes.byType.get(token.type).add(id);
+    if (!this.indexes.byType.has(tokenType)) {
+      this.indexes.byType.set(tokenType, new Set());
     }
+    this.indexes.byType.get(tokenType).add(tokenId);
+  }
 
-    // Extract component from ID (e.g., cmp.button.* -> button)
-    if (id.startsWith('cmp.')) {
-      const component = id.split('.')[1];
-      if (component) {
-        if (!this.indexes.byComponent.has(component)) {
-          this.indexes.byComponent.set(component, new Set());
-        }
-        this.indexes.byComponent.get(component).add(id);
-      }
+  /**
+   * Update component index for a token
+   */
+  updateComponentIndex(tokenId) {
+    if (!tokenId.startsWith('cmp.')) return;
+
+    const component = tokenId.split('.')[1];
+    if (!component) return;
+
+    if (!this.indexes.byComponent.has(component)) {
+      this.indexes.byComponent.set(component, new Set());
     }
+    this.indexes.byComponent.get(component).add(tokenId);
+  }
 
-    // Extract references from value
+  /**
+   * Update reference indexes for a token
+   */
+  updateReferenceIndexes(tokenId, token) {
     const references = this.extractReferences(token.originalValue || token.value);
-    references.forEach((ref) => {
+
+    for (const ref of references) {
       token.references.add(ref);
 
       // Update reference index
-      if (!this.indexes.references.has(id)) {
-        this.indexes.references.set(id, new Set());
+      if (!this.indexes.references.has(tokenId)) {
+        this.indexes.references.set(tokenId, new Set());
       }
-      this.indexes.references.get(id).add(ref);
+      this.indexes.references.get(tokenId).add(ref);
 
       // Update reverse reference index
       if (!this.indexes.referencedBy.has(ref)) {
         this.indexes.referencedBy.set(ref, new Set());
       }
-      this.indexes.referencedBy.get(ref).add(id);
-    });
+      this.indexes.referencedBy.get(ref).add(tokenId);
+    }
+  }
+
+  /**
+   * Check if a token value is expandable
+   */
+  isExpandableToken(token, tokenId) {
+    if (typeof token.value !== 'object' || token.value === null || Array.isArray(token.value)) {
+      return false;
+    }
+
+    if (tokenId.startsWith('ref.')) return false;
+
+    const nonExpandableTypes = ['shadow', 'border', 'gradient'];
+    if (nonExpandableTypes.includes(token.type)) return false;
+
+    // Check if this object has expandable properties (not a dimension object with value/unit)
+    return !('value' in token.value && 'unit' in token.value);
+  }
+
+  /**
+   * Register an expanded token property
+   */
+  registerExpandedProperty(parentId, parentToken, prop, propValue) {
+    const propId = `${parentId}.${prop}`;
+    const propType = this.inferTokenType(prop, propValue);
+
+    const expandedToken = {
+      id: propId,
+      value: propValue,
+      type: propType,
+      description: `${prop} from ${parentId}`,
+      deprecated: parentToken.deprecated,
+      source: parentToken.source,
+      originalValue: propValue,
+      metadata: {
+        expandedFrom: parentId,
+        parentType: parentToken.type,
+      },
+      outputs: new Map(),
+      references: new Set([parentId]),
+      referencedBy: new Set(),
+      themes: new Map(),
+    };
+
+    this.tokens.set(propId, expandedToken);
+    this.updateTypeIndex(propId, propType);
+
+    // Update reference indexes for parent-child relationship
+    if (!this.indexes.references.has(propId)) {
+      this.indexes.references.set(propId, new Set());
+    }
+    this.indexes.references.get(propId).add(parentId);
+
+    if (!this.indexes.referencedBy.has(parentId)) {
+      this.indexes.referencedBy.set(parentId, new Set());
+    }
+    this.indexes.referencedBy.get(parentId).add(propId);
+  }
+
+  /**
+   * Expand composite token into individual properties
+   */
+  expandCompositeToken(tokenId, token) {
+    if (!this.isExpandableToken(token, tokenId)) return;
+
+    for (const [prop, propValue] of Object.entries(token.value)) {
+      if (propValue === null || propValue === undefined) continue;
+      this.registerExpandedProperty(tokenId, token, prop, propValue);
+    }
+  }
+
+  /**
+   * Register a token with its source information
+   * @param {string} id - Token ID (e.g., 'ref.color.blue')
+   * @param {Object} tokenData - Token data from parser
+   * @param {string} tokenData.$type - Token type
+   * @param {*} tokenData.$value - Token value
+   * @param {Object} [tokenData.source] - Source information
+   */
+  registerToken(id, tokenData) {
+    this.validateTokenId(id);
+
+    const token = this.createToken(id, tokenData);
+    this.tokens.set(id, token);
+
+    // Update indexes
+    this.updateTypeIndex(id, token.type);
+    this.updateComponentIndex(id);
+    this.updateReferenceIndexes(id, token);
+
+    // Expand composite tokens
+    this.expandCompositeToken(id, token);
 
     return token;
   }
@@ -151,6 +262,28 @@ export class TokenRegistry {
       value,
       outputs: new Map(Object.entries(outputs)),
     });
+
+    // Also register theme variants for expanded properties
+    if (
+      typeof value === 'object' &&
+      value !== null &&
+      !Array.isArray(value) &&
+      token.metadata?.expandedFrom === undefined
+    ) {
+      // Only for parent tokens, not already expanded
+
+      for (const [prop, propValue] of Object.entries(value)) {
+        const expandedTokenId = `${tokenId}.${prop}`;
+        const expandedToken = this.tokens.get(expandedTokenId);
+
+        if (expandedToken) {
+          expandedToken.themes.set(theme, {
+            value: propValue,
+            outputs: new Map(),
+          });
+        }
+      }
+    }
   }
 
   /**
@@ -181,6 +314,121 @@ export class TokenRegistry {
    */
   extractReferences(value) {
     return extractAllReferences(value);
+  }
+
+  /**
+   * Infer type from reference
+   */
+  inferTypeFromReference(value) {
+    if (typeof value !== 'string' || !value.match(/^\{[^}]+\}$/)) {
+      return null;
+    }
+
+    const refId = value.slice(1, -1); // Remove { and }
+    const referencedToken = this.tokens.get(refId);
+    return referencedToken?.type || null;
+  }
+
+  /**
+   * Infer type from string value
+   */
+  inferTypeFromString(value) {
+    // Color patterns
+    if (value.match(/^#[0-9a-fA-F]{3,8}$/) || value.match(/^rgb/) || value.match(/^hsl/)) {
+      return 'color';
+    }
+
+    // Dimension patterns (number with unit)
+    if (value.match(/^-?\d+(\.\d+)?(px|rem|em|%|vh|vw|pt|cm|mm|in|pc|ex|ch)$/)) {
+      return 'dimension';
+    }
+
+    // Pure number as string
+    if (value.match(/^-?\d+(\.\d+)?$/)) {
+      return 'number';
+    }
+
+    // Font weight keywords
+    const fontWeightKeywords = ['thin', 'light', 'regular', 'medium', 'semibold', 'bold', 'black'];
+    if (fontWeightKeywords.includes(value.toLowerCase())) {
+      return 'fontWeight';
+    }
+
+    return null;
+  }
+
+  /**
+   * Infer type from number value
+   */
+  inferTypeFromNumber(value) {
+    // Numbers between 100-900 in steps of 100 are likely font weights
+    if (value >= 100 && value <= 900 && value % 100 === 0) {
+      return 'fontWeight';
+    }
+    return 'number';
+  }
+
+  /**
+   * Infer type from array value
+   */
+  inferTypeFromArray(value) {
+    // Arrays of strings might be fontFamily
+    if (value.every((v) => typeof v === 'string')) {
+      return 'fontFamily';
+    }
+    return 'array';
+  }
+
+  /**
+   * Infer type from object value
+   */
+  inferTypeFromObject(value) {
+    // Dimension object
+    if ('value' in value && 'unit' in value) {
+      return 'dimension';
+    }
+
+    // Color object
+    if ('r' in value || 'red' in value || 'h' in value || 'hue' in value) {
+      return 'color';
+    }
+
+    return 'object';
+  }
+
+  /**
+   * Best-effort type inference based on value characteristics
+   * @param {string} propertyName - Name of the property
+   * @param {*} value - Value of the property
+   * @returns {string} Inferred token type
+   */
+  inferTokenType(_propertyName, value) {
+    // Try to infer from reference first
+    const refType = this.inferTypeFromReference(value);
+    if (refType) return refType;
+
+    // Infer based on value type
+    if (typeof value === 'string') {
+      return this.inferTypeFromString(value) || 'string';
+    }
+
+    if (typeof value === 'number') {
+      return this.inferTypeFromNumber(value);
+    }
+
+    if (typeof value === 'boolean') {
+      return 'boolean';
+    }
+
+    if (Array.isArray(value)) {
+      return this.inferTypeFromArray(value);
+    }
+
+    if (typeof value === 'object' && value !== null) {
+      return this.inferTypeFromObject(value);
+    }
+
+    return 'string'; // Default fallback
   }
 
   // Query APIs
@@ -262,9 +510,9 @@ export class TokenRegistry {
    */
   buildNestedTokenStructure() {
     const flatTokens = {};
-    this.tokens.forEach((token, id) => {
+    for (const [id, _token] of this.tokens) {
       flatTokens[id] = this.getToken(id);
-    });
+    }
     return buildNestedStructure(flatTokens);
   }
 
@@ -291,9 +539,9 @@ export class TokenRegistry {
       data.tokens = this.buildNestedTokenStructure();
     } else {
       // Flat structure
-      this.tokens.forEach((token, id) => {
+      for (const [id, _token] of this.tokens) {
         data.tokens[id] = this.getToken(id);
-      });
+      }
     }
 
     // Add stats if requested

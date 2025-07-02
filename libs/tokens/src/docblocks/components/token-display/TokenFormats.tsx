@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { useSelectableContent } from '../../hooks/useSelectableContent';
 import sharedStyles from '../../styles/shared.module.css';
 
@@ -39,8 +39,7 @@ export const TokenFormats: React.FC<TokenFormatsProps> = ({ usage, className }) 
                   handleSelectContent(e.currentTarget);
                 }
               }}
-              tabIndex={0}
-              aria-label={`Click to copy ${format.label} format`}
+              title={`Click to copy ${format.label} format`}
             >
               {format.value}
             </code>

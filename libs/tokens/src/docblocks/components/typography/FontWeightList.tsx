@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import styles from '../../styles/Typography.module.css';
 import type { TokenInfo } from '../../types/tokenReferenceTable';
 import { TokenFormats } from '../token-display/TokenFormats';

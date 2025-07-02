@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { useColorTokens } from '../../hooks/useColorTokens';
 import { Colors } from './Colors';
 

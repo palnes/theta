@@ -5,11 +5,12 @@
   align-items: center;
   justify-content: center;
   border: none;
-  font-weight: var(--cmp-button-font-weight);
   cursor: pointer;
   transition: all var(--cmp-button-transition-duration) ms var(--cmp-button-transition-easing);
-  font-family: var(--cmp-button-font-family);
-  line-height: var(--cmp-button-line-height);
+  /* Default to medium size typography */
+  font-family: var(--cmp-button-typography-medium-font-family);
+  font-weight: var(--cmp-button-typography-medium-font-weight);
+  line-height: var(--cmp-button-typography-medium-line-height);
 }
 
 /* States */
@@ -68,20 +69,32 @@
 .small {
   height: var(--cmp-button-height-small);
   border-radius: var(--cmp-button-radius-small);
-  font-size: var(--cmp-button-font-size-small);
   padding: 0 var(--cmp-button-padding-x-small);
+  /* Typography */
+  font-family: var(--cmp-button-typography-small-font-family);
+  font-size: var(--cmp-button-typography-small-font-size);
+  font-weight: var(--cmp-button-typography-small-font-weight);
+  line-height: var(--cmp-button-typography-small-line-height);
 }
 
 .medium {
   height: var(--cmp-button-height-medium);
   border-radius: var(--cmp-button-radius-medium);
-  font-size: var(--cmp-button-font-size-medium);
   padding: 0 var(--cmp-button-padding-x-medium);
+  /* Typography */
+  font-family: var(--cmp-button-typography-medium-font-family);
+  font-size: var(--cmp-button-typography-medium-font-size);
+  font-weight: var(--cmp-button-typography-medium-font-weight);
+  line-height: var(--cmp-button-typography-medium-line-height);
 }
 
 .large {
   height: var(--cmp-button-height-large);
   border-radius: var(--cmp-button-radius-large);
-  font-size: var(--cmp-button-font-size-large);
   padding: 0 var(--cmp-button-padding-x-large);
+  /* Typography */
+  font-family: var(--cmp-button-typography-large-font-family);
+  font-size: var(--cmp-button-typography-large-font-size);
+  font-weight: var(--cmp-button-typography-large-font-weight);
+  line-height: var(--cmp-button-typography-large-line-height);
 }

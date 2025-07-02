@@ -1,5 +1,11 @@
 import React from 'react';
-import { Text, TextStyle, TouchableOpacity, TouchableOpacityProps, ViewStyle } from 'react-native';
+import {
+  Text,
+  type TextStyle,
+  TouchableOpacity,
+  type TouchableOpacityProps,
+  type ViewStyle,
+} from 'react-native';
 import { createThemedStyles } from '../../themedStyles';
 
 export interface ButtonProps extends Omit<TouchableOpacityProps, 'style'> {
@@ -54,8 +60,7 @@ const useStyles = createThemedStyles((tokens) => ({
     alignItems: 'center',
   },
   text: {
-    fontSize: tokens.cmpButtonFontSizeMedium,
-    fontWeight: tokens.cmpButtonFontWeight,
+    ...tokens.cmpButtonTypographyMedium,
   },
   // Variants
   primary: {
@@ -88,13 +93,13 @@ const useStyles = createThemedStyles((tokens) => ({
   },
   // Text sizes
   smallText: {
-    fontSize: tokens.cmpButtonFontSizeSmall,
+    ...tokens.cmpButtonTypographySmall,
   },
   mediumText: {
-    fontSize: tokens.cmpButtonFontSizeMedium,
+    ...tokens.cmpButtonTypographyMedium,
   },
   largeText: {
-    fontSize: tokens.cmpButtonFontSizeLarge,
+    ...tokens.cmpButtonTypographyLarge,
   },
   // States
   disabled: {

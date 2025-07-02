@@ -238,6 +238,13 @@ dl dt.formatLabel,
   margin: 0;
 }
 
+.tokenRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sys-spacing-xs);
+  font-size: var(--sys-font-size-xs);
+}
+
 .tokenDisplayInline {
   display: flex;
   gap: var(--sys-spacing-md);
@@ -248,13 +255,6 @@ dl dt.formatLabel,
   display: flex;
   align-items: baseline;
   gap: var(--sys-spacing-xs);
-}
-
-.tokenRow {
-  display: flex;
-  align-items: baseline;
-  gap: var(--sys-spacing-xs);
-  font-size: var(--sys-font-size-xs);
 }
 
 .tokenLabel {

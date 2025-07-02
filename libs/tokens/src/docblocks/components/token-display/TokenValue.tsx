@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { formatValue } from '../../tools/formatters';
 
 interface TokenValueProps {

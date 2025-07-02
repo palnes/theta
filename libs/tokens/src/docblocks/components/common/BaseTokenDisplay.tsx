@@ -1,8 +1,9 @@
-import React, { ReactNode } from 'react';
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { ERROR_MESSAGES, LOADING_MESSAGES } from '../../constants/displayConstants';
 import { useTokenDisplay } from '../../hooks/useTokenDisplay';
 import styles from '../../styles/shared.module.css';
-import { TokenData } from '../../types/tokenReferenceTable';
+import type { TokenData } from '../../types/tokenReferenceTable';
 
 interface BaseTokenDisplayProps {
   loadingKey?: keyof typeof LOADING_MESSAGES;

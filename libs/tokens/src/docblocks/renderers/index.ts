@@ -1,14 +1,14 @@
 // Export all renderers
 export * from './BaseRenderer';
+export * from './builtIn';
 export * from './ColorRenderer';
-export * from './TypographyRenderer';
-export * from './SpacingRenderer';
 export * from './GenericRenderer';
 export * from './RendererRegistry';
+export * from './SpacingRenderer';
 
 // Export new renderer system
 export * from './TokenRenderer';
-export * from './builtIn';
+export * from './TypographyRenderer';
 
 // Import renderers for registration
 import { ColorRenderer } from './ColorRenderer';

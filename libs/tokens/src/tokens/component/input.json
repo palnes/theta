@@ -26,30 +26,16 @@
       "borderRadius": {
         "$value": "{sys.radius.sm}"
       },
-      "fontSize": {
+      "typography": {
         "small": {
-          "$value": "{sys.fontSize.sm}"
+          "$value": "{sys.typography.body.sm}"
         },
         "medium": {
-          "$value": "{sys.fontSize.base}"
+          "$value": "{sys.typography.body.md}"
         },
         "large": {
-          "$value": "{sys.fontSize.base}"
+          "$value": "{sys.typography.body.lg}"
         }
-      },
-      "lineHeight": {
-        "small": {
-          "$value": "{sys.lineHeight.normal}"
-        },
-        "medium": {
-          "$value": "{sys.lineHeight.normal}"
-        },
-        "large": {
-          "$value": "{sys.lineHeight.normal}"
-        }
-      },
-      "fontWeight": {
-        "$value": "{sys.fontWeight.normal}"
       },
       "color": {
         "background": {

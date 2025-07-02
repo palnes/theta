@@ -1,4 +1,4 @@
-import { TokenInfo, UsageFormat } from '../types/tokenReferenceTable';
+import type { TokenInfo, UsageFormat } from '../types/tokenReferenceTable';
 
 export const getUsageValue = (token: TokenInfo, format: UsageFormat): string => {
   switch (format) {

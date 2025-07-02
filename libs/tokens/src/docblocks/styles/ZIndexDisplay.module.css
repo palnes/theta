@@ -23,6 +23,7 @@
 .card:hover {
   transform: scale(1.05);
   box-shadow: var(--sys-shadow-large);
+  z-index: calc(var(--sys-z-index-tooltip) + 1) !important;
 }
 
 .cardLabel {

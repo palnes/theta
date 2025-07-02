@@ -2,11 +2,11 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { build, parse } from '@terrazzo/parser';
 import {
+  createConfig,
+  createPlugins,
   DEFAULT_THEME,
   DIST_DIR,
   TEMP_DIR,
-  createConfig,
-  createPlugins,
 } from './terrazzo-config.js';
 import { processThemes } from './theme-processor.js';
 import { TokenRegistry } from './token-registry.js';
@@ -65,7 +65,10 @@ export async function buildTokens(themeTokens, rootDir) {
 
   // Step 1: Parse tokens from JSON to DTCG format
   const parseConfig = createConfig(rootDir, { parse: true });
-  const baseResult = await parseBaseTokens(themeTokens, { rootDir, parseConfig });
+  const baseResult = await parseBaseTokens(themeTokens, {
+    rootDir,
+    parseConfig,
+  });
 
   // Step 2: Parse and analyze theme variations (e.g., dark mode)
   const themeResults = await processThemes(themeTokens, baseResult.tokens, {

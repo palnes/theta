@@ -1,6 +1,23 @@
 import type { ReactNode } from 'react';
-import { typographyConfig } from '../config/defaultConfig';
 import styles from '../styles/shared.module.css';
+
+// Typography configuration
+const typographyConfig = {
+  fontSizeOrder: ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl'],
+  fontWeightLabels: {
+    '100': 'Thin',
+    '200': 'Extra Light',
+    '300': 'Light',
+    '400': 'Regular',
+    '500': 'Medium',
+    '600': 'Semi Bold',
+    '700': 'Bold',
+    '800': 'Extra Bold',
+    '900': 'Black',
+  },
+  lineHeightOrder: ['none', 'tight', 'normal', 'relaxed', 'loose'],
+};
+
 import type { TokenDisplayConfig } from '../types/config';
 import type { TokenInfo } from '../types/tokenReferenceTable';
 import { BaseTokenRenderer } from './BaseRenderer';
@@ -57,7 +74,9 @@ export class TypographyRenderer extends BaseTokenRenderer {
         return (
           <div
             className={styles.typographyExample}
-            style={{ fontSize: typeof value === 'number' ? `${value}px` : value }}
+            style={{
+              fontSize: typeof value === 'number' ? `${value}px` : value,
+            }}
           >
             {value}px
           </div>

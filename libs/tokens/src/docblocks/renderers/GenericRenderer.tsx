@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import sharedStyles from '../styles/shared.module.css';
 import type { TokenInfo } from '../types/tokenReferenceTable';
 import { BaseTokenRenderer } from './BaseRenderer';

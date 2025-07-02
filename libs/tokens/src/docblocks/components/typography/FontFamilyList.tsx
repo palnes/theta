@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import styles from '../../styles/Typography.module.css';
 import { formatFontFamilyValue } from '../../tools/tokenHelpers';
 import type { TokenInfo } from '../../types/tokenReferenceTable';
@@ -24,7 +24,13 @@ export const FontFamilyList: React.FC<FontFamilyListProps> = ({ fontFamilies }) 
         return (
           <div key={token.path} className={styles.typographyRow}>
             <div className={styles.typographyExample}>
-              <div style={{ fontFamily: fontValue, fontSize: '16px', lineHeight: 1.4 }}>
+              <div
+                style={{
+                  fontFamily: fontValue,
+                  fontSize: '16px',
+                  lineHeight: 1.4,
+                }}
+              >
                 {sampleText}
               </div>
             </div>

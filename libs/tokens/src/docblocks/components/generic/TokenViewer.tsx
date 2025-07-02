@@ -1,9 +1,8 @@
-import React from 'react';
 import type { ReactNode } from 'react';
-import { defaultTokenConfig } from '../../config/defaultConfig';
+import React from 'react';
 import { useTokens } from '../../hooks/useTokens';
 import { useRendererRegistry } from '../../renderers/RendererRegistry';
-import type { TokenDisplayConfig, TokenRenderer } from '../../types/config';
+import type { TokenDisplayConfig, TokenRenderer, TokenRendererRegistry } from '../../types/config';
 import { ErrorState } from '../common/ErrorState';
 import { LoadingState } from '../common/LoadingState';
 
@@ -74,6 +73,9 @@ export const TokenViewer: React.FC<TokenViewerProps> = ({
     category: category,
   });
 
+  // Find the appropriate renderer - must be called unconditionally
+  const activeRenderer = useActiveRenderer(renderer, tokens, registry);
+
   // Show loading state
   if (loading) {
     return <>{loadingComponent || <LoadingState />}</>;
@@ -89,37 +91,13 @@ export const TokenViewer: React.FC<TokenViewerProps> = ({
     return <>{emptyComponent || <div>No tokens found</div>}</>;
   }
 
-  // Find appropriate renderer
-  let activeRenderer = renderer;
-  if (!activeRenderer && tokens.length > 0 && tokens[0]) {
-    // Try to find a renderer that can handle the first token
-    activeRenderer = registry.getForToken(tokens[0]);
-  }
-
+  // No renderer found
   if (!activeRenderer) {
-    // Use generic renderer as fallback
-    const genericRenderer = registry.get('generic');
-    if (genericRenderer) {
-      activeRenderer = genericRenderer;
-    } else {
-      return (
-        <div>
-          <p>No renderer found for tokens of type: {tokens[0]?.type || 'unknown'}</p>
-          <p>
-            Available renderers:{' '}
-            {registry
-              .getAll()
-              .map((r) => r.name)
-              .join(', ')}
-          </p>
-        </div>
-      );
-    }
+    return <NoRendererError token={tokens[0]} registry={registry} />;
   }
 
   // Merge configurations
   const mergedConfig: TokenDisplayConfig = {
-    ...defaultTokenConfig,
     ...activeRenderer.defaultConfig,
     ...config,
   };
@@ -128,13 +106,55 @@ export const TokenViewer: React.FC<TokenViewerProps> = ({
   return (
     <div>
       {showTitle && title && <h2>{title}</h2>}
-      {activeRenderer.renderCollection ? (
-        activeRenderer.renderCollection(tokens, mergedConfig)
-      ) : (
-        <div>{tokens.map((token: any) => activeRenderer.renderToken(token, mergedConfig))}</div>
-      )}
+      <TokenCollection renderer={activeRenderer} tokens={tokens} config={mergedConfig} />
     </div>
   );
+};
+
+// Helper hook to find the appropriate renderer
+const useActiveRenderer = (
+  providedRenderer: TokenRenderer | undefined,
+  tokens: any[],
+  registry: TokenRendererRegistry
+): TokenRenderer | null => {
+  if (providedRenderer) return providedRenderer;
+
+  if (tokens.length > 0 && tokens[0]) {
+    const tokenRenderer = registry.getForToken(tokens[0]);
+    if (tokenRenderer) return tokenRenderer;
+  }
+
+  return registry.get('generic') || null;
+};
+
+// Component to display when no renderer is found
+const NoRendererError: React.FC<{ token: any; registry: TokenRendererRegistry }> = ({
+  token,
+  registry,
+}) => (
+  <div>
+    <p>No renderer found for tokens of type: {token?.type || 'unknown'}</p>
+    <p>
+      Available renderers:{' '}
+      {registry
+        .getAll()
+        .map((r: TokenRenderer) => r.name)
+        .join(', ')}
+    </p>
+  </div>
+);
+
+// Component to render token collection
+const TokenCollection: React.FC<{
+  renderer: TokenRenderer;
+  tokens: any[];
+  config: TokenDisplayConfig;
+}> = ({ renderer, tokens, config }) => {
+  if (renderer.renderCollection) {
+    return <>{renderer.renderCollection(tokens, config)}</>;
+  }
+
+  return <div>{tokens.map((token: any) => renderer.renderToken(token, config))}</div>;
 };
 
 /**

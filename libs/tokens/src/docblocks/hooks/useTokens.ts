@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTokenSystemConfig, useTokenSystemData } from '../contexts/TokenSystemContext';
-import { TokenInfo } from '../types/tokenReferenceTable';
+import type { TokenInfo } from '../types/tokenReferenceTable';
 
 export interface UseTokensOptions {
   /** Tier ID(s) to filter by */
@@ -16,6 +16,58 @@ export interface UseTokensOptions {
 /**
  * Hook to fetch tokens using the configuration system
  */
+// Helper to get tier IDs based on tier parameter
+const getTierIds = (tier: string | string[] | 'all', config: any): string[] => {
+  if (tier === 'all') {
+    return config.tiers.map((t: any) => t.id);
+  }
+  return Array.isArray(tier) ? tier : [tier];
+};
+
+// Helper to collect tokens from a single tier
+const collectTokensFromTier = (tierData: any, category?: string): TokenInfo[] => {
+  const tokens: TokenInfo[] = [];
+
+  if (!tierData) return tokens;
+
+  if (category) {
+    // Get specific category from tier
+    const categoryTokens = tierData[category];
+    if (categoryTokens) {
+      tokens.push(...categoryTokens);
+    }
+  } else {
+    // Get all tokens from tier
+    for (const categoryTokens of Object.values(tierData)) {
+      if (Array.isArray(categoryTokens)) {
+        tokens.push(...categoryTokens);
+      }
+    }
+  }
+
+  return tokens;
+};
+
+// Helper to sort tokens by sort order
+const sortTokensBySortOrder = (tokens: TokenInfo[], sortOrder: string[]): TokenInfo[] => {
+  return tokens.sort((a, b) => {
+    const aIndex = sortOrder.indexOf(a.name);
+    const bIndex = sortOrder.indexOf(b.name);
+
+    if (aIndex === -1 && bIndex === -1) {
+      return a.name.localeCompare(b.name);
+    }
+    if (aIndex === -1) return 1;
+    if (bIndex === -1) return -1;
+    return aIndex - bIndex;
+  });
+};
+
+// Helper to sort tokens by path
+const sortTokensByPath = (tokens: TokenInfo[]): TokenInfo[] => {
+  return tokens.sort((a, b) => a.path.localeCompare(b.path, undefined, { numeric: true }));
+};
+
 export const useTokens = (options: UseTokensOptions = {}) => {
   const { tier = 'all', category, filter, tokenData: providedTokenData } = options;
   const config = useTokenSystemConfig();
@@ -27,32 +79,16 @@ export const useTokens = (options: UseTokensOptions = {}) => {
   const tokens = useMemo(() => {
     if (!data) return [];
 
-    let allTokens: TokenInfo[] = [];
-
     // Determine which tiers to include
-    const tierIds =
-      tier === 'all' ? config.tiers.map((t) => t.id) : Array.isArray(tier) ? tier : [tier];
+    const tierIds = getTierIds(tier, config);
 
     // Collect tokens from specified tiers
-    tierIds.forEach((tierId) => {
+    let allTokens: TokenInfo[] = [];
+    for (const tierId of tierIds) {
       const tierData = (data as any)[tierId];
-      if (!tierData) return;
-
-      if (category) {
-        // Get specific category from tier
-        const categoryTokens = tierData[category];
-        if (categoryTokens) {
-          allTokens.push(...categoryTokens);
-        }
-      } else {
-        // Get all tokens from tier
-        Object.values(tierData).forEach((categoryTokens: any) => {
-          if (Array.isArray(categoryTokens)) {
-            allTokens.push(...categoryTokens);
-          }
-        });
-      }
-    });
+      const tierTokens = collectTokensFromTier(tierData, category);
+      allTokens.push(...tierTokens);
+    }
 
     // Apply custom filter if provided
     if (filter) {
@@ -62,23 +98,11 @@ export const useTokens = (options: UseTokensOptions = {}) => {
     // Apply sorting based on configuration
     const sortOrder = config.display?.sortOrders?.[category || ''];
     if (sortOrder && category) {
-      allTokens.sort((a, b) => {
-        const aIndex = sortOrder.indexOf(a.name);
-        const bIndex = sortOrder.indexOf(b.name);
-
-        if (aIndex === -1 && bIndex === -1) {
-          return a.name.localeCompare(b.name);
-        }
-        if (aIndex === -1) return 1;
-        if (bIndex === -1) return -1;
-        return aIndex - bIndex;
-      });
-    } else {
-      // Default sort by path
-      allTokens.sort((a, b) => a.path.localeCompare(b.path, undefined, { numeric: true }));
+      return sortTokensBySortOrder(allTokens, sortOrder);
     }
 
-    return allTokens;
+    // Default sort by path
+    return sortTokensByPath(allTokens);
   }, [data, tier, category, filter, config]);
 
   return { tokens, loading, error };

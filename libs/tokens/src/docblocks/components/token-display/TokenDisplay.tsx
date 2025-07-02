@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { useSelectableContent } from '../../hooks/useSelectableContent';
 import styles from '../../styles/shared.module.css';
 
@@ -52,7 +52,6 @@ export const TokenDisplay: React.FC<TokenDisplayProps> = ({
           <code
             className={styles.tokenValue}
             onClick={handleSelectContent}
-            tabIndex={0}
             onKeyDown={handleKeyDown}
           >
             {value}

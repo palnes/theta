@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from '../../styles/TokenTable.module.css';
 import { getUsageValue } from '../../tools/tokenReferenceHelpers';
-import { TokenInfo } from '../../types/tokenReferenceTable';
+import type { TokenInfo } from '../../types/tokenReferenceTable';
 import { ExpandedDetails } from './ExpandedDetails';
 import { TokenValue } from './TokenValue';
 
@@ -51,6 +51,14 @@ export const TokenRow: React.FC<TokenRowProps> = ({ token, isExpanded, onToggle,
               {isExpanded ? '▼' : '▶'}
             </span>
             <div>{token.path}</div>
+            {token.expandedFrom && (
+              <span
+                className={styles.expandedIndicator}
+                title={`Expanded from: ${token.expandedFrom}`}
+              >
+                ↳
+              </span>
+            )}
             {token.isThemeable && (
               <span
                 className={styles.themeIndicator}
@@ -91,8 +99,7 @@ export const TokenRow: React.FC<TokenRowProps> = ({ token, isExpanded, onToggle,
             className={styles.selectableValue}
             onClick={handleSelectContent}
             onKeyDown={handleKeyDown}
-            tabIndex={0}
-            aria-label="Click to copy"
+            title="Click to copy"
           >
             {getUsageValue(token, usageFormat)}
           </code>

@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import styles from '../../styles/DimensionScale.module.css';
 import type { NumericToken } from '../../types/tokens';
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { ERROR_MESSAGES, LOADING_MESSAGES } from '../../constants/displayConstants';
 import { useTypographyTokens } from '../../hooks/useTypographyTokens';
 import styles from '../../styles/TypographyShowcase.module.css';

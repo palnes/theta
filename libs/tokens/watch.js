@@ -80,7 +80,9 @@ function watchTokens() {
   // Handle graceful shutdown
   process.on('SIGINT', () => {
     console.log('\n\n👋 Stopping watch mode...');
-    watchers.forEach((watcher) => watcher.close());
+    for (const watcher of watchers) {
+      watcher.close();
+    }
     themeWatcher.close();
     process.exit(0);
   });

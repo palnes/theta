@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
-import { StorybookConfig } from '@storybook/react-native-web-vite';
+import type { StorybookConfig } from '@storybook/react-native-web-vite';
 
 const require = createRequire(import.meta.url);
 

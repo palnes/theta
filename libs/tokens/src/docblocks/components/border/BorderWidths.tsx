@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { useTokens } from '../../hooks/useTokens';
 import sharedStyles from '../../styles/shared.module.css';
 import { TokenCard } from '../common/TokenCard';

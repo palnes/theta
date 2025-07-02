@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const readline = require('readline');
-const { promisify } = require('util');
-const { exec } = require('child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+const readline = require('node:readline');
+const { promisify } = require('node:util');
+const { exec } = require('node:child_process');
 
-// ANSI color codes
+// ANSI colors
 const colors = {
   reset: '\x1b[0m',
   bright: '\x1b[1m',
@@ -16,400 +16,284 @@ const colors = {
   blue: '\x1b[34m',
   cyan: '\x1b[36m',
 };
-
-// Helper to colorize output
 const color = (text, colorCode) => `${colorCode}${text}${colors.reset}`;
-
-// Create readline interface
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-// Promisify readline question
+const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 const question = (query) => new Promise((resolve) => rl.question(query, resolve));
+const execAsync = promisify(exec);
 
 // Validate npm package name
-function isValidPackageName(name) {
-  const regex = /^(@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/;
-  return regex.test(name);
-}
+const isValidPackageName = (name) =>
+  /^(@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/.test(name);
 
-// Get all files to process
-function getAllFiles(dir, extensions = []) {
+// Get all files recursively
+const getAllFiles = (dir, extensions = []) => {
   const results = [];
+  const excludeDirs = ['.', 'node_modules', 'dist', 'build', 'storybook-static'];
 
-  function walk(currentDir) {
-    const files = fs.readdirSync(currentDir);
-
-    for (const file of files) {
+  const walk = (currentDir) => {
+    for (const file of fs.readdirSync(currentDir)) {
       const filePath = path.join(currentDir, file);
       const stat = fs.statSync(filePath);
-
-      // Skip node_modules, dist, build, and hidden directories
-      if (stat.isDirectory()) {
-        if (
-          !file.startsWith('.') &&
-          file !== 'node_modules' &&
-          file !== 'dist' &&
-          file !== 'build' &&
-          file !== 'storybook-static'
-        ) {
-          walk(filePath);
-        }
-      } else {
-        // Check if file has one of the target extensions
-        if (extensions.length === 0 || extensions.some((ext) => file.endsWith(ext))) {
-          results.push(filePath);
-        }
+      if (stat.isDirectory() && !excludeDirs.some((ex) => file.startsWith(ex))) {
+        walk(filePath);
+      } else if (!extensions.length || extensions.some((ext) => file.endsWith(ext))) {
+        results.push(filePath);
       }
     }
-  }
+  };
 
   walk(dir);
   return results;
-}
+};
 
-// Create case-preserving replacements
-function createCasePreservingReplacements(oldStr, newStr) {
-  const replacements = [];
+// Create case variants
+const caseVariants = (oldStr, newStr) => {
+  const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+  return [
+    ...new Set([
+      `${oldStr}|${newStr}`,
+      `${oldStr.toLowerCase()}|${newStr.toLowerCase()}`,
+      `${capitalize(oldStr)}|${capitalize(newStr)}`,
+      `${oldStr.toUpperCase()}|${newStr.toUpperCase()}`,
+    ]),
+  ].map((v) => v.split('|'));
+};
 
-  // Original case
-  replacements.push([oldStr, newStr]);
-
-  // All lowercase
-  replacements.push([oldStr.toLowerCase(), newStr.toLowerCase()]);
-
-  // First letter capitalized
-  const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-  replacements.push([capitalize(oldStr), capitalize(newStr)]);
-
-  // All uppercase
-  replacements.push([oldStr.toUpperCase(), newStr.toUpperCase()]);
-
-  // Remove duplicates
-  const unique = [];
-  const seen = new Set();
-  for (const [search, replace] of replacements) {
-    const key = `${search}::${replace}`;
-    if (!seen.has(key)) {
-      seen.add(key);
-      unique.push([search, replace]);
-    }
-  }
-
-  return unique;
-}
-
-// Count occurrences in a file
-function countOccurrences(content, searchStr) {
-  const regex = new RegExp(searchStr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-  const matches = content.match(regex);
-  return matches ? matches.length : 0;
-}
-
-// Preview changes in a file
-function previewFileChanges(filePath, replacements) {
-  const content = fs.readFileSync(filePath, 'utf8');
-  const changes = [];
-
-  for (const [search, replace] of replacements) {
-    const count = countOccurrences(content, search);
-    if (count > 0) {
-      changes.push({ search, replace, count });
-    }
-  }
-
-  return changes;
-}
-
-// Apply replacements to a file
-function applyReplacements(filePath, replacements) {
-  let content = fs.readFileSync(filePath, 'utf8');
-  let modified = false;
+// Process a single file
+const processFile = (file, replacements, preview = false) => {
+  let content = fs.readFileSync(file, 'utf8');
+  const fileChanges = [];
+  let totalCount = 0;
 
   for (const [search, replace] of replacements) {
     const regex = new RegExp(search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-    const newContent = content.replace(regex, replace);
-    if (newContent !== content) {
-      modified = true;
-      content = newContent;
+    const count = (content.match(regex) || []).length;
+
+    if (count > 0) {
+      fileChanges.push({ search, replace, count });
+      totalCount += count;
+      if (!preview) content = content.replace(regex, replace);
     }
   }
 
-  if (modified) {
-    fs.writeFileSync(filePath, content);
-    return true;
+  if (!preview && fileChanges.length > 0) {
+    fs.writeFileSync(file, content);
   }
 
-  return false;
-}
+  return { fileChanges, totalCount };
+};
 
-// Discover packages in libs directory
-function discoverPackages() {
+// Process all files
+const processFiles = (files, replacements, preview = false) => {
+  const changes = {};
+  let totalCount = 0;
+
+  for (const file of files) {
+    const { fileChanges, totalCount: fileCount } = processFile(file, replacements, preview);
+    if (fileChanges.length > 0) {
+      changes[file] = fileChanges;
+      totalCount += fileCount;
+    }
+  }
+
+  return { changes, totalCount, fileCount: Object.keys(changes).length };
+};
+
+// Discover packages
+const discoverPackages = () => {
   const packages = {};
   const libsDir = path.join(process.cwd(), 'libs');
 
-  if (!fs.existsSync(libsDir)) {
-    return packages;
-  }
+  if (!fs.existsSync(libsDir)) return packages;
 
-  const dirs = fs.readdirSync(libsDir).filter((file) => {
-    const fullPath = path.join(libsDir, file);
-    return (
-      fs.statSync(fullPath).isDirectory() && fs.existsSync(path.join(fullPath, 'package.json'))
-    );
-  });
-
-  for (const dir of dirs) {
+  for (const dir of fs.readdirSync(libsDir)) {
     const packageJsonPath = path.join(libsDir, dir, 'package.json');
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-    const packageName = packageJson.name;
-
-    if (packageName && packageName.startsWith('@')) {
-      const [, name] = packageName.split('/');
-      packages[name] = name; // Default to keeping the same name
+    if (fs.existsSync(packageJsonPath)) {
+      const { name } = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+      if (name?.startsWith('@')) packages[name.split('/')[1]] = name.split('/')[1];
     }
   }
 
   return packages;
-}
+};
 
-// Main function
-async function main() {
-  console.log(color('\n🎨 Project Whitelabel Tool\n', colors.bright));
+// Show preview of changes
+const showPreview = (changes, totalCount, fileCount) => {
+  console.log(color(`\nFound ${totalCount} changes in ${fileCount} files:`, colors.cyan));
 
-  // Get current values from root package.json
-  const rootPackageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-  const currentProjectName = rootPackageJson.name || 'theta';
+  const entries = Object.entries(changes);
+  const previewCount = Math.min(entries.length, 10);
 
-  // Discover packages
-  const discoveredPackages = discoverPackages();
-  const packageEntries = Object.entries(discoveredPackages);
-
-  if (packageEntries.length === 0) {
-    console.log(color('❌ No packages found in libs directory', colors.red));
-    process.exit(1);
+  for (let i = 0; i < previewCount; i++) {
+    const [file, fileChanges] = entries[i];
+    console.log(`\n${color(file, colors.blue)}:`);
+    for (const { search, replace, count } of fileChanges) {
+      console.log(`  ${color(search, colors.red)} → ${color(replace, colors.green)} (${count}x)`);
+    }
   }
 
-  // Infer current scope from first package
-  const firstPackagePath = path.join('libs', Object.keys(discoveredPackages)[0], 'package.json');
-  const firstPackageJson = JSON.parse(fs.readFileSync(firstPackagePath, 'utf8'));
-  const currentScope = firstPackageJson.name.split('/')[0];
+  if (entries.length > 10) {
+    console.log(color(`\n... and ${fileCount - 10} more files`, colors.yellow));
+  }
+};
 
-  console.log(`Current project name: ${color(currentProjectName, colors.cyan)}`);
-  console.log(`Current package scope: ${color(currentScope, colors.cyan)}`);
-  console.log(
-    `Found packages: ${color(packageEntries.map(([name]) => name).join(', '), colors.cyan)}\n`
-  );
-
-  // Ask for new values
-  let newProjectName = await question('Enter new project name (lowercase, no spaces): ');
-  newProjectName = newProjectName.trim().toLowerCase();
-
+// Get user input for new values
+const getNewValues = async () => {
+  const newProjectName = (await question('New project name (lowercase): ')).trim().toLowerCase();
   if (!isValidPackageName(newProjectName)) {
-    console.log(color('❌ Invalid project name. Must be lowercase with no spaces.', colors.red));
+    console.log(color('❌ Invalid project name', colors.red));
     process.exit(1);
   }
 
-  let newScope = await question('Enter new package scope (e.g., @mycompany): ');
-  newScope = newScope.trim();
-
-  if (!newScope.startsWith('@')) {
-    newScope = '@' + newScope;
-  }
-
-  if (!isValidPackageName(newScope + '/test')) {
-    console.log(color('❌ Invalid package scope.', colors.red));
+  let newScope = (await question('New package scope (e.g., @mycompany): ')).trim();
+  if (!newScope.startsWith('@')) newScope = `@${newScope}`;
+  if (!isValidPackageName(`${newScope}/test`)) {
+    console.log(color('❌ Invalid package scope', colors.red));
     process.exit(1);
   }
 
-  // Ask if they want to rename individual packages
-  const renamePackages = await question('\nRename individual packages? (y/n): ');
+  return { newProjectName, newScope };
+};
 
-  let packageNames = { ...discoveredPackages };
+// Get new package names if user wants to rename
+const getNewPackageNames = async (packages, packageKeys) => {
+  const packageNames = { ...packages };
+  if ((await question('\nRename packages? (y/n): ')).toLowerCase() === 'y') {
+    console.log(color('\nNew names (Enter to keep):', colors.cyan));
 
-  if (renamePackages.toLowerCase() === 'y') {
-    console.log(
-      color('\nEnter new names for packages (press Enter to keep current):', colors.cyan)
-    );
-
-    for (const [current, defaultName] of Object.entries(packageNames)) {
-      const newName = await question(`  ${current} [${defaultName}]: `);
-      if (newName.trim()) {
-        if (!isValidPackageName(newName.trim())) {
-          console.log(color(`❌ Invalid package name: ${newName}`, colors.red));
+    for (const current of packageKeys) {
+      const newName = (await question(`  ${current}: `)).trim();
+      if (newName) {
+        if (!isValidPackageName(newName)) {
+          console.log(color('❌ Invalid package name', colors.red));
           process.exit(1);
         }
-        packageNames[current] = newName.trim();
+        packageNames[current] = newName;
       }
     }
   }
+  return packageNames;
+};
 
-  // Confirm changes
-  console.log(color('\n📋 Summary of changes:', colors.bright));
-  console.log(
-    `  Project name: ${color(currentProjectName, colors.red)} → ${color(newProjectName, colors.green)}`
-  );
-  console.log(
-    `  Package scope: ${color(currentScope, colors.red)} → ${color(newScope, colors.green)}`
-  );
-  console.log(`  Package names:`);
-  for (const [oldName, newName] of Object.entries(packageNames)) {
-    console.log(
-      `    ${color(`${currentScope}/${oldName}`, colors.red)} → ${color(`${newScope}/${newName}`, colors.green)}`
-    );
-  }
-
-  // Define replacements
+// Build all replacements
+const buildReplacements = (currentProjectName, newProjectName, currentScope, newScope, packageNames) => {
   const replacements = [
-    // Project name in root package.json (exact match)
     [`"name": "${currentProjectName}"`, `"name": "${newProjectName}"`],
+    ...caseVariants(currentProjectName, newProjectName),
+    [`/${currentProjectName}/`, `/${newProjectName}/`],
   ];
 
-  // Add case-preserving replacements for project names
-  replacements.push(...createCasePreservingReplacements(currentProjectName, newProjectName));
-
-  // If current project name was previously renamed (e.g., theta -> shbno), handle that too
-  const possibleOldNames = ['theta', 'shbno'];
-  for (const oldName of possibleOldNames) {
-    if (oldName !== currentProjectName.toLowerCase()) {
-      replacements.push(...createCasePreservingReplacements(oldName, newProjectName));
-    }
-  }
-
-  // URL paths
-  replacements.push([`/${currentProjectName}/`, `/${newProjectName}/`]);
-
-  // Add package-specific replacements
   for (const [oldName, newName] of Object.entries(packageNames)) {
-    if (oldName !== newName) {
-      // Package name in package.json files
-      replacements.push([
-        `"name": "${currentScope}/${oldName}"`,
-        `"name": "${newScope}/${newName}"`,
-      ]);
-      // Imports and dependencies
-      replacements.push([`${currentScope}/${oldName}`, `${newScope}/${newName}`]);
-      // Turbo.json references
-      replacements.push([`"${currentScope}/${oldName}#`, `"${newScope}/${newName}#`]);
-    } else {
-      // Just update the scope
-      replacements.push([
-        `"name": "${currentScope}/${oldName}"`,
-        `"name": "${newScope}/${oldName}"`,
-      ]);
-      replacements.push([`${currentScope}/${oldName}`, `${newScope}/${oldName}`]);
-      replacements.push([`"${currentScope}/${oldName}#`, `"${newScope}/${oldName}#`]);
-    }
-  }
-
-  // Preview mode
-  const previewMode = await question('\nRun in preview mode first? (y/n): ');
-
-  if (previewMode.toLowerCase() === 'y') {
-    console.log(color('\n🔍 Preview Mode - Scanning files...', colors.yellow));
-
-    const targetFiles = [
-      ...getAllFiles('.', ['.json']),
-      ...getAllFiles('libs', ['.ts', '.tsx', '.js', '.jsx', '.mdx']),
-      ...getAllFiles('.', ['.md', '.mdx']),
-    ];
-
-    let totalChanges = 0;
-    const fileChanges = [];
-
-    for (const file of targetFiles) {
-      const changes = previewFileChanges(file, replacements);
-      if (changes.length > 0) {
-        fileChanges.push({ file, changes });
-        for (const change of changes) {
-          totalChanges += change.count;
-        }
-      }
-    }
-
-    // Show preview
-    console.log(
-      color(`\nFound ${totalChanges} occurrences in ${fileChanges.length} files:`, colors.cyan)
+    replacements.push(
+      [`"name": "${currentScope}/${oldName}"`, `"name": "${newScope}/${newName}"`],
+      [`${currentScope}/${oldName}`, `${newScope}/${newName}`],
+      [`"${currentScope}/${oldName}#`, `"${newScope}/${newName}#`]
     );
-
-    for (const { file, changes } of fileChanges.slice(0, 10)) {
-      console.log(`\n${color(file, colors.blue)}:`);
-      for (const { search, replace, count } of changes) {
-        console.log(
-          `  ${color(search, colors.red)} → ${color(replace, colors.green)} (${count} times)`
-        );
-      }
-    }
-
-    if (fileChanges.length > 10) {
-      console.log(color(`\n... and ${fileChanges.length - 10} more files`, colors.yellow));
-    }
   }
 
-  // Confirm execution
-  const proceed = await question('\nProceed with renaming? (y/n): ');
+  return replacements;
+};
 
-  if (proceed.toLowerCase() !== 'y') {
-    console.log(color('\n❌ Operation cancelled', colors.yellow));
-    process.exit(0);
-  }
-
-  // Check git status first
+// Check git status
+const checkGitStatus = async () => {
   try {
-    const { stdout } = await promisify(exec)('git status --porcelain');
+    const { stdout } = await execAsync('git status --porcelain');
     if (stdout.trim()) {
-      console.log(color('\n⚠️  Warning: You have uncommitted changes', colors.yellow));
-      console.log(
-        color("It's recommended to commit or stash changes before proceeding.", colors.yellow)
-      );
-
-      const continueAnyway = await question('\nContinue anyway? (y/n): ');
-      if (continueAnyway.toLowerCase() !== 'y') {
-        console.log(color('\n❌ Operation cancelled', colors.yellow));
+      console.log(color('\n⚠️  Uncommitted changes detected', colors.yellow));
+      if ((await question('Continue anyway? (y/n): ')).toLowerCase() !== 'y') {
+        console.log(color('\n❌ Cancelled', colors.yellow));
         process.exit(0);
       }
     }
-  } catch (err) {
-    console.log(color('\n⚠️  Warning: Not a git repository', colors.yellow));
+  } catch {
+    console.log(color('\n⚠️  Not a git repository', colors.yellow));
+  }
+};
+
+// Main
+async function main() {
+  console.log(color('\n🎨 Project Whitelabel Tool\n', colors.bright));
+
+  // Get current values
+  const rootPackageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+  const currentProjectName = rootPackageJson.name || 'theta';
+  const packages = discoverPackages();
+  const packageKeys = Object.keys(packages);
+
+  if (!packageKeys.length) {
+    console.log(color('❌ No packages found', colors.red));
+    process.exit(1);
   }
 
-  // Apply changes
-  console.log(color('\n✏️  Applying changes...', colors.cyan));
+  // Infer current scope
+  const firstPackage = JSON.parse(
+    fs.readFileSync(path.join('libs', packageKeys[0], 'package.json'), 'utf8')
+  );
+  const currentScope = firstPackage.name.split('/')[0];
 
+  console.log(
+    `Current: ${color(currentProjectName, colors.cyan)} / ${color(currentScope, colors.cyan)}`
+  );
+  console.log(`Packages: ${color(packageKeys.join(', '), colors.cyan)}\n`);
+
+  // Get new values
+  const { newProjectName, newScope } = await getNewValues();
+
+  // Get package names
+  const packageNames = await getNewPackageNames(packages, packageKeys);
+
+  // Show summary
+  console.log(color('\n📋 Summary:', colors.bright));
+  console.log(`  ${currentProjectName} → ${newProjectName}`);
+  console.log(`  ${currentScope} → ${newScope}`);
+  for (const [oldName, newName] of Object.entries(packageNames)) {
+    console.log(`  ${currentScope}/${oldName} → ${newScope}/${newName}`);
+  }
+
+  // Build replacements
+  const replacements = buildReplacements(currentProjectName, newProjectName, currentScope, newScope, packageNames);
+
+  // Get target files
   const targetFiles = [
     ...getAllFiles('.', ['.json']),
     ...getAllFiles('libs', ['.ts', '.tsx', '.js', '.jsx', '.mdx']),
     ...getAllFiles('.', ['.md', '.mdx']),
   ];
 
-  let modifiedCount = 0;
-
-  for (const file of targetFiles) {
-    if (applyReplacements(file, replacements)) {
-      modifiedCount++;
-      console.log(color(`  ✓ ${file}`, colors.green));
-    }
+  // Preview
+  if ((await question('\nPreview changes? (y/n): ')).toLowerCase() === 'y') {
+    const { changes, totalCount, fileCount } = processFiles(targetFiles, replacements, true);
+    showPreview(changes, totalCount, fileCount);
   }
 
-  console.log(color(`\n✅ Modified ${modifiedCount} files`, colors.green));
+  // Check git status
+  await checkGitStatus();
 
-  // Post-update instructions
+  // Apply changes
+  if ((await question('\nProceed with renaming? (y/n): ')).toLowerCase() !== 'y') {
+    console.log(color('\n❌ Cancelled', colors.yellow));
+    process.exit(0);
+  }
+
+  console.log(color('\n✏️  Applying changes...', colors.cyan));
+  const { fileCount } = processFiles(targetFiles, replacements);
+  console.log(color(`\n✅ Modified ${fileCount} files`, colors.green));
+
+  // Next steps
   console.log(color('\n📝 Next steps:', colors.bright));
-  console.log('  1. Review changes: ' + color('git diff', colors.cyan));
-  console.log('  2. Run: ' + color('yarn install', colors.cyan) + ' to update dependencies');
-  console.log('  3. Run: ' + color('yarn clean', colors.cyan) + ' to clean build artifacts');
-  console.log('  4. Run: ' + color('yarn build', colors.cyan) + ' to rebuild the project');
-  console.log(
-    '  5. Commit your changes: ' +
-      color('git add -A && git commit -m "chore: rebrand to ' + newProjectName + '"', colors.cyan)
-  );
+  const steps = [
+    'git diff',
+    'yarn install',
+    'yarn clean && yarn build',
+    `git add -A && git commit -m "chore: rebrand to ${newProjectName}"`,
+  ];
+  for (let i = 0; i < steps.length; i++) {
+    console.log(`  ${i + 1}. ${color(steps[i], colors.cyan)}`);
+  }
 
   rl.close();
 }
 
-// Run the tool
 main().catch((err) => {
   console.error(color(`\n❌ Error: ${err.message}`, colors.red));
   process.exit(1);

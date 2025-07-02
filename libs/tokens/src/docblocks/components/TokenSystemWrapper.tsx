@@ -1,9 +1,8 @@
-import React from 'react';
-import { TokenSystemProvider } from '../contexts/TokenSystemContext';
-
+import type React from 'react';
 // Import the token data directly
 // @ts-ignore - JSON import
 import tokenDataJson from '../../../.storybook/generated/tokens-generic.json';
+import { TokenSystemProvider } from '../contexts/TokenSystemContext';
 
 /**
  * Generic wrapper that provides TokenSystemProvider context

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import styles from '../../styles/ColorScale.module.css';
 import type { ColorToken } from '../../tools/colorUtils';
 import { ColorPopover } from './ColorPopover';

@@ -7,7 +7,10 @@ import { useTokens } from './useTokens';
  * Maintains the old API for backward compatibility
  */
 export function useDimensionTokens() {
-  const { tokens, loading, error } = useTokens({ tier: 'ref', category: 'dimension' });
+  const { tokens, loading, error } = useTokens({
+    tier: 'ref',
+    category: 'dimension',
+  });
 
   const processedData = useMemo(() => {
     if (!tokens || tokens.length === 0) {

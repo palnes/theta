@@ -1,6 +1,25 @@
 import type { ReactNode } from 'react';
-import { spacingConfig } from '../config/defaultConfig';
 import styles from '../styles/shared.module.css';
+
+// Spacing configuration
+const spacingConfig = {
+  orderedKeys: ['none', '2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '14', '18'],
+  visualDisplayKeys: ['xs', 'sm', 'md', 'lg', 'xl'],
+  keyLabels: {
+    none: 'None',
+    '2xs': '2XS',
+    xs: 'XS',
+    sm: 'SM',
+    md: 'MD',
+    lg: 'LG',
+    xl: 'XL',
+    '2xl': '2XL',
+    '3xl': '3XL',
+    '14': '14',
+    '18': '18',
+  },
+};
+
 import type { TokenDisplayConfig } from '../types/config';
 import type { TokenInfo } from '../types/tokenReferenceTable';
 import { BaseTokenRenderer } from './BaseRenderer';
@@ -56,6 +75,30 @@ export class SpacingRenderer extends BaseTokenRenderer {
   }
 
   /**
+   * Get spacing configuration
+   */
+  private getSpacingConfig() {
+    // In a real implementation, this would come from context
+    // For now, return defaults
+    return {
+      visualDisplayKeys: ['xs', 'sm', 'md', 'lg', 'xl'],
+      keyLabels: {
+        none: 'None',
+        '2xs': '2XS',
+        xs: 'XS',
+        sm: 'SM',
+        md: 'MD',
+        lg: 'LG',
+        xl: 'XL',
+        '2xl': '2XL',
+        '3xl': '3XL',
+        '14': '14',
+        '18': '18',
+      },
+    };
+  }
+
+  /**
    * Extract spacing key from token name
    */
   private extractSpacingKey(name: string): string {
@@ -89,7 +132,7 @@ export class SpacingRenderer extends BaseTokenRenderer {
       processedTokens = processedTokens.filter(mergedConfig.filters.include);
     }
     if (mergedConfig.filters?.exclude) {
-      processedTokens = processedTokens.filter((token) => !mergedConfig.filters!.exclude!(token));
+      processedTokens = processedTokens.filter((token) => !mergedConfig.filters?.exclude?.(token));
     }
 
     // Sort by configured order or by value
@@ -97,8 +140,9 @@ export class SpacingRenderer extends BaseTokenRenderer {
       const keyA = this.extractSpacingKey(a.name);
       const keyB = this.extractSpacingKey(b.name);
 
-      const orderA = spacingConfig.orderedKeys.indexOf(keyA);
-      const orderB = spacingConfig.orderedKeys.indexOf(keyB);
+      const orderedKeys = ['none', '2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '14', '18'];
+      const orderA = orderedKeys.indexOf(keyA);
+      const orderB = orderedKeys.indexOf(keyB);
 
       if (orderA !== -1 && orderB !== -1) {
         return orderA - orderB;
@@ -130,9 +174,8 @@ export class SpacingRenderer extends BaseTokenRenderer {
    */
   private formatTokenName(token: TokenInfo): string {
     const key = this.extractSpacingKey(token.name);
-    return (
-      spacingConfig.keyLabels[key as keyof typeof spacingConfig.keyLabels] || key.toUpperCase()
-    );
+    const config = this.getSpacingConfig();
+    return config.keyLabels[key as keyof typeof config.keyLabels] || key.toUpperCase();
   }
 
   /**

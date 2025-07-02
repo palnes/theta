@@ -1,5 +1,5 @@
-import React from 'react';
-import { TokenInfo } from '../types/tokenReferenceTable';
+import type React from 'react';
+import type { TokenInfo } from '../types/tokenReferenceTable';
 
 /**
  * Base interface for token renderers

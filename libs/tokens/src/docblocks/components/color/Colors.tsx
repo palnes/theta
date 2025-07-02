@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { useTokens } from '../../hooks/useTokens';
 import styles from '../../styles/ColorScale.module.css';
 import {
@@ -8,7 +8,7 @@ import {
   groupColorTokens,
   tokenInfoToColorToken,
 } from '../../tools/colorUtils';
-import { TokenInfo } from '../../types/tokenReferenceTable';
+import type { TokenInfo } from '../../types/tokenReferenceTable';
 import { ColorGrid } from './ColorGrid';
 
 interface ColorsProps {

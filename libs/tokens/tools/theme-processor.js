@@ -79,7 +79,9 @@ export async function processThemes(themes, baseTokens, config) {
       console.log(
         `⚠️  Warning: ${themeOnly.length} tokens in ${themeName} theme don't exist in base:`
       );
-      themeOnly.forEach((id) => console.log(`   - ${id}`));
+      for (const id of themeOnly) {
+        console.log(`   - ${id}`);
+      }
     }
   }
 

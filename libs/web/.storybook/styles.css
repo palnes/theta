@@ -1,5 +1,8 @@
-/* Import Manrope font */
+/* Import Manrope font - all weights used in the design system */
 @import "@fontsource/manrope/400.css";
+@import "@fontsource/manrope/500.css";
+@import "@fontsource/manrope/600.css";
+@import "@fontsource/manrope/700.css";
 
 /* Import design tokens from @theta/tokens package */
 @import "@theta/tokens/css/base.css";

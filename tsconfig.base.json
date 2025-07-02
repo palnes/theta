@@ -26,12 +26,9 @@
     "sourceMap": true,
     "allowJs": false,
     "paths": {
-      "@shbno/nordlys-tokens": ["./packages/nordlys-tokens/src/index.ts"],
-      "@shbno/nordlys-tokens/*": ["./packages/nordlys-tokens/src/*"],
-      "@shbno/nordlys-web": ["./packages/nordlys-web/src/index.ts"],
-      "@shbno/nordlys-web/*": ["./packages/nordlys-web/src/*"],
-      "@shbno/nordlys-native": ["./packages/nordlys-native/src/index.ts"],
-      "@shbno/nordlys-native/*": ["./packages/nordlys-native/src/*"]
+      "@theta/tokens": ["./packages/tokens/src/index.ts"],
+      "@theta/tokens/*": ["./packages/tokens/src/*"],
+      "@theta/web": ["./packages/web/src/index.ts"],
     }
   },
   "exclude": ["node_modules", "**/dist", "**/build", "**/.turbo"]

@@ -1,5 +1,4 @@
-import { TokenInfo } from '../types/tokenReferenceTable';
-import type { TokenUsage } from '../types/tokenReferenceTable';
+import type { TokenInfo, TokenUsage } from '../types/tokenReferenceTable';
 import type { NumericToken, StringToken } from '../types/tokens';
 
 /**
@@ -54,6 +53,28 @@ export const extractSpecialDimensions = (tokens: TokenInfo[]): StringToken[] => 
 /**
  * Get semantic spacing tokens in logical order
  */
+// Helper to compare tokens by predefined order
+const compareByOrder = (aKey: string, bKey: string, order: string[]): number | null => {
+  const aIndex = order.indexOf(aKey);
+  const bIndex = order.indexOf(bKey);
+
+  if (aIndex === -1 && bIndex === -1) return null;
+  if (aIndex === -1) return 1;
+  if (bIndex === -1) return -1;
+  return aIndex - bIndex;
+};
+
+// Helper to compare tokens numerically
+const compareNumeric = (aKey: string, bKey: string): number | null => {
+  const aNum = Number.parseInt(aKey);
+  const bNum = Number.parseInt(bKey);
+
+  if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) {
+    return aNum - bNum;
+  }
+  return null;
+};
+
 export const getSemanticSpacing = (tokens: TokenInfo[]): StringToken[] => {
   const order = ['none', '2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'];
 
@@ -70,17 +91,19 @@ export const getSemanticSpacing = (tokens: TokenInfo[]): StringToken[] => {
       };
     })
     .sort((a, b) => {
-      const aIndex = order.indexOf(a.key || '');
-      const bIndex = order.indexOf(b.key || '');
-      if (aIndex === -1 && bIndex === -1) {
-        const aNum = Number.parseInt(a.key || '');
-        const bNum = Number.parseInt(b.key || '');
-        if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) return aNum - bNum;
-        return (a.key || '').localeCompare(b.key || '');
-      }
-      if (aIndex === -1) return 1;
-      if (bIndex === -1) return -1;
-      return aIndex - bIndex;
+      const aKey = a.key || '';
+      const bKey = b.key || '';
+
+      // Try order-based comparison first
+      const orderComparison = compareByOrder(aKey, bKey, order);
+      if (orderComparison !== null) return orderComparison;
+
+      // Try numeric comparison
+      const numericComparison = compareNumeric(aKey, bKey);
+      if (numericComparison !== null) return numericComparison;
+
+      // Fallback to alphabetical
+      return aKey.localeCompare(bKey);
     });
 };
 
@@ -134,26 +157,29 @@ export const getSemanticZIndex = (
 
 /**
  * Get semantic borders grouped by type
+ * @param tokens - Array of tokens to group
+ * @param semanticTier - The tier ID for semantic tokens (defaults to 'sys')
  */
 export const getSemanticBorders = (
-  tokens: TokenInfo[]
+  tokens: TokenInfo[],
+  semanticTier = 'sys'
 ): { width: TokenInfo[]; style: TokenInfo[] } => {
   const grouped: { width: TokenInfo[]; style: TokenInfo[] } = {
     width: [],
     style: [],
   };
 
-  tokens.forEach((token) => {
+  for (const token of tokens) {
     const pathParts = token.path?.split('.') || [];
-    // Check for sys.border.width.* or sys.border.style.*
-    if (pathParts[0] === 'sys' && pathParts[1] === 'border' && pathParts.length >= 4) {
+    // Check for [semanticTier].border.width.* or [semanticTier].border.style.*
+    if (pathParts[0] === semanticTier && pathParts[1] === 'border' && pathParts.length >= 4) {
       const type = pathParts[2]; // 'width' or 'style'
 
       if (type && (type === 'width' || type === 'style')) {
         grouped[type].push(token);
       }
     }
-  });
+  }
 
   return grouped;
 };

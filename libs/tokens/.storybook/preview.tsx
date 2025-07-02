@@ -1,7 +1,7 @@
 import type { Preview } from '@storybook/react-vite';
-import React from 'react';
 import { TokenSystemProvider } from '../src/docblocks/contexts/TokenSystemContext';
 import tokenDataJson from './generated/tokens-generic.json';
+
 const tokenData = tokenDataJson as any;
 import '@fontsource/manrope/400.css';
 import '../dist/css/base.css';

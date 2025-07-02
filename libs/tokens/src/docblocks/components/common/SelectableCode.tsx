@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { useSelectableContent } from '../../hooks/useSelectableContent';
 import sharedStyles from '../../styles/shared.module.css';
 
@@ -20,8 +20,7 @@ export const SelectableCode: React.FC<SelectableCodeProps> = ({ children, classN
           handleSelectContent(e.currentTarget);
         }
       }}
-      tabIndex={0}
-      aria-label={`Click to copy: ${children}`}
+      title={`Click to copy: ${children}`}
     >
       {children}
     </code>

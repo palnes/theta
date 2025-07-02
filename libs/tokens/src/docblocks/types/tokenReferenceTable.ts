@@ -24,6 +24,8 @@ export interface TokenInfo {
   themeValues?: Record<string, any>;
   isThemeable?: boolean;
   overriddenIn?: string[];
+  referencedBy?: string[];
+  expandedFrom?: string;
 }
 
 export interface TokenData {

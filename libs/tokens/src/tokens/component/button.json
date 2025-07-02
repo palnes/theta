@@ -45,25 +45,16 @@
           "$value": "{sys.spacing.md}"
         }
       },
-      "fontSize": {
+      "typography": {
         "small": {
-          "$value": "{sys.fontSize.sm}"
+          "$value": "{sys.typography.action.sm}"
         },
         "medium": {
-          "$value": "{sys.fontSize.base}"
+          "$value": "{sys.typography.action.md}"
         },
         "large": {
-          "$value": "{sys.fontSize.base}"
+          "$value": "{sys.typography.action.lg}"
         }
-      },
-      "fontWeight": {
-        "$value": "{sys.fontWeight.semibold}"
-      },
-      "lineHeight": {
-        "$value": "{sys.lineHeight.normal}"
-      },
-      "fontFamily": {
-        "$value": "{sys.fontFamily.sans}"
       },
       "borderWidth": {
         "ghost": {

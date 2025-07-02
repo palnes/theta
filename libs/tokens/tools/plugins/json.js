@@ -9,6 +9,64 @@ const DEFAULT_FILENAME = 'tokens.json';
 export default function jsonPlugin(options = {}) {
   const { filename = DEFAULT_FILENAME, themes = {}, registry } = options;
 
+  // Helper to navigate to a value in theme data
+  const getThemeValueByPath = (themeData, path) => {
+    let value = themeData;
+    for (const part of path) {
+      value = value?.[part];
+    }
+    return value;
+  };
+
+  // Helper to build nested override object
+  const buildNestedOverride = (overrides, path, value) => {
+    let current = overrides;
+    for (let i = 0; i < path.length - 1; i++) {
+      if (!current[path[i]]) {
+        current[path[i]] = {};
+      }
+      current = current[path[i]];
+    }
+    current[path[path.length - 1]] = value;
+  };
+
+  // Helper to process theme overrides for a single theme
+  const processThemeOverrides = (themeName, themeData, tokens) => {
+    if (themeName === 'light') {
+      return {}; // Light theme has no overrides
+    }
+
+    const overrides = {};
+
+    for (const [id, token] of Object.entries(tokens)) {
+      const path = id.split('.');
+      const themeValue = getThemeValueByPath(themeData, path);
+
+      if (
+        themeValue &&
+        themeValue.$value !== undefined &&
+        !areTokenValuesEqual(themeValue.$value, token.$value)
+      ) {
+        buildNestedOverride(overrides, path, themeValue.$value);
+      }
+    }
+
+    return overrides;
+  };
+
+  // Helper to register outputs with registry
+  const registerOutputs = (tokens, registry) => {
+    if (!registry) return;
+
+    for (const [id, token] of Object.entries(tokens)) {
+      registry.registerOutput(id, 'json', {
+        name: id,
+        value: token.$value,
+        usage: id,
+      });
+    }
+  };
+
   return {
     name: 'json',
     async build({ tokens, outputFile }) {
@@ -17,43 +75,8 @@ export default function jsonPlugin(options = {}) {
 
       // Build theme overrides
       const themeOverrides = {};
-
       for (const [themeName, themeData] of Object.entries(themes)) {
-        if (themeName === 'light') {
-          themeOverrides[themeName] = {}; // Light theme has no overrides
-          continue;
-        }
-
-        const overrides = {};
-
-        // Find overridden tokens
-        for (const [id, token] of Object.entries(tokens)) {
-          const path = id.split('.');
-          let themeValue = themeData;
-
-          // Navigate to value in theme
-          for (const part of path) {
-            themeValue = themeValue?.[part];
-          }
-
-          if (
-            themeValue &&
-            themeValue.$value !== undefined &&
-            !areTokenValuesEqual(themeValue.$value, token.$value)
-          ) {
-            // Build nested path for override
-            let current = overrides;
-            for (let i = 0; i < path.length - 1; i++) {
-              if (!current[path[i]]) {
-                current[path[i]] = {};
-              }
-              current = current[path[i]];
-            }
-            current[path[path.length - 1]] = themeValue.$value;
-          }
-        }
-
-        themeOverrides[themeName] = overrides;
+        themeOverrides[themeName] = processThemeOverrides(themeName, themeData, tokens);
       }
 
       // Generate JSON content
@@ -65,16 +88,8 @@ export default function jsonPlugin(options = {}) {
       await outputFile(filename, JSON.stringify(jsonContent, null, 2));
       console.log('✓ Generated JSON');
 
-      // Register outputs with registry if provided
-      if (registry) {
-        for (const [id, token] of Object.entries(tokens)) {
-          registry.registerOutput(id, 'json', {
-            name: id,
-            value: token.$value,
-            usage: id,
-          });
-        }
-      }
+      // Register outputs with registry
+      registerOutputs(tokens, registry);
     },
   };
 }
